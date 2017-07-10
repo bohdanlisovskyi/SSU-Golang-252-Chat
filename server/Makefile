@@ -10,5 +10,7 @@ code-quality:
 install-helpers:
 	echo "Installing GoMetaLinter"
 	go get -u github.com/alecthomas/gometalinter
+	echo "Installing linters"
+	gometalinter --install
 	echo "Installing Glide"
 	curl https://glide.sh/get | sh

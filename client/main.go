@@ -6,5 +6,4 @@ import (
 
 func main() {
 	fmt.Println("I'm client")
-
 }

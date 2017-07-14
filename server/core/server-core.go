@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"net/http"
 	"github.com/gorilla/websocket"
+	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
 )
 
 
@@ -31,13 +32,13 @@ func MessageHandler(w http.ResponseWriter, r *http.Request) {
 		for {
 			_, text, _ := conn.ReadMessage()
 
-			receiver_id := somefunc() // This function from Valeryi return me info from header and body return to me json
+			message := messageService.UnmarshalMessage(text)
 
-			//I check this json and get receiver_id
+			//I check token this json and get receiver_id
 
-			//send json to Valery's function which return me []byte text
+			byteMessage := messageService.MarshalMessage(message)
 
-			writeMsg(text, receiver_id) //I send this text []byte to receiver
+			writeMsg(byteMessage, strconv.Itoa(message.Header.Receiver)) //I send this text []byte to receiver
 		}
 	}()
 }

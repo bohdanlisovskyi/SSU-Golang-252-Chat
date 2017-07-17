@@ -6,22 +6,22 @@ import (
 	"github.com/therecipe/qt/quick"
 )
 
-var qmlLog *QmlLog
+var qmlLogin *QmlLogin
 
-type QmlLog struct {
+type QmlLogin struct {
 	core.QObject
-	_ func(userName, password string) `slot:"sendLogD"`
-	_ func(isLogValid bool)           `signal:"sendLogIsValid"`
+	_ func(userName, password string) `slot:"checkLoginData"`
+	_ func(isLoginValid bool)           `signal:"loginDataIsValid"`
 }
 
-func initQmlLog(quickWidget *quick.QQuickWidget) {
-	qmlLog = NewQmlLog(nil)
-	quickWidget.RootContext().SetContextProperty("qmlLog", qmlLog)
-	qmlLog.ConnectSendLogD(func(userName, password string) {
+func initQmlLogin(quickWidget *quick.QQuickWidget) {
+	qmlLogin = NewQmlLogin(nil)
+	quickWidget.RootContext().SetContextProperty("qmlLogin", qmlLogin)
+	qmlLogin.ConnectCheckLoginData(func(userName, password string) {
 		if userName != "" && password != "" {
-			qmlLog.SendLogIsValid(true)
+			qmlLogin.LoginDataIsValid(true)
 		} else {
-			qmlLog.SendLogIsValid(false)
+			qmlLogin.LoginDataIsValid(false)
 		}
 	})
 }

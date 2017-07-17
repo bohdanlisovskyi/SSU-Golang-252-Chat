@@ -6,22 +6,22 @@ import (
 	"github.com/therecipe/qt/quick"
 )
 
-var qmlReg *QmlReg
+var qmlRegister *QmlRegister
 
-type QmlReg struct {
+type QmlRegister struct {
 	core.QObject
-	_ func(userName, nickName, password string) `slot:"sendRegD"`
-	_ func(isRegValid bool)                     `signal:"sendRegIsValid"`
+	_ func(userName, nickName, password string)      `slot:"checkRegisterData"`
+	_ func(isRegisterValid bool)                     `signal:"registerDataIsValid"`
 }
 
-func initQmlReg(quickWidget *quick.QQuickWidget) {
-	qmlReg = NewQmlReg(nil)
-	quickWidget.RootContext().SetContextProperty("qmlReg", qmlReg)
-	qmlReg.ConnectSendRegD(func(userName, nickName, password string) {
+func initQmlRegister(quickWidget *quick.QQuickWidget) {
+	qmlRegister = NewQmlRegister(nil)
+	quickWidget.RootContext().SetContextProperty("qmlRegister", qmlRegister)
+	qmlRegister.ConnectCheckRegisterData(func(userName, nickName, password string) {
 		if userName != "" && nickName != "" && password != "" {
-			qmlReg.SendRegIsValid(true)
+			qmlRegister.RegisterDataIsValid(true)
 		} else {
-			qmlReg.SendRegIsValid(false)
+			qmlRegister.RegisterDataIsValid(false)
 		}
 	})
 }

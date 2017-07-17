@@ -24,7 +24,7 @@ ApplicationWindow {
         visible: false
         onLogin: {
             //registerWindowLocal.userInput.text = userNameLogin
-            qmlLog.sendLogD(userInput.text, passInput.text)
+            qmlLogin.checkLoginData(userInput.text, passInput.text)
         }
         onGoBackToRegister: {
             registerWindowLocal.visible = true
@@ -39,7 +39,7 @@ ApplicationWindow {
         id: registerWindowLocal
         visible: true
         onRegister: {
-            qmlReg.sendRegD(userInput.text, nickInput.text, passInput.text)
+            qmlRegister.checkRegisterData(userInput.text, nickInput.text, passInput.text)
         }
         onGoNextToLogin: {
             loginWindowLocal.visible = true
@@ -56,9 +56,9 @@ ApplicationWindow {
     }
 
     Connections {
-        target: qmlReg
-        onSendRegIsValid: {
-            if (isRegValid == true) {
+        target: qmlRegister
+        onRegisterDataIsValid: {
+            if (isRegisterValid == true) {
                 registerWindowLocal.errText.text = ""
                 loginWindowLocal.visible = true
                 registerWindowLocal.visible = false
@@ -69,9 +69,9 @@ ApplicationWindow {
     }
 
     Connections {
-        target: qmlLog
-        onSendLogIsValid: {
-            if (isLogValid == true){
+        target: qmlLogin
+        onLoginDataIsValid: {
+            if (isLoginValid == true){
                 loginWindowLocal.errText.text = ""
                 mainWindow.width = messagerWindowLocal.width
                 mainWindow.height = messagerWindowLocal.height

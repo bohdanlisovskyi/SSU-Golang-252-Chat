@@ -25,8 +25,8 @@ func newQmlWidget() *quick.QQuickWidget {
 	var quickWidget = quick.NewQQuickWidget(nil)
 	quickWidget.SetResizeMode(quick.QQuickWidget__SizeRootObjectToView)
 
-	initQmlReg(quickWidget)
-	initQmlLog(quickWidget)
+	initQmlRegister(quickWidget)
+	initQmlLogin(quickWidget)
 	initQmlMessage(quickWidget)
 	quickWidget.SetSource(core.NewQUrl3("qrc:/qml/main.qml", 0))
 

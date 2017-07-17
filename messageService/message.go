@@ -34,7 +34,7 @@ func UnmarshalMessage(byteMessage [] byte) (Message, error) {
 	var MessageStructure Message
 	err := json.Unmarshal(byteMessage, &MessageStructure)
 	if err != nil {
-		log.Fatal("Error has occured: ", err)
+		log.Println("Error has occured: ", err)
 		return MessageStructure, err
 	}
 	return MessageStructure, err
@@ -44,7 +44,7 @@ func UnmarshalMessage(byteMessage [] byte) (Message, error) {
 func MarshalMessage(message Message) ([] byte, error) {
 	msgJSON, err := json.Marshal(message)
 	if err != nil {
-		log.Fatal("Error has occured: ", err)
+		log.Println("Error has occured: ", err)
 		return nil, err
 	}
 	return msgJSON, err
@@ -55,7 +55,7 @@ func UnmarshalRequest(byteRequest [] byte) (map[string]interface{}, error) {
 	var unmarshaledRequest map[string]interface{}
 	err := json.Unmarshal(byteRequest, &unmarshaledRequest)
 	if err != nil {
-		log.Fatal("Error has occured: ", err)
+		log.Println("Error has occured: ", err)
 		return nil, err
 	}
 	return unmarshaledRequest, err
@@ -63,10 +63,10 @@ func UnmarshalRequest(byteRequest [] byte) (map[string]interface{}, error) {
 
 //function for server to retrieving "type" value from unmarshaled request
 func GetType(unmarshaledRequest map[string]interface{}) (string, error) {
-	typeInterface := unmarshaledRequest["type"]
-	if typeInterface == nil {
+	typeInterface, ok := unmarshaledRequest["type"]
+	if !ok {
 		err := errors.New("Can't find value for type")
-		log.Fatal("Error has occured: ", err)
+		log.Println("Error has occured: ", err)
 		return "", err
 	}
 	typeValue := typeInterface.(string)
@@ -75,10 +75,10 @@ func GetType(unmarshaledRequest map[string]interface{}) (string, error) {
 
 //function for server to retrieving "command" value from unmarshaled request
 func GetCommand(unmarshaledRequest map[string]interface{}) (string, error) {
-	valInterface := unmarshaledRequest["command"]
-	if valInterface == nil {
+	valInterface, ok := unmarshaledRequest["command"]
+	if !ok {
 		err := errors.New("Can't find value for command")
-		log.Fatal("Error has occured: ", err)
+		log.Println("Error has occured: ", err)
 		return "", err
 	}
 	value := valInterface.(string)

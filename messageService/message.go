@@ -4,97 +4,83 @@ import (
 	"time"
 	"encoding/json"
 	"log"
+	"errors"
 )
 
-//structure for message(should be in JSON format) which consist with header and body
+//structure for message which sent between users
 type Message struct {
 	Header MessageHeader `json:"header"`
-	Body MessageBody `json:"body"`
+	Body   MessageBody `json:"body"`
 }
 
-// header for Message
+//structure of header for Message
 type MessageHeader struct {
-	Type_ string `json:"type"`// this named "Type_" because "type" - keyword
-	Command string `json:"command"` //depend on action from user (e.g. sent message, set info e.t.c.)
-	Sender int `json:"sender"`
+	Type_    string `json:"type"`    // this named "Type_" because "type" - keyword
+	Command  string `json:"command"` //depend on action from user (e.g. sent message, set info e.t.c.)
+	Sender   int `json:"sender"`
 	Receiver int `json:"receiver"`
-	Time time.Time `json:"time"`
-	Auth string `json:"auth"`// value of Auth is "token" at the beginning (maybe use JSON web token?)
+	Time     time.Time `json:"time"`
+	Auth     string `json:"auth"` // value of Auth is "token" at the beginning (maybe use JSON web token?)
 }
 
-// body for Message
+//structure of body for Message
 type MessageBody struct {
 	Text string `json:"text"`
 	//links []link -> slice of formatted URL's
 }
 
-//func for unmarshalling message ([] byte JSON -> Message struct)
-func UnmarshalMessage(byteMessage [] byte ) (Message, error){
+//function for unmarshaling message (from [] byte JSON to Message structure)
+func UnmarshalMessage(byteMessage [] byte) (Message, error) {
 	var MessageStructure Message
 	err := json.Unmarshal(byteMessage, &MessageStructure)
-	if err != nil{
-		log.Println("error has occured: ", err)
+	if err != nil {
+		log.Fatal("Error has occured: ", err)
 		return MessageStructure, err
 	}
 	return MessageStructure, err
 }
 
-//func for marshaling message (Message -> [] byte JSON)
-func MarshalMessage(message Message) ([] byte, error ){
+//function for marshaling message (Message -> [] byte JSON)
+func MarshalMessage(message Message) ([] byte, error) {
 	msgJSON, err := json.Marshal(message)
 	if err != nil {
-		log.Println("error has occured: ", err)
+		log.Fatal("Error has occured: ", err)
 		return nil, err
 	}
 	return msgJSON, err
 }
 
-//func for unmarshalling []byte into map[string]interface{} without knowing data's structure
-func UnmarshalAnyDataStructure(byteSlice [] byte) (map[string]interface{}, error) {
-	var dataStructure interface{}
-	err := json.Unmarshal(byteSlice, &dataStructure)
-	mapStructure := dataStructure.(map[string]interface{})
-	if err != nil{
-		log.Println("error has occured: ", err)
+//function for unmarshaling request(without info about structure) in []byte  which come from UI into map[string]interface{}
+func UnmarshalRequest(byteRequest [] byte) (map[string]interface{}, error) {
+	var unmarshaledRequest map[string]interface{}
+	err := json.Unmarshal(byteRequest, &unmarshaledRequest)
+	if err != nil {
+		log.Fatal("Error has occured: ", err)
 		return nil, err
 	}
-	return mapStructure, err
+	return unmarshaledRequest, err
 }
 
-//function for retrieving "type" value from JSON requests
-func GetType(byteSlice [] byte) (string, error) {
-	JSONMap, err := UnmarshalAnyDataStructure(byteSlice)
-	if err != nil {
-		log.Println("error has occured: ", err)
+//function for server to retrieving "type" value from unmarshaled request
+func GetType(unmarshaledRequest map[string]interface{}) (string, error) {
+	typeInterface := unmarshaledRequest["type"]
+	if typeInterface == nil {
+		err := errors.New("Can't find value for type")
+		log.Fatal("Error has occured: ", err)
 		return "", err
 	}
-	var value string
-	for k, v := range JSONMap {
-		//value := string(v)
-		//fmt.Println(k , v)
-		if k == "type" {
-			value := v.(string)
-
-			//v := string(v)
-			return value, err
-		}
-	}
-	return value, err
+	typeValue := typeInterface.(string)
+	return typeValue, nil
 }
 
-//function for retrieving "command" value from JSON requests
-func GetCommand(byteSlice [] byte) (string, error) {
-	JSONMap, err := UnmarshalAnyDataStructure(byteSlice)
-	if err != nil {
-		log.Println("error has occured: ", err)
+//function for server to retrieving "command" value from unmarshaled request
+func GetCommand(unmarshaledRequest map[string]interface{}) (string, error) {
+	valInterface := unmarshaledRequest["command"]
+	if valInterface == nil {
+		err := errors.New("Can't find value for command")
+		log.Fatal("Error has occured: ", err)
 		return "", err
 	}
-	var value string
-	for k, v := range JSONMap {
-		if k == "command" {
-			value := v.(string)
-			return value, err
-		}
-	}
-	return value, err
+	value := valInterface.(string)
+	return value, nil
 }

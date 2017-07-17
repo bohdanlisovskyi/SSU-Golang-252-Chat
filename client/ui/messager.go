@@ -18,6 +18,10 @@ func initQmlMessage(quickWidget *quick.QQuickWidget) {
 	qmlMessage = NewQmlMessage(nil)
 	quickWidget.RootContext().SetContextProperty("qmlMessage", qmlMessage)
 	qmlMessage.ConnectSendMessage(func(message string) {
-
+		/*
+			reciver id (or userName)
+			sender id (or userName)
+			message
+		*/
 	})
 }

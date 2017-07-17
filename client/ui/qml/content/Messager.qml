@@ -4,11 +4,13 @@ import QtQuick.Controls 2.1
 import Qt.labs.calendar 1.0
 
 Item {
+    id: messagerWindow
     visible: true
     width: 720
     height: 480
     Layout.fillHeight: true
     Layout.fillWidth: true
+    signal send(string message)
 
     Rectangle {
         color: "#ffffff"
@@ -153,7 +155,8 @@ Item {
                     onClicked: {
                         if( messageEdit.getText(0, messageEdit.length) !== "") {
                             historyTextView.text += "<div style=\"background-color: lightblue; border-color: red; text-align: right;\">"  + messageEdit.getText(0, messageEdit.length) + "</div>"
-                            print(historyTextView.text)
+                            //print(historyTextView.text)
+                            messagerWindow.send(messageEdit.getText(0, messageEdit.length))
                             messageEdit.text = ""
                         }
                     }

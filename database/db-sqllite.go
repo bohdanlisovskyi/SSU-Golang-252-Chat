@@ -7,26 +7,28 @@ import (
 	"github.com/8tomat8/SSU-Golang-252-Chat/server/config"
 )
 
-var SqlLite *sql.DB
+var (
+	once sync.Once
+	sqlLite *sql.DB
+)
 
-func init() {
+func GetStorage() *sql.DB {
 
-	once.Do(GetSqlLiteStorage)
-}
-var once sync.Once
+	once.Do(func() {
 
-func GetSqlLiteStorage() {
+		settings := config.GetConfig()
 
-	settings := config.GetConfig()
+		db, err := sql.Open(settings.Storage.Driver, settings.Storage.Name)
 
-	db, err := sql.Open(settings.Storage[0].Driver, settings.Storage[0].Name)
+		if err == nil {
 
-	if err == nil {
+			loger.Log.Errorf("Error connection to SqlLite3 %s", err.Error())
 
-		loger.Log.Errorf("Error connection to SqlLite3 %s", err.Error())
+			return
+		}
 
-		return
-	}
+		sqlLite = db
+	})
 
-	SqlLite = db
+	return sqlLite
 }

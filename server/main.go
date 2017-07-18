@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 	"github.com/gorilla/mux"
-	"github.com/8tomat8/SSU-Golang-252-Chat/chat-log"
+	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/server/core"
 )
 
@@ -15,5 +15,8 @@ func main() {
 
 	err := http.ListenAndServe(":3002", r)
 
-	chatlog.HandleError(err, "Can't connect to server error: ")
+	if err != nil {
+
+		loger.Log.Panicf("Cannot run server %s", err.Error())
+	}
 }

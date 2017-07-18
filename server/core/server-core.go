@@ -1,11 +1,9 @@
 package core
 
 import (
-	"strconv"
 	"net/http"
 	"github.com/gorilla/websocket"
-	"github.com/8tomat8/SSU-Golang-252-Chat/chat-log"
-	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
+	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 )
 
 
@@ -21,25 +19,30 @@ type Client struct {
 
 var clients = map[string]Client{}
 
+//TODO uncommented this when the message module wil be done
+
 func MessageHandler(w http.ResponseWriter, r *http.Request) {
 
-	conn := addNewClient(w, r)
+	/*conn := addNewClient(w, r)
 
-	chatlog.Log(chatlog.Fields{}, "info", "Add new connection: ", conn)
+	loger.Log.Infof("Add new connection: ", conn)
 
 	go func() {
 
 		for {
 			messageType, text, err := conn.ReadMessage()
 
-			chatlog.HandleError(err, "Read message error: ")
+			if err != nil {
+
+				loger.Log.Warningf("Read message error: ", err.Error())
+			}
 
 			validateMessage(messageService.UnmarshalMessage(text), messageType)
 		}
-	}()
+	}()*/
 }
 
-func sendMessage(message messageService.Message, messageType int) {
+/*func sendMessage(message messageService.Message, messageType int) {
 
 	byteMessage := messageService.MarshalMessage(message)
 
@@ -47,8 +50,6 @@ func sendMessage(message messageService.Message, messageType int) {
 }
 
 func validateMessage(message messageService.Message, messageType int) {
-
-	//Why i don't use case? because if working faster
 
 	if message.Header.Type_ == "msg" {
 
@@ -84,15 +85,20 @@ func validateMessage(message messageService.Message, messageType int) {
 
 		//run change_user_info function
 	}
-}
+}*/
 
 func addNewClient(w http.ResponseWriter, r *http.Request) *websocket.Conn{
 
+	client_id := "" // get client_id from request
+
 	conn, err := upgrader.Upgrade(w, r, nil)
 
-	chatlog.HandleError(err, "Connect new user Error: ")
+	if err != nil {
 
-	clients[strconv.Itoa(len(clients)+1)] = Client{conn:conn}
+		loger.Log.Errorf("Connect new user Error: ", err.Error())
+	}
+
+	clients[client_id] = Client{conn:conn}
 
 	return conn
 }
@@ -100,5 +106,10 @@ func addNewClient(w http.ResponseWriter, r *http.Request) *websocket.Conn{
 
 func writeMsg(text []byte, receiver_id string, messageType int) {
 
-	chatlog.HandleError(clients[receiver_id].conn.WriteMessage(messageType, text), "Write message error: ")
+	err := clients[receiver_id].conn.WriteMessage(messageType, text)
+
+	if err != nil {
+
+		loger.Log.Errorf("Write message error: ", err.Error())
+	}
 }

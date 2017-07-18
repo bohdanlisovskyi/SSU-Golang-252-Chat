@@ -8,6 +8,7 @@ import (
 
 var qmlRegister *QmlRegister
 
+
 type QmlRegister struct {
 	core.QObject
 	_ func(userName, nickName, password string)      `slot:"checkRegisterData"`
@@ -19,8 +20,10 @@ func initQmlRegister(quickWidget *quick.QQuickWidget) {
 	quickWidget.RootContext().SetContextProperty("qmlRegister", qmlRegister)
 	qmlRegister.ConnectCheckRegisterData(func(userName, nickName, password string) {
 		if userName != "" && nickName != "" && password != "" {
+
 			qmlRegister.RegisterDataIsValid(true)
 		} else {
+
 			qmlRegister.RegisterDataIsValid(false)
 		}
 	})

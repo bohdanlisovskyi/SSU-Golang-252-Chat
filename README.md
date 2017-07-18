@@ -15,3 +15,14 @@ Run toinstall application dependencies
     
 ### Code quality check
     make code-quality
+
+### How to install GUI library and run build
+Follow the instruction https://github.com/therecipe/qt#installation . If needed see "Regular Setup"
+
+To build application run
+ 
+    qtdeploy build desktop [path/to/your/project] 
+
+or 
+    
+    $GOPATH/bin/qtdeploy build desktop [path/to/your/project]

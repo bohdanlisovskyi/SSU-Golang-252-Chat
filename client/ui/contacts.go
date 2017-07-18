@@ -10,10 +10,11 @@ var qmlContacts *QmlContacts
 
 type QmlContacts struct {
 	core.QObject
-	_ func(newIndex int)        `slot:"changeCurrentContact"`
-	_ func(searchedUser string) `slot:"searchUser"`
-	_ func(lastMessage string)  `signal:"sendLastMessage"`
-	_ func(history string)      `signal:"sendHistory"`
+	_ func(newIndex int)        			`slot:"changeCurrentContact"`
+	_ func(searchedUser string) 			`slot:"searchUser"`
+	_ func(newUsername, newNickname string) `slot:"addUser"`
+	_ func(lastMessage string)  			`signal:"sendLastMessage"`
+	_ func(history string)      			`signal:"sendHistory"`
 }
 
 func initQmlContacts(quickWidget *quick.QQuickWidget) {
@@ -22,5 +23,10 @@ func initQmlContacts(quickWidget *quick.QQuickWidget) {
 	qmlContacts.ConnectChangeCurrentContact(func(newIndex int) {
 
 	})
+	qmlContacts.ConnectSearchUser(func(searchedUser string){
 
+	})
+	qmlContacts.ConnectAddUser(func(newUsername, newNickname string){
+
+	})
 }

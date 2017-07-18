@@ -10,7 +10,7 @@ var qmlLogin *QmlLogin
 
 type QmlLogin struct {
 	core.QObject
-	_ func(userName, password string) `slot:"checkLoginData"`
+	_ func(userName, password string) 	`slot:"checkLoginData"`
 	_ func(isLoginValid bool)           `signal:"loginDataIsValid"`
 }
 

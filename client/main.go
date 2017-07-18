@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
+	"github.com/8tomat8/SSU-Golang-252-Chat/client/ui"
 )
 
 func main() {
-	fmt.Println("I'm client")
+	ui.CreateWindow()
 }

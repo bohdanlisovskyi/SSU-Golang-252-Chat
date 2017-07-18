@@ -1,8 +1,0 @@
-{
-  "storage": [
-    {
-      "driver": "sqlite3",
-      "name": "./foo.db"
-    }
-  ]
-}

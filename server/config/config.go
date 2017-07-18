@@ -12,7 +12,7 @@ type Storage struct {
 }
 
 type Config struct {
-	Storage []Storage `json:"storage"`
+	Storage Storage `json:"storage"`
 }
 
 var config Config

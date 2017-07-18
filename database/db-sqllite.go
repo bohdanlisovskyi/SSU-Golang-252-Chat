@@ -1,37 +1,32 @@
 package database
 
 import (
+	"sync"
 	"database/sql"
-	"github.com/8tomat8/SSU-Golang-252-Chat/config"
-	"github.com/8tomat8/SSU-Golang-252-Chat/chat-log"
+	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
+	"github.com/8tomat8/SSU-Golang-252-Chat/server/config"
 )
 
-type StorageInterface struct {
-	SqlLite map[bool]*sql.DB
-}
-
-var storage StorageInterface
+var SqlLite *sql.DB
 
 func init() {
 
-	storage = StorageInterface{}
-
-	storage.SqlLite = make(map[bool]*sql.DB)
+	once.Do(GetSqlLiteStorage)
 }
+var once sync.Once
 
-func GetSqlLiteStorage() *sql.DB {
-
-	if store, exists := storage.SqlLite[true]; exists {
-		return store
-	}
+func GetSqlLiteStorage() {
 
 	settings := config.GetConfig()
 
-	db, err := sql.Open(settings.Storage.Driver, settings.Storage.Name)
+	db, err := sql.Open(settings.Storage[0].Driver, settings.Storage[0].Name)
 
-	chatlog.HandleError(err, "Connect Error: ")
+	if err == nil {
 
-	storage.SqlLite[true] = db
+		loger.Log.Errorf("Error connection to SqlLite3 %s", err.Error())
 
-	return storage.SqlLite[true]
+		return
+	}
+
+	SqlLite = db
 }

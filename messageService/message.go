@@ -2,7 +2,7 @@ package messageService
 
 import (
 	"encoding/json"
-	"log"
+	"SSU-Golang-252-Chat/loger"
 )
 
 // Message is a structure for message which is sending between users
@@ -31,17 +31,17 @@ func UnmarshalMessage(byteMessage [] byte) (*Message, error) {
 	var MessageStructure *Message
 	err := json.Unmarshal(byteMessage, &MessageStructure)
 	if err != nil {
-		log.Println("Error has occured: ", err) // it will be synchronized with Bohdan's logger-lib after merging initial PR's
+		loger.Log.Errorf("Error has occured: ", err)
 		return MessageStructure, err
 	}
 	return MessageStructure, err
 }
 
 // MarshalMessage is a function for marshaling message (Message -> [] byte JSON)
-func MarshalMessage(message Message) ([] byte, error) {
+func MarshalMessage(message *Message) ([] byte, error) {
 	msgJSON, err := json.Marshal(message)
 	if err != nil {
-		log.Println("Error has occured: ", err) // it will be synchronized with Bohdan's logger-lib after merging initial PR's
+		loger.Log.Errorf("Error has occured: ", err)
 		return nil, err
 	}
 	return msgJSON, err
@@ -52,7 +52,7 @@ func UnmarshalRequest(byteRequest [] byte) (map[string]interface{}, error) {
 	var unmarshaledRequest map[string]interface{}
 	err := json.Unmarshal(byteRequest, &unmarshaledRequest)
 	if err != nil {
-		log.Println("Error has occured: ", err) // it will be synchronized with Bohdan's logger-lib after merging initial PR's
+		loger.Log.Errorf("Error has occured: ", err)
 		return nil, err
 	}
 	return unmarshaledRequest, err

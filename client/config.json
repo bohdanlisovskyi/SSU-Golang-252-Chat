@@ -1,0 +1,5 @@
+{
+	"server": {
+      "connection": "localhost:3002"
+    }
+}

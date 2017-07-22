@@ -53,6 +53,9 @@ ApplicationWindow {
     Messager {
         id: messagerWindowLocal
         visible: false
+        onSend: {
+            qmlMessage.sendMessage(message)
+        }
     }
 
     Connections {
@@ -82,5 +85,6 @@ ApplicationWindow {
             }
         }
     }
+
 
 }

@@ -2,7 +2,6 @@ package messageService
 
 import (
 	"testing"
-	"SSU-Golang-252-Chat/loger"
 )
 
 var (
@@ -24,9 +23,9 @@ func TestMarshalMessage(t *testing.T) {
 	message := Message{header, body}
 	mrsMsg, err := MarshalMessage(&message)
 	if err != nil {
-		loger.Log.Fatal("Error has occured: ", err)
+		t.Fatal("Error has occured: ", err)
 	}
-	loger.Log.Printf("Message after marshaling in []byte: ", mrsMsg)
+	t.Log("Message after marshaling in []byte: ", mrsMsg)
 }
 
 func TestUnmarshalMessage(t *testing.T) {
@@ -34,8 +33,8 @@ func TestUnmarshalMessage(t *testing.T) {
 	if err != nil {
 		t.Fatal("Error has occured: ", err)
 	}
-	loger.Log.Printf("Message after unmarshaling has type %T", ThisMessage)
-	loger.Log.Printf("Message after unmarshaling : %+v \n ", ThisMessage)
+	t.Log("Message after unmarshaling has type %T", ThisMessage)
+	t.Log("Message after unmarshaling : %+v \n ", ThisMessage)
 }
 
 func Test1UnmarshalRequest(t *testing.T) {
@@ -43,8 +42,8 @@ func Test1UnmarshalRequest(t *testing.T) {
 	if err != nil {
 		t.Fatal("Error has occured: ", err)
 	}
-	loger.Log.Printf("Message after unmarshaling has type %T /n", MessageInByte)
-	loger.Log.Printf("Message after unmarshaling : %+v ", MessageInByte)
+	t.Logf("Message after unmarshaling has type %T /n", MessageInByte)
+	t.Logf("Message after unmarshaling : %+v ", MessageInByte)
 }
 
 func Test2UnmarshalRequest(t *testing.T) {
@@ -52,8 +51,8 @@ func Test2UnmarshalRequest(t *testing.T) {
 	if err != nil {
 		t.Fatal("Error has occured: ", err)
 	}
-	loger.Log.Printf("Message after unmarshaling has type %T /n", HeaderInByte)
-	loger.Log.Printf("Message after unmarshaling : %+v  ", HeaderInByte)
+	t.Logf("Message after unmarshaling has type %T /n", HeaderInByte)
+	t.Logf("Message after unmarshaling : %+v  ", HeaderInByte)
 }
 
 func Test3UnmarshalRequest(t *testing.T) {
@@ -61,6 +60,6 @@ func Test3UnmarshalRequest(t *testing.T) {
 	if err != nil {
 		t.Fatal("Error has occured: ", err)
 	}
-	loger.Log.Printf("Message after unmarshaling has type %T \n", BodyInByte)
-	loger.Log.Printf("Message after unmarshaling : %+v  ", BodyInByte)
+	t.Logf("Message after unmarshaling has type %T \n", BodyInByte)
+	t.Logf("Message after unmarshaling : %+v  ", BodyInByte)
 }

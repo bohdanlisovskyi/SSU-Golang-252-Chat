@@ -164,6 +164,213 @@ Q_DECLARE_METATYPE(QmlRegister*)
 void QmlRegister_QmlRegister_QRegisterMetaTypes() {
 }
 
+void QmlMessage_SendMessage(void* ptr, struct Moc_PackedString message)
+{
+	QMetaObject::invokeMethod(static_cast<QmlMessage*>(ptr), "sendMessage", Q_ARG(QString, QString::fromUtf8(message.data, message.len)));
+}
+
+int QmlMessage_QmlMessage_QRegisterMetaType()
+{
+	return qRegisterMetaType<QmlMessage*>();
+}
+
+int QmlMessage_QmlMessage_QRegisterMetaType2(char* typeName)
+{
+	return qRegisterMetaType<QmlMessage*>(const_cast<const char*>(typeName));
+}
+
+int QmlMessage_QmlMessage_QmlRegisterType()
+{
+#ifdef QT_QML_LIB
+	return qmlRegisterType<QmlMessage>();
+#else
+	return 0;
+#endif
+}
+
+int QmlMessage_QmlMessage_QmlRegisterType2(char* uri, int versionMajor, int versionMinor, char* qmlName)
+{
+#ifdef QT_QML_LIB
+	return qmlRegisterType<QmlMessage>(const_cast<const char*>(uri), versionMajor, versionMinor, const_cast<const char*>(qmlName));
+#else
+	return 0;
+#endif
+}
+
+void* QmlMessage___dynamicPropertyNames_atList(void* ptr, int i)
+{
+	return new QByteArray(static_cast<QList<QByteArray>*>(ptr)->at(i));
+}
+
+void QmlMessage___dynamicPropertyNames_setList(void* ptr, void* i)
+{
+	static_cast<QList<QByteArray>*>(ptr)->append(*static_cast<QByteArray*>(i));
+}
+
+void* QmlMessage___dynamicPropertyNames_newList(void* ptr)
+{
+	Q_UNUSED(ptr);
+	return new QList<QByteArray>;
+}
+
+void* QmlMessage___findChildren_atList2(void* ptr, int i)
+{
+	return const_cast<QObject*>(static_cast<QList<QObject*>*>(ptr)->at(i));
+}
+
+void QmlMessage___findChildren_setList2(void* ptr, void* i)
+{
+	static_cast<QList<QObject*>*>(ptr)->append(static_cast<QObject*>(i));
+}
+
+void* QmlMessage___findChildren_newList2(void* ptr)
+{
+	Q_UNUSED(ptr);
+	return new QList<QObject*>;
+}
+
+void* QmlMessage___findChildren_atList3(void* ptr, int i)
+{
+	return const_cast<QObject*>(static_cast<QList<QObject*>*>(ptr)->at(i));
+}
+
+void QmlMessage___findChildren_setList3(void* ptr, void* i)
+{
+	static_cast<QList<QObject*>*>(ptr)->append(static_cast<QObject*>(i));
+}
+
+void* QmlMessage___findChildren_newList3(void* ptr)
+{
+	Q_UNUSED(ptr);
+	return new QList<QObject*>;
+}
+
+void* QmlMessage___findChildren_atList(void* ptr, int i)
+{
+	return const_cast<QObject*>(static_cast<QList<QObject*>*>(ptr)->at(i));
+}
+
+void QmlMessage___findChildren_setList(void* ptr, void* i)
+{
+	static_cast<QList<QObject*>*>(ptr)->append(static_cast<QObject*>(i));
+}
+
+void* QmlMessage___findChildren_newList(void* ptr)
+{
+	Q_UNUSED(ptr);
+	return new QList<QObject*>;
+}
+
+void* QmlMessage___children_atList(void* ptr, int i)
+{
+	return const_cast<QObject*>(static_cast<QList<QObject *>*>(ptr)->at(i));
+}
+
+void QmlMessage___children_setList(void* ptr, void* i)
+{
+	static_cast<QList<QObject *>*>(ptr)->append(static_cast<QObject*>(i));
+}
+
+void* QmlMessage___children_newList(void* ptr)
+{
+	Q_UNUSED(ptr);
+	return new QList<QObject *>;
+}
+
+void* QmlMessage_NewQmlMessage(void* parent)
+{
+	if (dynamic_cast<QCameraImageCapture*>(static_cast<QObject*>(parent))) {
+		return new QmlMessage(static_cast<QCameraImageCapture*>(parent));
+	} else if (dynamic_cast<QDBusPendingCallWatcher*>(static_cast<QObject*>(parent))) {
+		return new QmlMessage(static_cast<QDBusPendingCallWatcher*>(parent));
+	} else if (dynamic_cast<QExtensionFactory*>(static_cast<QObject*>(parent))) {
+		return new QmlMessage(static_cast<QExtensionFactory*>(parent));
+	} else if (dynamic_cast<QExtensionManager*>(static_cast<QObject*>(parent))) {
+		return new QmlMessage(static_cast<QExtensionManager*>(parent));
+	} else if (dynamic_cast<QGraphicsObject*>(static_cast<QObject*>(parent))) {
+		return new QmlMessage(static_cast<QGraphicsObject*>(parent));
+	} else if (dynamic_cast<QGraphicsWidget*>(static_cast<QObject*>(parent))) {
+		return new QmlMessage(static_cast<QGraphicsWidget*>(parent));
+	} else if (dynamic_cast<QLayout*>(static_cast<QObject*>(parent))) {
+		return new QmlMessage(static_cast<QLayout*>(parent));
+	} else if (dynamic_cast<QMediaPlaylist*>(static_cast<QObject*>(parent))) {
+		return new QmlMessage(static_cast<QMediaPlaylist*>(parent));
+	} else if (dynamic_cast<QMediaRecorder*>(static_cast<QObject*>(parent))) {
+		return new QmlMessage(static_cast<QMediaRecorder*>(parent));
+	} else if (dynamic_cast<QOffscreenSurface*>(static_cast<QObject*>(parent))) {
+		return new QmlMessage(static_cast<QOffscreenSurface*>(parent));
+	} else if (dynamic_cast<QPaintDeviceWindow*>(static_cast<QObject*>(parent))) {
+		return new QmlMessage(static_cast<QPaintDeviceWindow*>(parent));
+	} else if (dynamic_cast<QPdfWriter*>(static_cast<QObject*>(parent))) {
+		return new QmlMessage(static_cast<QPdfWriter*>(parent));
+	} else if (dynamic_cast<QQuickItem*>(static_cast<QObject*>(parent))) {
+		return new QmlMessage(static_cast<QQuickItem*>(parent));
+	} else if (dynamic_cast<QRadioData*>(static_cast<QObject*>(parent))) {
+		return new QmlMessage(static_cast<QRadioData*>(parent));
+	} else if (dynamic_cast<QSignalSpy*>(static_cast<QObject*>(parent))) {
+		return new QmlMessage(static_cast<QSignalSpy*>(parent));
+	} else if (dynamic_cast<QWidget*>(static_cast<QObject*>(parent))) {
+		return new QmlMessage(static_cast<QWidget*>(parent));
+	} else if (dynamic_cast<QWindow*>(static_cast<QObject*>(parent))) {
+		return new QmlMessage(static_cast<QWindow*>(parent));
+	} else {
+		return new QmlMessage(static_cast<QObject*>(parent));
+	}
+}
+
+void QmlMessage_DestroyQmlMessage(void* ptr)
+{
+	static_cast<QmlMessage*>(ptr)->~QmlMessage();
+}
+
+void QmlMessage_DestroyQmlMessageDefault(void* ptr)
+{
+	Q_UNUSED(ptr);
+
+}
+
+char QmlMessage_EventDefault(void* ptr, void* e)
+{
+	return static_cast<QmlMessage*>(ptr)->QObject::event(static_cast<QEvent*>(e));
+}
+
+char QmlMessage_EventFilterDefault(void* ptr, void* watched, void* event)
+{
+	return static_cast<QmlMessage*>(ptr)->QObject::eventFilter(static_cast<QObject*>(watched), static_cast<QEvent*>(event));
+}
+
+void QmlMessage_ChildEventDefault(void* ptr, void* event)
+{
+	static_cast<QmlMessage*>(ptr)->QObject::childEvent(static_cast<QChildEvent*>(event));
+}
+
+void QmlMessage_ConnectNotifyDefault(void* ptr, void* sign)
+{
+	static_cast<QmlMessage*>(ptr)->QObject::connectNotify(*static_cast<QMetaMethod*>(sign));
+}
+
+void QmlMessage_CustomEventDefault(void* ptr, void* event)
+{
+	static_cast<QmlMessage*>(ptr)->QObject::customEvent(static_cast<QEvent*>(event));
+}
+
+void QmlMessage_DeleteLaterDefault(void* ptr)
+{
+	static_cast<QmlMessage*>(ptr)->QObject::deleteLater();
+}
+
+void QmlMessage_DisconnectNotifyDefault(void* ptr, void* sign)
+{
+	static_cast<QmlMessage*>(ptr)->QObject::disconnectNotify(*static_cast<QMetaMethod*>(sign));
+}
+
+void QmlMessage_TimerEventDefault(void* ptr, void* event)
+{
+	static_cast<QmlMessage*>(ptr)->QObject::timerEvent(static_cast<QTimerEvent*>(event));
+}
+
+
+
 void QmlRegister_CheckRegisterData(void* ptr, struct Moc_PackedString userName, struct Moc_PackedString nickName, struct Moc_PackedString password)
 {
 	QMetaObject::invokeMethod(static_cast<QmlRegister*>(ptr), "checkRegisterData", Q_ARG(QString, QString::fromUtf8(userName.data, userName.len)), Q_ARG(QString, QString::fromUtf8(nickName.data, nickName.len)), Q_ARG(QString, QString::fromUtf8(password.data, password.len)));
@@ -846,213 +1053,6 @@ void QmlLogin_DisconnectNotifyDefault(void* ptr, void* sign)
 void QmlLogin_TimerEventDefault(void* ptr, void* event)
 {
 	static_cast<QmlLogin*>(ptr)->QObject::timerEvent(static_cast<QTimerEvent*>(event));
-}
-
-
-
-void QmlMessage_SendMessage(void* ptr, struct Moc_PackedString message)
-{
-	QMetaObject::invokeMethod(static_cast<QmlMessage*>(ptr), "sendMessage", Q_ARG(QString, QString::fromUtf8(message.data, message.len)));
-}
-
-int QmlMessage_QmlMessage_QRegisterMetaType()
-{
-	return qRegisterMetaType<QmlMessage*>();
-}
-
-int QmlMessage_QmlMessage_QRegisterMetaType2(char* typeName)
-{
-	return qRegisterMetaType<QmlMessage*>(const_cast<const char*>(typeName));
-}
-
-int QmlMessage_QmlMessage_QmlRegisterType()
-{
-#ifdef QT_QML_LIB
-	return qmlRegisterType<QmlMessage>();
-#else
-	return 0;
-#endif
-}
-
-int QmlMessage_QmlMessage_QmlRegisterType2(char* uri, int versionMajor, int versionMinor, char* qmlName)
-{
-#ifdef QT_QML_LIB
-	return qmlRegisterType<QmlMessage>(const_cast<const char*>(uri), versionMajor, versionMinor, const_cast<const char*>(qmlName));
-#else
-	return 0;
-#endif
-}
-
-void* QmlMessage___dynamicPropertyNames_atList(void* ptr, int i)
-{
-	return new QByteArray(static_cast<QList<QByteArray>*>(ptr)->at(i));
-}
-
-void QmlMessage___dynamicPropertyNames_setList(void* ptr, void* i)
-{
-	static_cast<QList<QByteArray>*>(ptr)->append(*static_cast<QByteArray*>(i));
-}
-
-void* QmlMessage___dynamicPropertyNames_newList(void* ptr)
-{
-	Q_UNUSED(ptr);
-	return new QList<QByteArray>;
-}
-
-void* QmlMessage___findChildren_atList2(void* ptr, int i)
-{
-	return const_cast<QObject*>(static_cast<QList<QObject*>*>(ptr)->at(i));
-}
-
-void QmlMessage___findChildren_setList2(void* ptr, void* i)
-{
-	static_cast<QList<QObject*>*>(ptr)->append(static_cast<QObject*>(i));
-}
-
-void* QmlMessage___findChildren_newList2(void* ptr)
-{
-	Q_UNUSED(ptr);
-	return new QList<QObject*>;
-}
-
-void* QmlMessage___findChildren_atList3(void* ptr, int i)
-{
-	return const_cast<QObject*>(static_cast<QList<QObject*>*>(ptr)->at(i));
-}
-
-void QmlMessage___findChildren_setList3(void* ptr, void* i)
-{
-	static_cast<QList<QObject*>*>(ptr)->append(static_cast<QObject*>(i));
-}
-
-void* QmlMessage___findChildren_newList3(void* ptr)
-{
-	Q_UNUSED(ptr);
-	return new QList<QObject*>;
-}
-
-void* QmlMessage___findChildren_atList(void* ptr, int i)
-{
-	return const_cast<QObject*>(static_cast<QList<QObject*>*>(ptr)->at(i));
-}
-
-void QmlMessage___findChildren_setList(void* ptr, void* i)
-{
-	static_cast<QList<QObject*>*>(ptr)->append(static_cast<QObject*>(i));
-}
-
-void* QmlMessage___findChildren_newList(void* ptr)
-{
-	Q_UNUSED(ptr);
-	return new QList<QObject*>;
-}
-
-void* QmlMessage___children_atList(void* ptr, int i)
-{
-	return const_cast<QObject*>(static_cast<QList<QObject *>*>(ptr)->at(i));
-}
-
-void QmlMessage___children_setList(void* ptr, void* i)
-{
-	static_cast<QList<QObject *>*>(ptr)->append(static_cast<QObject*>(i));
-}
-
-void* QmlMessage___children_newList(void* ptr)
-{
-	Q_UNUSED(ptr);
-	return new QList<QObject *>;
-}
-
-void* QmlMessage_NewQmlMessage(void* parent)
-{
-	if (dynamic_cast<QCameraImageCapture*>(static_cast<QObject*>(parent))) {
-		return new QmlMessage(static_cast<QCameraImageCapture*>(parent));
-	} else if (dynamic_cast<QDBusPendingCallWatcher*>(static_cast<QObject*>(parent))) {
-		return new QmlMessage(static_cast<QDBusPendingCallWatcher*>(parent));
-	} else if (dynamic_cast<QExtensionFactory*>(static_cast<QObject*>(parent))) {
-		return new QmlMessage(static_cast<QExtensionFactory*>(parent));
-	} else if (dynamic_cast<QExtensionManager*>(static_cast<QObject*>(parent))) {
-		return new QmlMessage(static_cast<QExtensionManager*>(parent));
-	} else if (dynamic_cast<QGraphicsObject*>(static_cast<QObject*>(parent))) {
-		return new QmlMessage(static_cast<QGraphicsObject*>(parent));
-	} else if (dynamic_cast<QGraphicsWidget*>(static_cast<QObject*>(parent))) {
-		return new QmlMessage(static_cast<QGraphicsWidget*>(parent));
-	} else if (dynamic_cast<QLayout*>(static_cast<QObject*>(parent))) {
-		return new QmlMessage(static_cast<QLayout*>(parent));
-	} else if (dynamic_cast<QMediaPlaylist*>(static_cast<QObject*>(parent))) {
-		return new QmlMessage(static_cast<QMediaPlaylist*>(parent));
-	} else if (dynamic_cast<QMediaRecorder*>(static_cast<QObject*>(parent))) {
-		return new QmlMessage(static_cast<QMediaRecorder*>(parent));
-	} else if (dynamic_cast<QOffscreenSurface*>(static_cast<QObject*>(parent))) {
-		return new QmlMessage(static_cast<QOffscreenSurface*>(parent));
-	} else if (dynamic_cast<QPaintDeviceWindow*>(static_cast<QObject*>(parent))) {
-		return new QmlMessage(static_cast<QPaintDeviceWindow*>(parent));
-	} else if (dynamic_cast<QPdfWriter*>(static_cast<QObject*>(parent))) {
-		return new QmlMessage(static_cast<QPdfWriter*>(parent));
-	} else if (dynamic_cast<QQuickItem*>(static_cast<QObject*>(parent))) {
-		return new QmlMessage(static_cast<QQuickItem*>(parent));
-	} else if (dynamic_cast<QRadioData*>(static_cast<QObject*>(parent))) {
-		return new QmlMessage(static_cast<QRadioData*>(parent));
-	} else if (dynamic_cast<QSignalSpy*>(static_cast<QObject*>(parent))) {
-		return new QmlMessage(static_cast<QSignalSpy*>(parent));
-	} else if (dynamic_cast<QWidget*>(static_cast<QObject*>(parent))) {
-		return new QmlMessage(static_cast<QWidget*>(parent));
-	} else if (dynamic_cast<QWindow*>(static_cast<QObject*>(parent))) {
-		return new QmlMessage(static_cast<QWindow*>(parent));
-	} else {
-		return new QmlMessage(static_cast<QObject*>(parent));
-	}
-}
-
-void QmlMessage_DestroyQmlMessage(void* ptr)
-{
-	static_cast<QmlMessage*>(ptr)->~QmlMessage();
-}
-
-void QmlMessage_DestroyQmlMessageDefault(void* ptr)
-{
-	Q_UNUSED(ptr);
-
-}
-
-char QmlMessage_EventDefault(void* ptr, void* e)
-{
-	return static_cast<QmlMessage*>(ptr)->QObject::event(static_cast<QEvent*>(e));
-}
-
-char QmlMessage_EventFilterDefault(void* ptr, void* watched, void* event)
-{
-	return static_cast<QmlMessage*>(ptr)->QObject::eventFilter(static_cast<QObject*>(watched), static_cast<QEvent*>(event));
-}
-
-void QmlMessage_ChildEventDefault(void* ptr, void* event)
-{
-	static_cast<QmlMessage*>(ptr)->QObject::childEvent(static_cast<QChildEvent*>(event));
-}
-
-void QmlMessage_ConnectNotifyDefault(void* ptr, void* sign)
-{
-	static_cast<QmlMessage*>(ptr)->QObject::connectNotify(*static_cast<QMetaMethod*>(sign));
-}
-
-void QmlMessage_CustomEventDefault(void* ptr, void* event)
-{
-	static_cast<QmlMessage*>(ptr)->QObject::customEvent(static_cast<QEvent*>(event));
-}
-
-void QmlMessage_DeleteLaterDefault(void* ptr)
-{
-	static_cast<QmlMessage*>(ptr)->QObject::deleteLater();
-}
-
-void QmlMessage_DisconnectNotifyDefault(void* ptr, void* sign)
-{
-	static_cast<QmlMessage*>(ptr)->QObject::disconnectNotify(*static_cast<QMetaMethod*>(sign));
-}
-
-void QmlMessage_TimerEventDefault(void* ptr, void* event)
-{
-	static_cast<QmlMessage*>(ptr)->QObject::timerEvent(static_cast<QTimerEvent*>(event));
 }
 
 

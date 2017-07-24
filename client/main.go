@@ -1,9 +1,7 @@
 package main
 
 import (
-
-	"github.com/Greckas/SSU-Golang-252-Chat/client/ui"
-
+	"github.com/8tomat8/SSU-Golang-252-Chat/client/ui"
 )
 
 func main() {

@@ -21,12 +21,11 @@ func TestMarshalMessage(t *testing.T) {
 	header := MessageHeader{Type_, Command, UserName, Token}
 	body := MessageBody{ReceiverName, CurrentTime, Text}
 	message := Message{header, body}
-	mrsMsg, err := MarshalMessage(message)
+	mrsMsg, err := MarshalMessage(&message)
 	if err != nil {
 		t.Fatal("Error has occured: ", err)
 	}
-	t.Log("Message after marshaling in []byte: \n", mrsMsg)
-	t.Log("Message after marshaling in string: \n", string(mrsMsg))
+	t.Log("Message after marshaling in []byte: ", mrsMsg)
 }
 
 func TestUnmarshalMessage(t *testing.T) {
@@ -34,8 +33,8 @@ func TestUnmarshalMessage(t *testing.T) {
 	if err != nil {
 		t.Fatal("Error has occured: ", err)
 	}
-	t.Logf("Message after unmarshaling has type %T \n", ThisMessage)
-	t.Logf("Message after unmarshaling : %+v \n ", ThisMessage)
+	t.Log("Message after unmarshaling has type %T", ThisMessage)
+	t.Log("Message after unmarshaling : %+v \n ", ThisMessage)
 }
 
 func Test1UnmarshalRequest(t *testing.T) {
@@ -43,8 +42,8 @@ func Test1UnmarshalRequest(t *testing.T) {
 	if err != nil {
 		t.Fatal("Error has occured: ", err)
 	}
-	t.Logf("Message after unmarshaling has type %T \n", MessageInByte)
-	t.Logf("Message after unmarshaling : %+v \n ", MessageInByte)
+	t.Logf("Message after unmarshaling has type %T /n", MessageInByte)
+	t.Logf("Message after unmarshaling : %+v ", MessageInByte)
 }
 
 func Test2UnmarshalRequest(t *testing.T) {
@@ -52,8 +51,8 @@ func Test2UnmarshalRequest(t *testing.T) {
 	if err != nil {
 		t.Fatal("Error has occured: ", err)
 	}
-	t.Logf("Message after unmarshaling has type %T \n", HeaderInByte)
-	t.Logf("Message after unmarshaling : %+v \n ", HeaderInByte)
+	t.Logf("Message after unmarshaling has type %T /n", HeaderInByte)
+	t.Logf("Message after unmarshaling : %+v  ", HeaderInByte)
 }
 
 func Test3UnmarshalRequest(t *testing.T) {
@@ -62,5 +61,5 @@ func Test3UnmarshalRequest(t *testing.T) {
 		t.Fatal("Error has occured: ", err)
 	}
 	t.Logf("Message after unmarshaling has type %T \n", BodyInByte)
-	t.Logf("Message after unmarshaling : %+v \n ", BodyInByte)
+	t.Logf("Message after unmarshaling : %+v  ", BodyInByte)
 }

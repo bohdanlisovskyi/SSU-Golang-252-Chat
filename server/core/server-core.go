@@ -23,8 +23,7 @@ func MessageHandler(w http.ResponseWriter, r *http.Request) {
 	conn, err := addNewConnect(w, r)
 
 	if err != nil {
-
-		loger.Log.Error("Add new connection error: %s", err)
+		loger.Log.Panicf("Add new connection error: %s", err)
 	}
 
 	go func() {

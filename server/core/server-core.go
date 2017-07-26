@@ -5,6 +5,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
+	"time"
 )
 
 
@@ -20,29 +21,22 @@ type Client struct {
 var clients = map[string]Client{}
 
 func MessageHandler(w http.ResponseWriter, r *http.Request) {
-
 	conn := addNewConnect(w, r)
-
 	loger.Log.Infof("Add new connection: %s", conn)
 
 	go func() {
-
 		for {
-
 			messageType, text, err := conn.ReadMessage()
-
 			if err != nil {
-
+				conn.Close()
+				break
 				loger.Log.Warningf("Read message error: ", err.Error())
 			}
 
 			msg, err := messageService.UnmarshalMessage(text)
-
 			if err != nil {
-
-				loger.Log.Errorf("Unmarshal message error: ", err.Error())
-
-				msg = new(messageService.Message)
+				loger.Log.Warnf("Unmarshal message error: ", err.Error())
+				continue
 			}
 
 			validateMessage(msg, messageType, conn)
@@ -51,11 +45,8 @@ func MessageHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func sendMessage(message *messageService.Message, messageType int) {
-
 	byteMessage, err := messageService.MarshalMessage(message)
-
 	if err != nil {
-
 		loger.Log.Errorf("Unmarshal message error: ", err.Error())
 	}
 
@@ -65,26 +56,21 @@ func sendMessage(message *messageService.Message, messageType int) {
 func validateMessage(message *messageService.Message, messageType int, conn *websocket.Conn) {
 
 	if message.Header.Type_ == "" {
-
 		loger.Log.Errorf("Message Header Type Empty")
-
 		return
 	}
 
 	if message.Header.Type_ == "message" {
-
 		sendMessage(message, messageType)
 	}
 
 	if message.Header.Type_ == "register" {
-
 		clients[message.Header.UserName] = Client{conn:conn}
 
 		//run register function
 	}
 
 	if message.Header.Type_ == "auth" {
-
 		clients[message.Header.UserName] = Client{conn:conn}
 
 		//run auth function
@@ -112,11 +98,8 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 }
 
 func addNewConnect(w http.ResponseWriter, r *http.Request) *websocket.Conn{
-
 	conn, err := upgrader.Upgrade(w, r, nil)
-
 	if err != nil {
-
 		loger.Log.Errorf("Connect new user Error: ", err.Error())
 	}
 
@@ -125,11 +108,14 @@ func addNewConnect(w http.ResponseWriter, r *http.Request) *websocket.Conn{
 
 
 func writeMsg(text []byte, receiver_id string, messageType int) {
+	client, ok := clients[receiver_id]
+	if !ok {
+		loger.Log.Warn("Receiver not found")
+		return
+	}
 
-	err := clients[receiver_id].conn.WriteMessage(messageType, text)
-
+	err := client.conn.WriteMessage(messageType, text)
 	if err != nil {
-
 		loger.Log.Errorf("Write message error: ", err.Error())
 	}
 }

@@ -28,6 +28,7 @@ func MessageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	go func() {
+		defer conn.Close()
 		for {
 			messageType, text, err := conn.ReadMessage()
 			if err != nil {

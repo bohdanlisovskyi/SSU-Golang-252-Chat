@@ -5,7 +5,6 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
-	"time"
 )
 
 
@@ -21,8 +20,12 @@ type Client struct {
 var clients = map[string]Client{}
 
 func MessageHandler(w http.ResponseWriter, r *http.Request) {
-	conn := addNewConnect(w, r)
-	loger.Log.Infof("Add new connection: %s", conn)
+	conn, err := addNewConnect(w, r)
+
+	if err != nil {
+
+		loger.Log.Error("Add new connection error: %s", err)
+	}
 
 	go func() {
 		for {
@@ -65,14 +68,27 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 	}
 
 	if message.Header.Type_ == "register" {
-		clients[message.Header.UserName] = Client{conn:conn}
+		if _, ok := clients[message.Header.UserName]; ok {
+			loger.Log.Warn("User already exist")
+			return
+
+		}else {
+
+			clients[message.Header.UserName] = Client{conn:conn}
+		}
 
 		//run register function
 	}
 
 	if message.Header.Type_ == "auth" {
-		clients[message.Header.UserName] = Client{conn:conn}
+		if _, ok := clients[message.Header.UserName]; ok {
+			loger.Log.Warn("User already exist")
+			return
 
+		}else {
+
+			clients[message.Header.UserName] = Client{conn:conn}
+		}
 		//run auth function
 	}
 
@@ -97,13 +113,13 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 	}
 }
 
-func addNewConnect(w http.ResponseWriter, r *http.Request) *websocket.Conn{
+func addNewConnect(w http.ResponseWriter, r *http.Request) (*websocket.Conn, error) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		loger.Log.Errorf("Connect new user Error: ", err.Error())
 	}
 
-	return conn
+	return conn, err
 }
 
 

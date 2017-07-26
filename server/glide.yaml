@@ -3,7 +3,5 @@ import:
 - package: github.com/gorilla/mux
   version: ~1.4.0
 - package: github.com/Sirupsen/logrus
-  version: ~1.0.2
-- package: github.com/8tomat8/SSU-Golang-252-Chat
   subpackages:
   - messageService

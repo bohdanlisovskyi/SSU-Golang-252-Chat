@@ -65,6 +65,7 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 
 	if message.Header.Type_ == "message" {
 		sendMessage(message, messageType)
+		return
 	}
 
 	if message.Header.Type_ == "register" {
@@ -76,8 +77,8 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 
 			clients[message.Header.UserName] = Client{conn:conn}
 		}
-
 		//run register function
+		return
 	}
 
 	if message.Header.Type_ == "auth" {
@@ -90,6 +91,7 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 			clients[message.Header.UserName] = Client{conn:conn}
 		}
 		//run auth function
+		return
 	}
 
 	if message.Header.Type_ == "search" {

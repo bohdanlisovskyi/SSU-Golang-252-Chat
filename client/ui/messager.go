@@ -63,29 +63,5 @@ func initQmlMessage(quickWidget *quick.QQuickWidget) {
 			}
 		}
 		conn.Close()
-		/*marshaledMessage, err := messageService.MarshalMessage(newMessage)
-		if err != nil {
-			qmlMessage.MessageSent(false)
-			qmlMessage.ErrorOccured(err.Error())
-			loger.Log.Panicf("Can`t marshal message. %s", err)
-		} else {
-			var addr = flag.String("addr", config.GetConfig().Server.Connection, "http server address")
-			//u := url.URL{Scheme:“ws”, Host: *addr, Path: “/message”}
-
-			u := url.URL{Scheme:"ws", Host:*addr, Path:"/message"}
-			connection, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
-			//connection, _, err := websocket.DefaultDialer.Dial(config.GetConfig().Server.Connection, nil)
-			if err != nil {
-				loger.Log.Fatal("dial:", err)
-			}
-
-			if err := connection.WriteMessage(websocket.TextMessage, marshaledMessage); err != nil {
-				loger.Log.Panicf("Can not send message. %s", err)
-			}
-
-			select {
-
-			}
-		}*/
 	})
 }

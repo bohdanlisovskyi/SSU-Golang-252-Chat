@@ -32,8 +32,8 @@ func MessageHandler(w http.ResponseWriter, r *http.Request) {
 			messageType, text, err := conn.ReadMessage()
 			if err != nil {
 				conn.Close()
-				break
 				loger.Log.Warningf("Read message error: ", err.Error())
+				break
 			}
 
 			msg, err := messageService.UnmarshalMessage(text)

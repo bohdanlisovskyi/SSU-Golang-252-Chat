@@ -19,8 +19,7 @@ var (
 
 func TestMarshalMessage(t *testing.T) {
 	header := MessageHeader{Type_, Command, UserName, Token}
-	body := MessageBody{ReceiverName, CurrentTime, Text}
-	message := Message{header, body}
+	message := Message{header, byteBody}
 	mrsMsg, err := MarshalMessage(&message)
 	if err != nil {
 		t.Fatal("Error has occured: ", err)

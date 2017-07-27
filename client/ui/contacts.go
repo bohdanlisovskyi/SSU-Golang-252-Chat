@@ -4,12 +4,10 @@ package ui
 import (
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/quick"
-	//"github.com/8tomat8/SSU-Golang-252-Chat/client/contacts"
 )
-
+////binding to qml
 var qmlContacts *QmlContacts
-//var contactsList contacts.Contacts
-
+//represent contacts as QObject
 type QmlContacts struct {
 	core.QObject
 	_ func(newIndex int)        			`slot:"changeCurrentContact"`
@@ -31,6 +29,4 @@ func initQmlContacts(quickWidget *quick.QQuickWidget) {
 	qmlContacts.ConnectAddUser(func(newUsername, newNickname string){
 
 	})
-
-	//contactsList.LoadDataFromDB()
 }

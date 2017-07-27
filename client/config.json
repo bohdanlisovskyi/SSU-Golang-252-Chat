@@ -1,5 +1,5 @@
 {
-	"server": {
-      "connection": "localhost:3002"
-    }
+  "server": {
+    "connection": "ws://127.0.0.1:3002/message"
+  }
 }

@@ -29,6 +29,7 @@ Item {
                 id: topRowLayout
                 width: 100
                 height: 100
+                Layout.fillWidth: true
 
                 Button {
                     id: backButton
@@ -52,6 +53,7 @@ Item {
                 id: newPasswordRowLayout
                 width: 100
                 height: 100
+                Layout.fillWidth: true
 
                 Text {
                     id: newPasswordText
@@ -95,6 +97,7 @@ Item {
                 id: oldPasswordColumnLayout
                 width: 100
                 height: 100
+                Layout.fillWidth: true
 
                 Text {
                     id: oldPasswordText

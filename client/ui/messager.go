@@ -5,13 +5,9 @@ import (
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/quick"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
-	//"github.com/8tomat8/SSU-Golang-252-Chat/client/config"
 	"github.com/gorilla/websocket"
-	//"github.com/8tomat8/SSU-Golang-252-Chat/loger"
+	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"time"
-	//"net/url"
-	//"flag"
-	"fmt"
 )
 
 //binding to qml
@@ -22,8 +18,7 @@ type QmlMessage struct {
 	core.QObject
 
 	_ func(message string) 			`slot:"sendMessage"`
-	_ func(messageWasSent bool)		`slot:"messageSent"`
-	_ func(errorMessage string)		`signal:"errorOccured"`
+	_ func(messageWasSent bool)		`signal:"messageSent"`
 }
 
 //initialize QmlMessage and its slots
@@ -32,13 +27,13 @@ func initQmlMessage(quickWidget *quick.QQuickWidget) {
 	quickWidget.RootContext().SetContextProperty("qmlMessage", qmlMessage)
 	qmlMessage.ConnectSendMessage(func(message string) {
 		newMessageHeader := messageService.MessageHeader{
-			Type_:"msg", //or messsage
+			Type_:"message", //type will be added to config file in near future
 			Command:"sendMessage", //commands will be added to config file in near future
 			UserName:"Kitler", //still haven`t user preferences
 			Token:"123456789009876", //still haven`t authorization
 		}
 		newMessageBody := messageService.MessageBody{
-			ReceiverName: "Little Kitty", //contactsList.CurrentContactUsername(), //struct Contacts has not full implementation
+			ReceiverName: "Little Kitty", //have to be replaced with Contacts data
 			Time:int(time.Now().Unix()),
 			Text:message,
 		}
@@ -46,22 +41,21 @@ func initQmlMessage(quickWidget *quick.QQuickWidget) {
 			Header:newMessageHeader,
 			Body:newMessageBody,
 		}
-		conn, resp, err := websocket.DefaultDialer.Dial("ws://127.0.0.1:3002/message", nil)
+		marshaledMessage, err := messageService.MarshalMessage(&newMessage)
 		if err != nil {
-			panic(err)
-		}
-		fmt.Printf("%+v\n", resp)
-		conn.WriteJSON(newMessage)
-		//conn.WriteJSON(msg)
-
-		for i := 0; i < 10; i++ {
-			time.Sleep(time.Second * 1)
-			newMessage.Body.Text = fmt.Sprintf("Message №%d", i)
-			err := conn.WriteJSON(newMessage)
-			if err != nil {
-				panic(err)
+			qmlMessage.MessageSent(false)
+			loger.Log.Errorf("Can`t marshal message. %s", err)
+			qmlStatus.SendStatus("Message wasn`t sent")
+		} else {
+			if err := connection.WriteMessage(websocket.TextMessage, marshaledMessage); err != nil {
+				loger.Log.Errorf("Can not send message. %s", err)
+				qmlMessage.MessageSent(false)
+				qmlStatus.SendStatus("Message wasn`t sent. It`s not your fall. Life is just a PAIN")
+				return
 			}
+			loger.Log.Info("Message was sent successfully")
+			qmlMessage.MessageSent(true)
+			qmlStatus.SendStatus("Message sent")
 		}
-		conn.Close()
 	})
 }

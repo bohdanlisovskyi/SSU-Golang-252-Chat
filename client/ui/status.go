@@ -3,13 +3,11 @@ package ui
 import (
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/quick"
-	//_ "github.com/mattn/go-sqlite3"
-	//"database/sql"
 )
 
-
+//binding to qml
 var qmlStatus *QmlStatus
-
+//represent status structure as QObject
 type QmlStatus struct{
 	core.QObject
 
@@ -19,6 +17,4 @@ type QmlStatus struct{
 func initQmlStatus(quickWidget *quick.QQuickWidget){
 	qmlStatus = NewQmlStatus(nil)
 	quickWidget.RootContext().SetContextProperty("qmlStatus", qmlStatus)
-	//db, _ := sql.Open("sqlite3", "./foo.db")
-	//db.Ping()
 }

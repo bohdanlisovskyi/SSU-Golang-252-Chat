@@ -14,14 +14,14 @@ type Config struct {
 	Server Server 		`json:"server"`
 }
 
-var config Config
+var config *Config
 
 func init(){
 	data, err := ioutil.ReadFile("../../config.json")
 	if err != nil {
 		loger.Log.Panicf("Can`t read config file. %s", err.Error())
 	}
-	config = Config{}
+	config = &Config{}
 
 	if err := json.Unmarshal(data, &config); err != nil {
 		loger.Log.Panicf("Corrupted data in connfig file. %s", err.Error())
@@ -29,5 +29,5 @@ func init(){
 }
 
 func GetConfig() Config{
-	return config
+	return *config
 }

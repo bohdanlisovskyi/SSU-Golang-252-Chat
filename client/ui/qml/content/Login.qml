@@ -5,7 +5,7 @@ import QtQuick.Layouts 1.3
 Item {
     id: loginWindow
     width: 400
-    height: 300
+    height: 280
     property TextInput userInput: userNameInput
     property TextInput passInput: passwordInput
     property Text errText: errorText

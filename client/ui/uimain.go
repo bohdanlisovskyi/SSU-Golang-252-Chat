@@ -7,7 +7,6 @@ import (
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/quick"
 	"github.com/therecipe/qt/widgets"
-	//"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 )
 
 func CreateWindow() {

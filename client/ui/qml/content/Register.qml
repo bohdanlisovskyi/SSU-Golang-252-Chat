@@ -12,7 +12,7 @@ Item {
     signal goNextToLogin()
     signal inputFieldsChanged()
     width: 400
-    height: 300
+    height: 280
 
     Rectangle {
         color: "#ffffff"

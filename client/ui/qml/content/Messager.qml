@@ -154,8 +154,6 @@ Item {
                     Layout.fillWidth: false
                     onClicked: {
                         if( messageEdit.getText(0, messageEdit.length) !== "") {
-                            historyTextView.text += "<div style=\"background-color: lightblue; border-color: red; text-align: right;\">"  + messageEdit.getText(0, messageEdit.length) + "</div>"
-                            //print(historyTextView.text)
                             messagerWindow.send(messageEdit.getText(0, messageEdit.length))
                             messageEdit.text = ""
                         }
@@ -270,9 +268,4 @@ Item {
         }
 
     }
-
-    /*Connections {
-        target: sendButton
-        onClicked: print("clicked")
-    }*/
 }

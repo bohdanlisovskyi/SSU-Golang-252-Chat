@@ -28,6 +28,7 @@ func newQmlWidget() *quick.QQuickWidget {
 	initQmlRegister(quickWidget)
 	initQmlLogin(quickWidget)
 	initQmlMessage(quickWidget)
+	initQmlStatus(quickWidget)
 	quickWidget.SetSource(core.NewQUrl3("qrc:/qml/main.qml", 0))
 
 	return quickWidget

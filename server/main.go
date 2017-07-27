@@ -2,9 +2,10 @@ package main
 
 import (
 	"net/http"
-	"github.com/gorilla/mux"
+
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/server/core"
+	"github.com/gorilla/mux"
 )
 
 func main() {

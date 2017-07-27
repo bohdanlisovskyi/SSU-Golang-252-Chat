@@ -1,84 +1,42 @@
 package auth
 
 import (
-	"database/sql"
-	"fmt"
-_   "github.com/mattn/go-sqlite3"
-	"github.com/Greckas/SSU-Golang-252-Chat/messageService"
-	"log"
-	"github.com/Greckas/SSU-Golang-252-Chat/loger"
+	"errors"
+
+	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
+	"github.com/jinzhu/gorm"
 )
 
-var (
-db, _ = sql.Open("go-sqlite3", "messager.db")
-)
-//request map from server
-
-
-
-func parse_request(body_data [] byte) (Login, Password, Name string, err error)  {
-	request_data, err := messageService.UnmarshalRequest(body_data)
-	if err != nil {
-		log.Println("invalid recived data", err)
-		return nil, nil, nil, err
-
-	}
-
-	Login := request_data["login"]
-	Password := request_data["password"]
-	Name := request_data["name"]
-	return Login, Password, Name, nil
-}
-
-func retrive_db_data(body_data [] byte) (bool, error){
-	login,_,_, err := parse_request(body_data)
-	if err != nil {
-		loger.Log.Errorf("Parsing from server have failed", err)
-	}
-	rows, err := db.Query("SELECT login FROM users WHERE login ="+ login)
-	if rows != nil{
-		loger.Log.Errorf("User with this login already exists", err)
-		return false, err
-	}
-	return true, nil
+// UserRegistry is a structure for Messager
+type UserRegistry struct {
+	UserName string `json:"user_name"`
+	Password string `json:"password"`
+	NickName string `json:"nick_name"`
 }
 
 type User struct {
-Name      string
-Login     string
-Password  string
+	UserName string `gorm:"not null;unique_index"`
+	Password string
+	NickName string
 }
 
+type UserGorm struct {
+	*gorm.DB
+}
 
-func (u *User) InsertIntoUsers(body_data[] byte) (bool, error) {
-	ok, _ := retrive_db_data(body_data)
-	tx, _ := db.Begin()
-	defer db.Close()
-	if ok {
-
-		stmp, _ := tx.Prepare("insert into users(name, login, password) values (?, ?, ?)")
-
-		_, err := stmp.Exec(u.Name, u.Login, u.Password)
-		// перепитати як мають записуватись дані в базу корректно
-
-		if err != nil {
-			loger.Log.Errorf("query didn`t execute", err)
-			return false, err
-		}
-
-		tx.Commit()
-		return true, err
+func (ug *UserGorm) Create(user *User) error {
+	newUser := ug.NewRecord(user)
+	if newUser != true {
+		err := errors.New("User already exist in database!")
+		loger.Log.Errorf("user already exist!", err)
+		return err
 	} else {
-		tx.Rollback()
-
+		ug.DB.Create(&user)
+		checkUser := ug.NewRecord(user)
+		if checkUser != false {
+			err := errors.New("Failed to create user!")
+			return err
+		}
+		return nil
 	}
-	return true, nil
 }
-
-
-
-
-//func main() {
-//	InsertIntoUsers(body_data[] byte)
-//
-//}

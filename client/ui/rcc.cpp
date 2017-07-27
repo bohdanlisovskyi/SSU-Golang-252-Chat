@@ -7,7 +7,7 @@
 *****************************************************************************/
 
 static const unsigned char qt_resource_data[] = {
-  // /home/greckas/GoglandProjects/src/github.com/Greckas/SSU-Golang-252-Chat/client/ui/qml/main.qml
+  // /home/greckas/GoglandProjects/src/github.com/8tomat8/SSU-Golang-252-Chat/client/ui/qml/main.qml
   0x0,0x0,0x2,0x42,
   0x0,
   0x0,0x8,0x7c,0x78,0x9c,0xcd,0x55,0x4d,0x6f,0xd4,0x30,0x10,0xbd,0xe7,0x57,0x58,
@@ -47,7 +47,7 @@ static const unsigned char qt_resource_data[] = {
   0xb9,0x53,0x93,0xab,0x77,0x6c,0x66,0x76,0x95,0x1c,0x4f,0x9f,0x28,0x5d,0x30,0xc3,
   0x9,0xf3,0xbc,0xc0,0x9,0x8b,0x3c,0xfd,0x9b,0xd,0x8a,0xe0,0xf,0x7e,0xda,0x70,
   0xd0,
-    // /home/greckas/GoglandProjects/src/github.com/Greckas/SSU-Golang-252-Chat/client/ui/qml/content/Messager.qml
+    // /home/greckas/GoglandProjects/src/github.com/8tomat8/SSU-Golang-252-Chat/client/ui/qml/content/Messager.qml
   0x0,0x0,0x7,0x66,
   0x0,
   0x0,0x24,0x25,0x78,0x9c,0xb5,0x59,0x5b,0x53,0xdb,0x38,0x14,0x7e,0xe7,0x57,0x78,
@@ -169,7 +169,7 @@ static const unsigned char qt_resource_data[] = {
   0x48,0x12,0xf3,0xfe,0x95,0x56,0x38,0x56,0x44,0x42,0xb7,0xe5,0x7c,0x9f,0xa9,0xf4,
   0xc6,0xa6,0xd1,0xeb,0x45,0x66,0x9e,0x57,0x38,0xf,0x2f,0xf7,0xb6,0x1e,0xb6,0xfe,
   0x5,0x17,0x2d,0xd6,0xae,
-    // /home/greckas/GoglandProjects/src/github.com/Greckas/SSU-Golang-252-Chat/client/ui/qml/content/Register.qml
+    // /home/greckas/GoglandProjects/src/github.com/8tomat8/SSU-Golang-252-Chat/client/ui/qml/content/Register.qml
   0x0,0x0,0x3,0xff,
   0x0,
   0x0,0x18,0x5b,0x78,0x9c,0xed,0x58,0xdf,0x6f,0xdb,0x20,0x10,0x7e,0xcf,0x5f,0xc1,
@@ -236,7 +236,7 @@ static const unsigned char qt_resource_data[] = {
   0xbc,0x6b,0xf9,0xeb,0x4a,0xda,0x3d,0x60,0xd2,0xe2,0xd6,0xff,0x4f,0x4c,0x31,0xcc,
   0x3e,0x47,0x30,0x10,0xb9,0xb5,0x4e,0xd6,0xe2,0x30,0x7f,0x5,0x2d,0xa1,0x47,0xea,
   0x7e,0x7f,0xfc,0x2a,0xaa,0x7f,0xef,0x6,0xbf,0x0,0xc0,0xc7,0x8e,0xc9,
-    // /home/greckas/GoglandProjects/src/github.com/Greckas/SSU-Golang-252-Chat/client/ui/qml/content/Login.qml
+    // /home/greckas/GoglandProjects/src/github.com/8tomat8/SSU-Golang-252-Chat/client/ui/qml/content/Login.qml
   0x0,0x0,0x3,0x8b,
   0x0,
   0x0,0x12,0x57,0x78,0x9c,0xed,0x58,0xdf,0x4f,0xdb,0x30,0x10,0x7e,0xef,0x5f,0xe1,
@@ -382,16 +382,16 @@ bool qUnregisterResourceData(int, const unsigned char *, const unsigned char *, 
 }
 #endif
 
-int QT_RCC_MANGLE_NAMESPACE(qInitResources_github_com_Greckas_SSU_Golang_252_Chat_client_ui)();
-int QT_RCC_MANGLE_NAMESPACE(qInitResources_github_com_Greckas_SSU_Golang_252_Chat_client_ui)()
+int QT_RCC_MANGLE_NAMESPACE(qInitResources_github_com_8tomat8_SSU_Golang_252_Chat_client_ui)();
+int QT_RCC_MANGLE_NAMESPACE(qInitResources_github_com_8tomat8_SSU_Golang_252_Chat_client_ui)()
 {
     QT_RCC_PREPEND_NAMESPACE(qRegisterResourceData)
         (0x2, qt_resource_struct, qt_resource_name, qt_resource_data);
     return 1;
 }
 
-int QT_RCC_MANGLE_NAMESPACE(qCleanupResources_github_com_Greckas_SSU_Golang_252_Chat_client_ui)();
-int QT_RCC_MANGLE_NAMESPACE(qCleanupResources_github_com_Greckas_SSU_Golang_252_Chat_client_ui)()
+int QT_RCC_MANGLE_NAMESPACE(qCleanupResources_github_com_8tomat8_SSU_Golang_252_Chat_client_ui)();
+int QT_RCC_MANGLE_NAMESPACE(qCleanupResources_github_com_8tomat8_SSU_Golang_252_Chat_client_ui)()
 {
     QT_RCC_PREPEND_NAMESPACE(qUnregisterResourceData)
        (0x2, qt_resource_struct, qt_resource_name, qt_resource_data);
@@ -400,7 +400,7 @@ int QT_RCC_MANGLE_NAMESPACE(qCleanupResources_github_com_Greckas_SSU_Golang_252_
 
 namespace {
    struct initializer {
-       initializer() { QT_RCC_MANGLE_NAMESPACE(qInitResources_github_com_Greckas_SSU_Golang_252_Chat_client_ui)(); }
-       ~initializer() { QT_RCC_MANGLE_NAMESPACE(qCleanupResources_github_com_Greckas_SSU_Golang_252_Chat_client_ui)(); }
+       initializer() { QT_RCC_MANGLE_NAMESPACE(qInitResources_github_com_8tomat8_SSU_Golang_252_Chat_client_ui)(); }
+       ~initializer() { QT_RCC_MANGLE_NAMESPACE(qCleanupResources_github_com_8tomat8_SSU_Golang_252_Chat_client_ui)(); }
    } dummy;
 }

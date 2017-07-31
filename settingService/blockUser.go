@@ -9,8 +9,8 @@ import (
 )
 
 type BlockUserRequest struct {
-	Header BlockUserRequestHeader
-	Body   BlockUserRequestBody
+	Header BlockUserRequestHeader `json:"header"`
+	Body   BlockUserRequestBody `json:"body"`
 }
 
 type BlockUserRequestHeader struct {
@@ -61,3 +61,5 @@ func BlockUnblockUser(byteRequest [] byte) (bool, error) {
 	}
 	return true, nil
 }
+
+// TODO func IsBlocked - checking if user is blocked

@@ -1,42 +1,44 @@
 package auth
 
 import (
-	"errors"
-
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/8tomat8/SSU-Golang-252-Chat/database"
 )
 
-// UserRegistry is a structure for Messager
-type UserRegistry struct {
-	UserName string `json:"user_name"`
-	Password string `json:"password"`
-	NickName string `json:"nick_name"`
-}
+//type UserRegistry struct {
+//	UserName string `json:"user_name"`
+//	Password string `json:"password"`
+//	NickName string `json:"nick_name"`
+//}
 
 type User struct {
-	UserName string `gorm:"not null;unique_index"`
+	UserName string `gorm:"primary_key"`
 	Password string
 	NickName string
 }
 
-type UserGorm struct {
-	*gorm.DB
-}
 
-func (ug *UserGorm) Create(user *User) error {
-	newUser := ug.NewRecord(user)
-	if newUser != true {
-		err := errors.New("User already exist in database!")
-		loger.Log.Errorf("user already exist!", err)
+
+func NewUser(user *User, UserName, Password string) error {
+	db, err := database.GetStorage()
+	if err != nil {
+		loger.Log.Errorf("Failed to open db", err)
+		return err
+	}
+	if err := db.Where("username = ?", UserName).First(&user).Error; err != nil {
+		loger.Log.Errorf("no such user in db", err)
 		return err
 	} else {
-		ug.DB.Create(&user)
-		checkUser := ug.NewRecord(user)
-		if checkUser != false {
-			err := errors.New("Failed to create user!")
+		db.NewRecord(user)
+		err := db.Create(&user).Error
+		if err != nil {
+			loger.Log.Errorf("failed to create new user", err)
 			return err
 		}
-		return nil
+		Login(UserName, Password)
+
 	}
+	return nil
 }

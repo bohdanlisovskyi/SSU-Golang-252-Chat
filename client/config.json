@@ -1,5 +1,16 @@
 {
   "server": {
-    "connection": "ws://127.0.0.1:3002/message"
+    "host": "127.0.0.1:3002",
+    "path": "/message"
+  },
+  "messagetype": {
+    "message":        "message",
+    "authorization":  "authorization",
+    "contacts":       "contact",
+    "settings":       "setting"
+  },
+  "messagecommand": {
+    "sendmessage":    "sendMessage",
+    "messagesended":  "messageSent"
   }
 }

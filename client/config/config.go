@@ -1,22 +1,38 @@
 package config
 
 import (
-	"io/ioutil"
 	"encoding/json"
+	"io/ioutil"
+
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 )
 
 type Server struct {
-	Connection string	`json:"connection"`
+	Host string `json:"host"`
+	Path string `json:"path"`
+}
+
+type MessageType struct {
+	Message  string `json:"message"`
+	Auth     string `json:"authorization"`
+	Contacts string `json:"contacts"`
+	Settings string `json:"settings"`
+}
+
+type MessageCommand struct {
+	SendMessage string `json:"sendmessage"`
+	MessageSent string `json:"messagesent"`
 }
 
 type Config struct {
-	Server Server 		`json:"server"`
+	Server         Server         `json:"server"`
+	MessageType    MessageType    `json:"messagetype"`
+	MessageCommand MessageCommand `json:"messagecommand"`
 }
 
 var config *Config
 
-func init(){
+func init() {
 	data, err := ioutil.ReadFile("../../config.json")
 	if err != nil {
 		loger.Log.Panicf("Can`t read config file. %s", err.Error())
@@ -28,6 +44,6 @@ func init(){
 	}
 }
 
-func GetConfig() Config{
+func GetConfig() Config {
 	return *config
 }

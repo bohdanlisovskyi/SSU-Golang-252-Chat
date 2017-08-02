@@ -3,9 +3,9 @@ package core
 import (
 	"net/http"
 
-	"github.com/Greckas/SSU-Golang-252-Chat/loger"
-	"github.com/Greckas/SSU-Golang-252-Chat/messageService"
-	"github.com/Greckas/SSU-Golang-252-Chat/server/auth"
+	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
+	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
+	"github.com/8tomat8/SSU-Golang-252-Chat/server/auth"
 	"github.com/gorilla/websocket"
 )
 

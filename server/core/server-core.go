@@ -5,6 +5,7 @@ import (
 
 	"github.com/Greckas/SSU-Golang-252-Chat/loger"
 	"github.com/Greckas/SSU-Golang-252-Chat/messageService"
+	"github.com/Greckas/SSU-Golang-252-Chat/server/auth"
 	"github.com/gorilla/websocket"
 )
 
@@ -14,7 +15,8 @@ var upgrader = websocket.Upgrader{
 }
 
 type Client struct {
-	conn *websocket.Conn
+	conn  *websocket.Conn
+	token string
 }
 
 var clients = map[string]Client{}
@@ -68,8 +70,9 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 		sendMessage(message, messageType)
 		return
 	}
-
+	//add token here!
 	if message.Header.Type_ == "register" {
+
 		if _, ok := clients[message.Header.UserName]; ok {
 			loger.Log.Warn("User already exist")
 			return
@@ -88,8 +91,8 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 			return
 
 		} else {
-
-			clients[message.Header.UserName] = Client{conn: conn}
+			tok := auth.RandToken()
+			clients[message.Header.UserName] = Client{conn: conn, token: tok}
 		}
 		//run auth function
 		return

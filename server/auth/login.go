@@ -1,12 +1,16 @@
 package auth
 
 import (
-	"github.com/8tomat8/SSU-Golang-252-Chat/database"
-	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
+	"crypto/rand"
+	"encoding/base64"
+
+	"github.com/Greckas/SSU-Golang-252-Chat/database"
+	"github.com/Greckas/SSU-Golang-252-Chat/loger"
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
 )
 
+var secret string = "very_secret_key"
 
 func ByName(UserName string) (*User, error) {
 	db, err := database.GetStorage()
@@ -36,8 +40,16 @@ func Login(username, password string) error {
 		loger.Log.Errorf("Invalid password", err2)
 		return err2
 	}
+	tok := randToken()
+
 
 	return nil
+}
+
+func randToken() string {
+	b := make([]byte, 32)
+	rand.Read(b)
+	return base64.StdEncoding.EncodeToString(b)
 }
 
 func byQuery(db *gorm.DB) (*User, error) {

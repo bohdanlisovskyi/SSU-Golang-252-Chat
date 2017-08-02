@@ -1,10 +1,10 @@
 package auth
 
 import (
-	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
+	"github.com/Greckas/SSU-Golang-252-Chat/loger"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/8tomat8/SSU-Golang-252-Chat/database"
+	"github.com/Greckas/SSU-Golang-252-Chat/database"
 )
 
 //type UserRegistry struct {

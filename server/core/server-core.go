@@ -3,7 +3,7 @@ package core
 import (
 	"net/http"
 	"github.com/gorilla/websocket"
-	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
+	"github.com/Greckas/SSU-Golang-252-Chat/loger"
 )
 
 

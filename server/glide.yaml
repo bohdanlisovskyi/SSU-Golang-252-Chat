@@ -1,2 +1,6 @@
 package: github.com/Greckas/SSU-Golang-252-Chat/server
-import: []
+import:
+- package: github.com/gorilla/mux
+  version: ~1.4.0
+- package: github.com/Sirupsen/logrus
+

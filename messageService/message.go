@@ -8,7 +8,7 @@ import (
 // Message is a structure for message which is sending between users
 type Message struct {
 	Header MessageHeader `json:"header"`
-	Body   MessageBody `json:"body"`
+	Body   json.RawMessage `json:"body"`
 }
 
 // MessageHeader is a structure of header for Message

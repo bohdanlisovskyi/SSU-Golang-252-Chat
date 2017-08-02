@@ -1,12 +1,14 @@
 package auth
 
 import (
-	"github.com/8tomat8/SSU-Golang-252-Chat/database"
-	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
+	"crypto/rand"
+	"encoding/base64"
+
+	"github.com/Greckas/SSU-Golang-252-Chat/database"
+	"github.com/Greckas/SSU-Golang-252-Chat/loger"
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
 )
-
 
 func ByName(UserName string) (*User, error) {
 	db, err := database.GetStorage()
@@ -40,6 +42,12 @@ func Login(username, password string) error {
 	return nil
 }
 
+func RandToken() string {
+	b := make([]byte, 32)
+	rand.Read(b)
+	return base64.StdEncoding.EncodeToString(b)
+}
+
 func byQuery(db *gorm.DB) (*User, error) {
 	ret := &User{}
 	err := db.First(ret).Error
@@ -49,39 +57,3 @@ func byQuery(db *gorm.DB) (*User, error) {
 	}
 	return ret, err
 }
-
-//var state string
-//
-//func randToken() string {
-//	b := make([]byte, 32)
-//	rand.Read(b)
-//	return base64.StdEncoding.EncodeToString(b)
-//}
-//
-//func loginHandler(UserName, Password string) {
-//	if UserName != "" && Password != "" {
-//		state = randToken()
-//		session := sessions.Default()
-//		session.Set("state", state)
-//		session.Save()
-//	} else {
-//		//print error("Empty fields")
-//		return
-//	}
-//}
-//
-//func authHandler() {
-//	// Check state validity.
-//	session := sessions.Default()
-//	retrievedState := session.Get("state")
-//	if retrievedState != byQuery("state") {
-//		loger.Log.Errorf("Invalid session state: %s", retrievedState)
-//		return
-//	}
-//	// Handle the exchange code to initiate a transport.
-//	tok, err := conf.Exchange(NoContext, ug.byQuery("code"))
-//	if err != nil {
-//		//AbortWithError(http.StatusBadRequest, err)
-//		return
-//	}
-//}

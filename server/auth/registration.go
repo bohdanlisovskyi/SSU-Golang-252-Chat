@@ -1,10 +1,9 @@
 package auth
 
 import (
-	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
-	"github.com/jinzhu/gorm"
+	"github.com/Greckas/SSU-Golang-252-Chat/database"
+	"github.com/Greckas/SSU-Golang-252-Chat/loger"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/8tomat8/SSU-Golang-252-Chat/database"
 )
 
 //type UserRegistry struct {
@@ -18,8 +17,6 @@ type User struct {
 	Password string
 	NickName string
 }
-
-
 
 func NewUser(user *User, UserName, Password string) error {
 	db, err := database.GetStorage()

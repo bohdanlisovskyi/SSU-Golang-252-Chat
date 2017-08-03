@@ -5,9 +5,9 @@ import (
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/quick"
 )
-
+////binding to qml
 var qmlContacts *QmlContacts
-
+//represent contacts as QObject
 type QmlContacts struct {
 	core.QObject
 	_ func(newIndex int)        			`slot:"changeCurrentContact"`

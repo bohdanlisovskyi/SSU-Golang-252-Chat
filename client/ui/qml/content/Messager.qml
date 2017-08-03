@@ -7,10 +7,12 @@ Item {
     id: messagerWindow
     visible: true
     width: 720
-    height: 480
+    height: 460
     Layout.fillHeight: true
     Layout.fillWidth: true
     signal send(string message)
+    property Text historyText: historyTextView
+    property TextEdit messageText: messageEdit
 
     Rectangle {
         color: "#ffffff"
@@ -154,8 +156,6 @@ Item {
                     Layout.fillWidth: false
                     onClicked: {
                         if( messageEdit.getText(0, messageEdit.length) !== "") {
-                            historyTextView.text += "<div style=\"background-color: lightblue; border-color: red; text-align: right;\">"  + messageEdit.getText(0, messageEdit.length) + "</div>"
-                            //print(historyTextView.text)
                             messagerWindow.send(messageEdit.getText(0, messageEdit.length))
                             messageEdit.text = ""
                         }
@@ -270,9 +270,4 @@ Item {
         }
 
     }
-
-    /*Connections {
-        target: sendButton
-        onClicked: print("clicked")
-    }*/
 }

@@ -3,39 +3,28 @@ package auth
 import (
 	"github.com/Greckas/SSU-Golang-252-Chat/database"
 	"github.com/Greckas/SSU-Golang-252-Chat/loger"
+	"github.com/Greckas/SSU-Golang-252-Chat/messageService"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
-//type UserRegistry struct {
-//	UserName string `json:"user_name"`
-//	Password string `json:"password"`
-//	NickName string `json:"nick_name"`
-//}
-
-type User struct {
-	UserName string `gorm:"primary_key"`
-	Password string
-	NickName string
-}
-
-func NewUser(user *User, UserName, Password string) error {
+func RegisterNewUser(user *messageService.User) (*messageService.User, string, error) {
 	db, err := database.GetStorage()
 	if err != nil {
 		loger.Log.Errorf("Failed to open db", err)
-		return err
+		return nil, "", err
 	}
-	if err := db.Where("username = ?", UserName).First(&user).Error; err != nil {
+	if err := db.Where("username = ?", user.UserName).Error; err != nil {
 		loger.Log.Errorf("no such user in db", err)
-		return err
-	} else {
-		db.NewRecord(user)
-		err := db.Create(&user).Error
-		if err != nil {
-			loger.Log.Errorf("failed to create new user", err)
-			return err
-		}
-		Login(UserName, Password)
-
+		return nil, "", err
 	}
-	return nil
+
+	err = db.Create(&user).Error
+	if err != nil {
+		loger.Log.Errorf("failed to create new user", err)
+		return nil, "", err
+	}
+	token := randToken()
+	Login(user.UserName, user.Password)
+
+	return user, token, nil
 }

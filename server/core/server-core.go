@@ -3,6 +3,8 @@ package core
 import (
 	"net/http"
 
+	"encoding/json"
+
 	"github.com/Greckas/SSU-Golang-252-Chat/loger"
 	"github.com/Greckas/SSU-Golang-252-Chat/messageService"
 	"github.com/Greckas/SSU-Golang-252-Chat/server/auth"
@@ -18,6 +20,8 @@ type Client struct {
 	conn  *websocket.Conn
 	token string
 }
+
+//в коннект записати меседж для відправки на клієнт
 
 var clients = map[string]Client{}
 
@@ -37,6 +41,7 @@ func MessageHandler(w http.ResponseWriter, r *http.Request) {
 				conn.Close()
 				loger.Log.Warningf("Read message error: ", err.Error())
 				break
+
 			}
 
 			msg, err := messageService.UnmarshalMessage(text)
@@ -70,17 +75,22 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 		sendMessage(message, messageType)
 		return
 	}
+
 	//add token here!
 	if message.Header.Type_ == "register" {
 
 		if _, ok := clients[message.Header.UserName]; ok {
 			loger.Log.Warn("User already exist")
 			return
-
 		} else {
-
 			clients[message.Header.UserName] = Client{conn: conn}
+
 		}
+		var x *messageService.User
+		json.Unmarshal(message.Body, &x)
+
+		auth.RegisterNewUser(x)
+		//call register
 		//run register function
 		return
 	}
@@ -89,12 +99,28 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 		if _, ok := clients[message.Header.UserName]; ok {
 			loger.Log.Warn("User already exist")
 			return
-
 		} else {
-			tok := auth.RandToken()
+			// треба подумати над порівнянням токенів
+			request_token := message.Header.Token
+			ok := Client{token: request_token}
+			if ok.token != request_token {
+				loger.Log.Errorf("Not valid token")
+				return
+			}
+			var x *messageService.User
+			json.Unmarshal(message.Body, &x)
+			auth.Login(x.UserName, x.Password)
+			_, tok, _ := auth.Login(x.UserName, x.Password)
 			clients[message.Header.UserName] = Client{conn: conn, token: tok}
 		}
 		//run auth function
+		return
+	}
+
+	// TODO: Add token check
+
+	if message.Header.Type_ == "message" {
+		sendMessage(message, messageType)
 		return
 	}
 

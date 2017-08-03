@@ -1,11 +1,19 @@
 package listener
 
 import (
+	"github.com/8tomat8/SSU-Golang-252-Chat/client/config"
 	"github.com/8tomat8/SSU-Golang-252-Chat/client/resolvers"
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
 	"github.com/gorilla/websocket"
 )
+
+var LoginStatusChannel chan messageService.ResponseFromServerBody
+var MessageSentStatusChannel chan messageService.ResponseFromServerBody
+var RegisterStatusChannel chan messageService.ResponseFromServerBody
+var QuitChannel chan bool
+
+//var MessageChannel chan messageService.MessageBody
 
 func ListenToServer(conn *websocket.Conn) {
 	for {
@@ -25,9 +33,10 @@ func ListenToServer(conn *websocket.Conn) {
 }
 
 func ValidateAndRedirectMessage(message *messageService.Message) {
-	if message.Header.Type_ == "message" {
-		resolvers.ReceiveMessage(message)
-	} else if message.Header.Type_ == "settings" {
-
+	switch message.Header.Type_ {
+	case config.GetConfig().MessageType.Message:
+		resolvers.ReceiveMessage(message, MessageSentStatusChannel)
+	case config.GetConfig().MessageType.Settings:
+	case config.GetConfig().MessageType.Auth:
 	}
 }

@@ -9,25 +9,22 @@ import (
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
 )
 
-var HaveNewMessageResponse bool
-var MessageResponse messageService.ResponseFromServerBody
-
-func ReceiveMessage(message *messageService.Message) {
+func ReceiveMessage(message *messageService.Message, messageChannel chan messageService.ResponseFromServerBody) {
 	switch message.Header.Command {
 	case config.GetConfig().MessageCommand.SendMessage:
 		{
-			AddNewMessageFromSender(message)
+			AddNewMessageFromSender(message, messageChannel)
 			break
 		}
 	case config.GetConfig().MessageCommand.MessageSent:
 		{
-			ReceiveMessageResponse(message)
+			ReceiveMessageResponse(message, messageChannel)
 			break
 		}
 	}
 }
 
-func AddNewMessageFromSender(message *messageService.Message) {
+func AddNewMessageFromSender(message *messageService.Message, messageChannel  chan messageService.ResponseFromServerBody) {
 	//userName in Message structure is sender name for us
 	senderName := message.Header.UserName
 	//get sender index in contacts list
@@ -43,25 +40,16 @@ func AddNewMessageFromSender(message *messageService.Message) {
 		contacts.ContactsList.ContactsList[indexOfSender].MessageHistory += messageBody.Text
 		// TODO: fix SendLastMessage signal
 		//ui.GetQmlContacts().SendLastMessage(messageBody.Text, indexOfSender)
+		messageChannel <- messageService.ResponseFromServerBody{}
 	}
 }
 
-func ReceiveMessageResponse(message *messageService.Message) {
+func ReceiveMessageResponse(message *messageService.Message, messageChannel  chan messageService.ResponseFromServerBody) {
 	var responseBody *messageService.ResponseFromServerBody
 	err := json.Unmarshal(message.Body, &responseBody)
 	if err != nil {
 		loger.Log.Errorf("Cannot unmarshal received message. %s", err)
 		return
 	}
-	HaveNewMessageResponse = true
-	MessageResponse = *responseBody
-}
 
-func GetMessageResponse() (bool, messageService.ResponseFromServerBody) {
-	return HaveNewMessageResponse, MessageResponse
-}
-
-func SetMessageResponseReaded() {
-	HaveNewMessageResponse = false
-	MessageResponse = messageService.ResponseFromServerBody{}
 }

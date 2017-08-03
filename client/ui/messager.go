@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/8tomat8/SSU-Golang-252-Chat/client/config"
-	"github.com/8tomat8/SSU-Golang-252-Chat/client/resolvers"
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
 	"github.com/gorilla/websocket"
@@ -71,7 +70,7 @@ func sendMessage(message string) {
 	}
 }
 
-func CheckForMessageResponse() {
+/*func CheckForMessageResponse() {
 	for {
 		haveResponse, response := resolvers.GetMessageResponse()
 		if haveResponse {
@@ -87,4 +86,4 @@ func CheckForMessageResponse() {
 			resolvers.SetMessageResponseReaded()
 		}
 	}
-}
+}*/

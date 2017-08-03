@@ -9,8 +9,8 @@ import (
 )
 
 var (
-	once    sync.Once
-	sqlLite *gorm.DB
+	once sync.Once
+	db   *gorm.DB
 )
 
 func GetStorage() (*gorm.DB, error) {
@@ -18,10 +18,10 @@ func GetStorage() (*gorm.DB, error) {
 
 	once.Do(func() {
 		settings := config.GetConfig()
-		sqlLite, err = gorm.Open(settings.Storage.Driver, settings.Storage.Name)
+		db, err = gorm.Open(settings.Storage.Driver, settings.Storage.Name)
 		if err != nil {
 			loger.Log.Errorf("ERROR connection to SqlLite3 %s", err.Error())
 		}
 	})
-	return sqlLite, err
+	return db, err
 }

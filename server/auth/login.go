@@ -10,7 +10,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func ByName(UserName string) (*User, error) {
+func byName(UserName string) (*User, error) {
 	db, err := database.GetStorage()
 	if err != nil {
 		loger.Log.Errorf("Failed to open db", err)
@@ -25,7 +25,7 @@ func ByName(UserName string) (*User, error) {
 }
 
 func Login(username, password string) error {
-	foundUser, err := ByName(username)
+	foundUser, err := byName(username)
 	if err != nil {
 		loger.Log.Errorf("No user with that Username")
 		return err

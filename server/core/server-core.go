@@ -2,12 +2,11 @@ package core
 
 import (
 	"net/http"
-
-	"github.com/Greckas/SSU-Golang-252-Chat/loger"
-	"github.com/Greckas/SSU-Golang-252-Chat/messageService"
-	"github.com/Greckas/SSU-Golang-252-Chat/server/auth"
 	"github.com/gorilla/websocket"
+	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
+	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
 )
+
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
@@ -15,8 +14,7 @@ var upgrader = websocket.Upgrader{
 }
 
 type Client struct {
-	conn  *websocket.Conn
-	token string
+	conn *websocket.Conn
 }
 
 var clients = map[string]Client{}
@@ -70,16 +68,15 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 		sendMessage(message, messageType)
 		return
 	}
-	//add token here!
-	if message.Header.Type_ == "register" {
 
+	if message.Header.Type_ == "register" {
 		if _, ok := clients[message.Header.UserName]; ok {
 			loger.Log.Warn("User already exist")
 			return
 
-		} else {
+		}else {
 
-			clients[message.Header.UserName] = Client{conn: conn}
+			clients[message.Header.UserName] = Client{conn:conn}
 		}
 		//run register function
 		return
@@ -90,9 +87,9 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 			loger.Log.Warn("User already exist")
 			return
 
-		} else {
-			tok := auth.RandToken()
-			clients[message.Header.UserName] = Client{conn: conn, token: tok}
+		}else {
+
+			clients[message.Header.UserName] = Client{conn:conn}
 		}
 		//run auth function
 		return
@@ -127,6 +124,7 @@ func addNewConnect(w http.ResponseWriter, r *http.Request) (*websocket.Conn, err
 
 	return conn, err
 }
+
 
 func writeMsg(text []byte, receiver_id string, messageType int) {
 	client, ok := clients[receiver_id]

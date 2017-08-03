@@ -1,6 +1,7 @@
 
 import QtQuick 2.2
 import QtQuick.Controls 2.1
+import QtQuick.Layouts 1.1
 import QtQml.Models 2.2
 import "content"
 
@@ -8,8 +9,103 @@ ApplicationWindow {
     id: mainWindow
     visible: true
     width: 400
-    height: 300
+    height: 320
     title: "SendMeMessage"
+    property bool canToolButtonBeClicked
+    signal openSettings()
+    signal logout()
+    signal quit()
+
+    onQuit: {
+        qmlLogin.logOut()
+    }
+
+    canToolButtonBeClicked: true
+
+    header: ToolBar {
+        id: toolBar
+        Layout.fillWidth: true
+        width: mainWindow.width
+        height: 20
+        RowLayout {
+            anchors.fill: parent
+            ToolButton {
+                id: fileMenuButton
+                text: qsTr("File")
+                height: 20
+                checkable: true
+                onCheckedChanged: {
+                    if(fileMenuButton.checked&&canToolButtonBeClicked){
+                        menu.open()
+                    } else {
+                        menu.close()
+                    }
+                }
+
+                Layout.maximumHeight: 20
+                Menu {
+                    id: menu
+                    visible: false
+                    y: fileMenuButton.height
+                    Layout.maximumWidth: 100
+                    width: 100
+                    closePolicy: Popup.NoAutoClose
+                    MenuItem {
+                        id: settingsMenu
+                        text: "Settings"
+                        height: 0
+                        visible: false
+                        Layout.maximumHeight: 20
+                        onTriggered: {
+                            fileMenuButton.checked = false
+                            openSettings()
+                        }
+
+                        background: Rectangle {
+                            color: "white"
+                            border.color: "#585594"
+                            border.width: 1
+                        }
+                    }
+                    MenuItem {
+                        id: logoutMenu
+                        text: "Log out"
+                        height: 0
+                        visible: false
+                        Layout.maximumHeight: 20
+                        onTriggered: {
+                            fileMenuButton.checked = false
+                            logout()
+                        }
+
+                        background: Rectangle {
+                            color: "white"
+                            border.color: "#585594"
+                            border.width: 1
+                        }
+                    }
+                    MenuSeparator {}
+                    MenuItem {
+                        id: quitMenu
+                        text: "Quit"
+                        height: 20
+                        Layout.maximumHeight: 20
+                        onTriggered: {
+                            fileMenuButton.checked = false
+                            mainWindow.quit()
+                        }
+                        background: Rectangle {
+                            color: "white"
+                            border.color: "#585594"
+                            border.width: 1
+                        }
+                    }
+                    MenuSeparator {}
+                }
+            }
+        }
+    }
+
 
     Rectangle {
         id: backgroundRect
@@ -23,7 +119,6 @@ ApplicationWindow {
         id: loginWindowLocal
         visible: false
         onLogin: {
-            //registerWindowLocal.userInput.text = userNameLogin
             qmlLogin.checkLoginData(userInput.text, passInput.text)
         }
         onGoBackToRegister: {
@@ -53,6 +148,44 @@ ApplicationWindow {
     Messager {
         id: messagerWindowLocal
         visible: false
+        onSend: {
+            qmlMessage.sendMessage(message)
+        }
+    }
+
+    Settings {
+        id: settingsWindowLocal
+        visible: false
+        onBackToMessager: {
+            messagerWindowLocal.visible = true
+            visible = false
+        }
+    }
+
+    Connections {
+        target: mainWindow
+        onQuit: {
+            mainWindow.close()
+        }
+    }
+
+    Connections {
+        target: mainWindow
+        onOpenSettings: {
+            messagerWindowLocal.visible = false
+            settingsWindowLocal.visible = true
+        }
+    }
+
+    Connections {
+        target: mainWindow
+        onLogout: {
+            qmlLogin.logOut()
+            messagerWindowLocal.visible = false
+            loginWindowLocal.visible = true
+            mainWindow.width = loginWindowLocal.width
+            mainWindow.height = loginWindowLocal.height + toolBar.height + statusBar.height
+        }
     }
 
     Connections {
@@ -73,14 +206,48 @@ ApplicationWindow {
         onLoginDataIsValid: {
             if (isLoginValid == true){
                 loginWindowLocal.errText.text = ""
+                //resize window to size of messanger
                 mainWindow.width = messagerWindowLocal.width
-                mainWindow.height = messagerWindowLocal.height
+                mainWindow.height = messagerWindowLocal.height + toolBar.height + statusBar.height
                 messagerWindowLocal.visible = true
                 loginWindowLocal.visible = false
+                //restore height of hiden menus
+                logoutMenu.height = 20
+                logoutMenu.visible = true
+                settingsMenu.height = 20
+                settingsMenu.visible = true
             } else {
                 loginWindowLocal.errText.text = "Something wrong. Check fields"
             }
         }
     }
 
+    Connections {
+        target: qmlMessage
+        onMessageSent: {
+            if(messageWasSent) {
+                messagerWindowLocal.historyText.text += messagerWindowLocal.messageText.text
+                messagerWindowLocal.messageText.text = ""
+            }
+        }
+    }
+
+    Connections {
+        target: qmlStatus
+        onSendStatus: {
+            statusText.text = statusMessage
+        }
+    }
+
+    footer: ToolBar {
+        id: statusBar
+        height: 20
+        RowLayout {
+            Text {
+                id: statusText
+                text: "Status: ok"
+                horizontalAlignment: Text.AlignHCenter
+            }
+        }
+    }
 }

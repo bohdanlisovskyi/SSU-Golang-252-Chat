@@ -3,7 +3,7 @@ package messageService
 import (
 	"encoding/json"
 
-	"github.com/Greckas/SSU-Golang-252-Chat/loger"
+	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 )
 
 //Message for client after registration

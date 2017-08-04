@@ -5,9 +5,9 @@ import (
 
 	"encoding/json"
 
-	"github.com/Greckas/SSU-Golang-252-Chat/loger"
-	"github.com/Greckas/SSU-Golang-252-Chat/messageService"
-	"github.com/Greckas/SSU-Golang-252-Chat/server/auth"
+	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
+	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
+	"github.com/8tomat8/SSU-Golang-252-Chat/server/auth"
 	"github.com/gorilla/websocket"
 )
 
@@ -100,13 +100,15 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 			request_token := message.Header.Token
 			ok := Client{token: request_token}
 			if ok.token != request_token {
-				loger.Log.Errorf("Not valid token")
+
 				return
 			}
 			var x *messageService.User
 			json.Unmarshal(message.Body, &x)
-			auth.Login(x.UserName, x.Password)
-			_, tok, _ := auth.Login(x.UserName, x.Password)
+			_, tok, err := auth.Login(x.UserName, x.Password)
+			if err != nil {
+				loger.Log.Errorf("Login failed")
+			}
 			clients[message.Header.UserName] = Client{conn: conn, token: tok}
 		}
 		return

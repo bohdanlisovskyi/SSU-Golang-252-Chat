@@ -5,7 +5,7 @@ import (
 
 	"fmt"
 
-	"github.com/Greckas/SSU-Golang-252-Chat/messageService"
+	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
 )
 
 func TestRegisterNewUser(t *testing.T) {

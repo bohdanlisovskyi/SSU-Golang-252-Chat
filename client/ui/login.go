@@ -5,8 +5,8 @@ import (
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/quick"
 	"github.com/gorilla/websocket"
-	"github.com/Greckas/SSU-Golang-252-Chat/loger"
-	"github.com/Greckas/SSU-Golang-252-Chat/client/config"
+	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
+	"github.com/8tomat8/SSU-Golang-252-Chat/client/config"
 )
 
 //binding to qml

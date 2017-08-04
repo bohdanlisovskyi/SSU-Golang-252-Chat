@@ -6,9 +6,9 @@ import (
 
 	"fmt"
 
-	"github.com/Greckas/SSU-Golang-252-Chat/database"
-	"github.com/Greckas/SSU-Golang-252-Chat/loger"
-	"github.com/Greckas/SSU-Golang-252-Chat/messageService"
+	"github.com/8tomat8/SSU-Golang-252-Chat/database"
+	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
+	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
 	"golang.org/x/crypto/bcrypt"
 )
 

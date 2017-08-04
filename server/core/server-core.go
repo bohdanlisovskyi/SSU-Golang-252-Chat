@@ -2,11 +2,14 @@ package core
 
 import (
 	"net/http"
-	"github.com/gorilla/websocket"
+
+	"encoding/json"
+
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
+	"github.com/8tomat8/SSU-Golang-252-Chat/server/auth"
+	"github.com/gorilla/websocket"
 )
-
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
@@ -14,8 +17,11 @@ var upgrader = websocket.Upgrader{
 }
 
 type Client struct {
-	conn *websocket.Conn
+	conn  *websocket.Conn
+	token string
 }
+
+//в коннект записати меседж для відправки на клієнт
 
 var clients = map[string]Client{}
 
@@ -35,6 +41,7 @@ func MessageHandler(w http.ResponseWriter, r *http.Request) {
 				conn.Close()
 				loger.Log.Warningf("Read message error: ", err.Error())
 				break
+
 			}
 
 			msg, err := messageService.UnmarshalMessage(text)
@@ -64,21 +71,20 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 		return
 	}
 
-	if message.Header.Type_ == "message" {
-		sendMessage(message, messageType)
-		return
-	}
-
+	//add token here!
 	if message.Header.Type_ == "register" {
 		if _, ok := clients[message.Header.UserName]; ok {
 			loger.Log.Warn("User already exist")
 			return
+		} else {
 
-		}else {
+			clients[message.Header.UserName] = Client{conn: conn}
 
-			clients[message.Header.UserName] = Client{conn:conn}
 		}
-		//run register function
+		var x *messageService.User
+		json.Unmarshal(message.Body, &x)
+
+		auth.RegisterNewUser(x)
 		return
 	}
 
@@ -86,12 +92,28 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 		if _, ok := clients[message.Header.UserName]; ok {
 			loger.Log.Warn("User already exist")
 			return
-
-		}else {
-
-			clients[message.Header.UserName] = Client{conn:conn}
+		} else {
+			// треба подумати над порівнянням токенів
+			request_token := message.Header.Token
+			ok := Client{token: request_token}
+			if ok.token != request_token {
+				loger.Log.Errorf("Not valid token")
+				return
+			}
+			var x *messageService.User
+			json.Unmarshal(message.Body, &x)
+			auth.Login(x.UserName, x.Password)
+			_, tok, _ := auth.Login(x.UserName, x.Password)
+			clients[message.Header.UserName] = Client{conn: conn, token: tok}
 		}
 		//run auth function
+		return
+	}
+
+	// TODO: Add token check
+
+	if message.Header.Type_ == "message" {
+		sendMessage(message, messageType)
 		return
 	}
 
@@ -124,7 +146,6 @@ func addNewConnect(w http.ResponseWriter, r *http.Request) (*websocket.Conn, err
 
 	return conn, err
 }
-
 
 func writeMsg(text []byte, receiver_id string, messageType int) {
 	client, ok := clients[receiver_id]

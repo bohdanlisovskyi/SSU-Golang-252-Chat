@@ -4,6 +4,8 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 
+	"fmt"
+
 	"github.com/Greckas/SSU-Golang-252-Chat/database"
 	"github.com/Greckas/SSU-Golang-252-Chat/loger"
 	"github.com/Greckas/SSU-Golang-252-Chat/messageService"
@@ -11,43 +13,41 @@ import (
 )
 
 //+token
-func getUserbyName(UserName string) (*messageService.User, error) {
+func getUserByName(UserName string) (*messageService.User, error) {
 
 	db, err := database.GetStorage()
 	if err != nil {
 		loger.Log.Errorf("Failed to open db", err)
 		return nil, err
 	}
-	db_search := db.Where("username=?", UserName)
-	if db_search == nil {
-		loger.Log.Errorf("Search in db failed")
-		return nil, err
-	}
+	db_search := db.Where("user_name=?", UserName)
 	ret := &messageService.User{}
 	err = db_search.First(ret).Error
 	if err != nil {
 		loger.Log.Errorf("Failed to find user in DB")
-		return nil, err
 	}
 
 	return ret, err
 }
 
 func Login(username, password string) (*messageService.User, string, error) {
-	foundUser, err := getUserbyName(username)
+	foundUser, err := getUserByName(username)
 	if err != nil {
 		loger.Log.Errorf("No user with that Username")
 		return nil, "", err
 	}
-
+	db_p := []byte(foundUser.Password)
+	cl_p := []byte(password)
+	fmt.Println(db_p, cl_p)
 	err = bcrypt.CompareHashAndPassword(
-		[]byte(foundUser.Password),
-		[]byte(password))
+		db_p,
+		cl_p)
 	if err != nil {
 		loger.Log.Errorf("Invalid password", err)
 		return nil, "", err
 	}
 	token := randToken()
+	//write message with header & body
 	return foundUser, token, nil
 }
 

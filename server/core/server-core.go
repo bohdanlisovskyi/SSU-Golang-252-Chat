@@ -76,7 +76,6 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 		return
 	}
 
-	//add token here!
 	if message.Header.Type_ == "register" {
 
 		if _, ok := clients[message.Header.UserName]; ok {
@@ -88,10 +87,7 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 		}
 		var x *messageService.User
 		json.Unmarshal(message.Body, &x)
-
 		auth.RegisterNewUser(x)
-		//call register
-		//run register function
 		return
 	}
 
@@ -113,11 +109,8 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 			_, tok, _ := auth.Login(x.UserName, x.Password)
 			clients[message.Header.UserName] = Client{conn: conn, token: tok}
 		}
-		//run auth function
 		return
 	}
-
-	// TODO: Add token check
 
 	if message.Header.Type_ == "message" {
 		sendMessage(message, messageType)

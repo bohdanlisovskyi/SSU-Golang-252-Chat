@@ -7,24 +7,22 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
-func RegisterNewUser(user *messageService.User) (*messageService.User, string, error) {
+func RegisterNewUser(user *messageService.User) (*messageService.User, error) {
 	db, err := database.GetStorage()
 	if err != nil {
 		loger.Log.Errorf("Failed to open db", err)
-		return nil, "", err
+		return nil, err
 	}
-	if err := db.Where("username = ?", user.UserName).Error; err != nil {
-		loger.Log.Errorf("no such user in db", err)
-		return nil, "", err
-	}
-
 	err = db.Create(&user).Error
 	if err != nil {
-		loger.Log.Errorf("failed to create new user", err)
-		return nil, "", err
+		loger.Log.Errorf("failed to create new user or user exist", err)
+		return nil, err
 	}
-	token := randToken()
-	Login(user.UserName, user.Password)
+	_,_, err = Login(user.UserName, user.Password)
+	if err != nil{
+		loger.Log.Errorf("Login failed", err)
+		return nil, err
+	}
 
-	return user, token, nil
+	return user, nil
 }

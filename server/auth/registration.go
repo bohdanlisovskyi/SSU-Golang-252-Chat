@@ -1,6 +1,10 @@
 package auth
 
 import (
+	"regexp"
+
+	"errors"
+
 	"github.com/8tomat8/SSU-Golang-252-Chat/database"
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
@@ -8,6 +12,14 @@ import (
 )
 
 func RegisterNewUser(user *messageService.User) (*messageService.User, error) {
+	if checkUsername(user.UserName) != true {
+		err := errors.New("input username not valid")
+		return nil, err
+	}
+	if checkPassword(user.Password) != true {
+		err := errors.New("input password not valid")
+		return nil, err
+	}
 	db, err := database.GetStorage()
 	if err != nil {
 		loger.Log.Errorf("Failed to open db", err)
@@ -24,4 +36,18 @@ func RegisterNewUser(user *messageService.User) (*messageService.User, error) {
 		return nil, err
 	}
 	return user, nil
+}
+
+func checkPassword(password string) (b bool) {
+	if ok, _ := regexp.MatchString("^[a-zA-Z0-9]{4,16}$", password); !ok {
+		return false
+	}
+	return true
+}
+
+func checkUsername(username string) (b bool) {
+	if ok, _ := regexp.MatchString("^[a-zA-Z0-9]{4,16}$", username); !ok {
+		return false
+	}
+	return true
 }

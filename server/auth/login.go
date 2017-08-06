@@ -8,45 +8,53 @@ import (
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
 	"golang.org/x/crypto/bcrypt"
+	"github.com/gorilla/websocket"
 )
 
 //+token
-func getUserbyName(UserName string) (*messageService.User, error) {
+func getUserByName(UserName string) (*messageService.User, error) {
+
 	db, err := database.GetStorage()
 	if err != nil {
 		loger.Log.Errorf("Failed to open db", err)
 		return nil, err
 	}
-	db_search := db.Where("username=?", UserName)
-	if db_search == nil {
-		loger.Log.Errorf("Search in db failed")
-		return nil, err
-	}
+	db_search := db.Where("user_name=?", UserName)
 	ret := &messageService.User{}
 	err = db_search.First(ret).Error
 	if err != nil {
 		loger.Log.Errorf("Failed to find user in DB")
-		return nil, err
 	}
 
 	return ret, err
 }
 
 func Login(username, password string) (*messageService.User, string, error) {
-	foundUser, err := getUserbyName(username)
+	foundUser, err := getUserByName(username)
 	if err != nil {
 		loger.Log.Errorf("No user with that Username")
 		return nil, "", err
 	}
 
-	err = bcrypt.CompareHashAndPassword(
-		[]byte(foundUser.Password),
-		[]byte(password))
+	// Generate "hash" to check from user password
+	hash, err := bcrypt.GenerateFromPassword([]byte(foundUser.Password), bcrypt.DefaultCost)
 	if err != nil {
-		loger.Log.Errorf("Invalid password", err)
+		loger.Log.Errorf("hash generation failed!", err)
 		return nil, "", err
 	}
+
+	userPassword2 := password
+	hashFromDatabase := hash
+
+	// Comparing the password with the hash
+	if err := bcrypt.CompareHashAndPassword(hashFromDatabase, []byte(userPassword2)); err != nil {
+		loger.Log.Errorf("Password check failed!", err)
+		return nil, "", err
+	}
+
 	token := randToken()
+
+	//write message with header & body
 	return foundUser, token, nil
 }
 

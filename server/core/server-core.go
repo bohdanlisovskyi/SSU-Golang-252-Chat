@@ -71,8 +71,13 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 		return
 	}
 
-	//add token here!
+	if message.Header.Type_ == "message" {
+		sendMessage(message, messageType)
+		return
+	}
+
 	if message.Header.Type_ == "register" {
+
 		if _, ok := clients[message.Header.UserName]; ok {
 			loger.Log.Warn("User already exist")
 			return
@@ -83,8 +88,6 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 		}
 		var x *messageService.User
 		json.Unmarshal(message.Body, &x)
-
-		auth.RegisterNewUser(x)
 		return
 	}
 
@@ -94,19 +97,39 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 			return
 		} else {
 			// треба подумати над порівнянням токенів
-			request_token := message.Header.Token
-			ok := Client{token: request_token}
-			if ok.token != request_token {
-				loger.Log.Errorf("Not valid token")
-				return
-			}
+			//request_token := message.Header.Token
+			//ok := Client{token: request_token}
+			//if ok.token != request_token {
+			//	loger.Log.Errorf("Not valid token")
+			//	return
+			//}
 			var x *messageService.User
 			json.Unmarshal(message.Body, &x)
-			auth.Login(x.UserName, x.Password)
-			_, tok, _ := auth.Login(x.UserName, x.Password)
+			us, tok, err := auth.Login(x.UserName, x.Password)
+			newMessageHeader := messageService.MessageHeader{
+				Type_:    "authorization",
+				Command:  "loginissucc", //commands will be added to config file in near future
+				UserName: us.UserName,
+				Token:    tok,
+			}
+			// How to fill body message
+			newMessageBody := messageService.MessageBody{}
+
+			newMessage := messageService.Message{
+				Header: newMessageHeader,
+				Body:   newMessageBody,
+			}
+
+			text, err := messageService.MarshalMessage(&newMessage)
+			if err != nil {
+				loger.Log.Errorf("Marshal message failed")
+			}
+			err = conn.WriteMessage(websocket.TextMessage, text)
+			if err != nil {
+				loger.Log.Errorf("Login failed")
+			}
 			clients[message.Header.UserName] = Client{conn: conn, token: tok}
 		}
-		//run auth function
 		return
 	}
 

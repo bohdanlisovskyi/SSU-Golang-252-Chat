@@ -1,6 +1,6 @@
 {
   "storage": {
       "driver": "sqlite3",
-      "name": "./messager.db"
+      "name": "./foo.db"
     }
 }

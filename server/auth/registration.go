@@ -18,11 +18,10 @@ func RegisterNewUser(user *messageService.User) (*messageService.User, error) {
 		loger.Log.Errorf("failed to create new user or user exist", err)
 		return nil, err
 	}
-	_,_, err = Login(user.UserName, user.Password)
-	if err != nil{
+	_, _, err = Login(user.UserName, user.Password)
+	if err != nil {
 		loger.Log.Errorf("Login failed", err)
 		return nil, err
 	}
-
 	return user, nil
 }

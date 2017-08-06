@@ -4,8 +4,6 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 
-	"fmt"
-
 	"github.com/8tomat8/SSU-Golang-252-Chat/database"
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
@@ -36,16 +34,23 @@ func Login(username, password string) (*messageService.User, string, error) {
 		loger.Log.Errorf("No user with that Username")
 		return nil, "", err
 	}
-	db_p := []byte(foundUser.Password)
-	cl_p := []byte(password)
-	fmt.Println(db_p, cl_p)
-	err = bcrypt.CompareHashAndPassword(
-		db_p,
-		cl_p)
+
+	// Generate "hash" to check from user password
+	hash, err := bcrypt.GenerateFromPassword([]byte(foundUser.Password), bcrypt.DefaultCost)
 	if err != nil {
-		loger.Log.Errorf("Invalid password", err)
+		loger.Log.Errorf("hash generation failed!", err)
 		return nil, "", err
 	}
+
+	userPassword2 := password
+	hashFromDatabase := hash
+
+	// Comparing the password with the hash
+	if err := bcrypt.CompareHashAndPassword(hashFromDatabase, []byte(userPassword2)); err != nil {
+		loger.Log.Errorf("Password check failed!", err)
+		return nil, "", err
+	}
+
 	token := randToken()
 	//write message with header & body
 	return foundUser, token, nil

@@ -87,7 +87,6 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 		}
 		var x *messageService.User
 		json.Unmarshal(message.Body, &x)
-		auth.RegisterNewUser(x)
 		return
 	}
 
@@ -103,9 +102,29 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 
 				return
 			}
+
 			var x *messageService.User
 			json.Unmarshal(message.Body, &x)
-			_, tok, err := auth.Login(x.UserName, x.Password)
+			us, tok, err := auth.Login(x.UserName, x.Password)
+			newMessageHeader := messageService.MessageHeader{
+				Type_:    "authorization",
+				Command:  "loginissucc", //commands will be added to config file in near future
+				UserName: us.UserName,
+				Token:    tok,
+			}
+			// How to fill body message
+			newMessageBody := messageService.MessageBody{}
+
+			newMessage := messageService.Message{
+				Header: newMessageHeader,
+				Body:   newMessageBody,
+			}
+
+			text, err := messageService.MarshalMessage(&newMessage)
+			if err != nil {
+				loger.Log.Errorf("Marshal message failed")
+			}
+			err = conn.WriteMessage(websocket.TextMessage, text)
 			if err != nil {
 				loger.Log.Errorf("Login failed")
 			}

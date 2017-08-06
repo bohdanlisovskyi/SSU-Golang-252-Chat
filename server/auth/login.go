@@ -8,6 +8,7 @@ import (
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
 	"golang.org/x/crypto/bcrypt"
+	"github.com/gorilla/websocket"
 )
 
 //+token
@@ -52,6 +53,7 @@ func Login(username, password string) (*messageService.User, string, error) {
 	}
 
 	token := randToken()
+
 	//write message with header & body
 	return foundUser, token, nil
 }

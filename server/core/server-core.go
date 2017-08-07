@@ -2,11 +2,11 @@ package core
 
 import (
 	"net/http"
+	"encoding/json"
 	"github.com/gorilla/websocket"
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
 )
-
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
@@ -32,7 +32,6 @@ func MessageHandler(w http.ResponseWriter, r *http.Request) {
 		for {
 			messageType, text, err := conn.ReadMessage()
 			if err != nil {
-				conn.Close()
 				loger.Log.Warningf("Read message error: ", err.Error())
 				break
 			}
@@ -48,15 +47,6 @@ func MessageHandler(w http.ResponseWriter, r *http.Request) {
 	}()
 }
 
-func sendMessage(message *messageService.Message, messageType int) {
-	byteMessage, err := messageService.MarshalMessage(message)
-	if err != nil {
-		loger.Log.Errorf("Unmarshal message error: ", err.Error())
-	}
-
-	writeMsg(byteMessage, message.Body.ReceiverName, messageType) //I send this text []byte to receiver
-}
-
 func validateMessage(message *messageService.Message, messageType int, conn *websocket.Conn) {
 
 	if message.Header.Type_ == "" {
@@ -65,7 +55,21 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 	}
 
 	if message.Header.Type_ == "message" {
-		sendMessage(message, messageType)
+		err := sendMessage(message, messageType)
+		byteError, er := json.Marshal(err)
+
+		if er != nil {
+			loger.Log.Errorf("Marshal Error Message")
+		}
+
+		if err.Header.Command != "Ok" {
+			err := conn.WriteMessage(messageType, byteError)
+
+			if err != nil {
+				loger.Log.Errorf("Write Message Error")
+			}
+		}
+
 		return
 	}
 
@@ -125,16 +129,67 @@ func addNewConnect(w http.ResponseWriter, r *http.Request) (*websocket.Conn, err
 	return conn, err
 }
 
+func sendMessage(message *messageService.Message, messageType int) messageService.Message {
 
-func writeMsg(text []byte, receiver_id string, messageType int) {
-	client, ok := clients[receiver_id]
-	if !ok {
-		loger.Log.Warn("Receiver not found")
-		return
+	byteMessage, err := messageService.MarshalMessage(message)
+	if err != nil {
+		loger.Log.Errorf("Marshal message error: ", err.Error())
+		return messageService.Message {
+			Header:messageService.MessageHeader{
+				Type_: "message",
+				Command:"Marshal message error",
+			},
+			Body:message.Body,
+		}
 	}
 
-	err := client.conn.WriteMessage(messageType, text)
+	return writeMsg(byteMessage, message, messageType) //I send this text []byte to receiver
+}
+
+func writeMsg(text []byte, message *messageService.Message, messageType int) messageService.Message {
+	msgBody := messageService.MessageBody{}
+	err := json.Unmarshal(message.Body, &msgBody)
+	if err != nil {
+		loger.Log.Errorf("Unmarshal message error: ", err.Error())
+
+		return messageService.Message {
+			Header:messageService.MessageHeader{
+				Type_: "message",
+				Command:"Unmarshal message error",
+			},
+			Body:message.Body,
+		}
+	}
+
+	client, ok := clients[msgBody.ReceiverName]
+	if !ok {
+		loger.Log.Warn("Receiver not found")
+		return messageService.Message {
+			Header:messageService.MessageHeader{
+				Type_: "message",
+				Command:"Receiver not found",
+			},
+			Body:message.Body,
+		}
+	}
+
+	err = client.conn.WriteMessage(messageType, text)
 	if err != nil {
 		loger.Log.Errorf("Write message error: ", err.Error())
+		return messageService.Message {
+			Header:messageService.MessageHeader{
+				Type_: "message",
+				Command:"Write message error",
+			},
+			Body:message.Body,
+		}
+	}
+
+	return messageService.Message {
+		Header:messageService.MessageHeader{
+			Type_: "message",
+			Command:"Ok",
+		},
+		Body:message.Body,
 	}
 }

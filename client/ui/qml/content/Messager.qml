@@ -7,10 +7,12 @@ Item {
     id: messagerWindow
     visible: true
     width: 720
-    height: 480
+    height: 460
     Layout.fillHeight: true
     Layout.fillWidth: true
     signal send(string message)
+    property Text historyText: historyTextView
+    property TextEdit messageText: messageEdit
 
     Rectangle {
         color: "#ffffff"

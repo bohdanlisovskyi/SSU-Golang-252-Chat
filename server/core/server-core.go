@@ -128,8 +128,7 @@ func addNewConnect(w http.ResponseWriter, r *http.Request) (*websocket.Conn, err
 
 func sendMessage(message *messageService.Message, messageType int) msgerror.MsgError {
 	msgBody := messageService.MessageBody{}
-	json.Unmarshal(message.Body, &msgBody)
-	byteMessage, err := messageService.MarshalMessage(message)
+	err := json.Unmarshal(message.Body, &msgBody)
 
 	if err != nil {
 		loger.Log.Errorf("Unmarshal message error: ", err.Error())
@@ -137,6 +136,16 @@ func sendMessage(message *messageService.Message, messageType int) msgerror.MsgE
 		return msgerror.MsgError {
 			Code:"001",
 			Message:"Unmarshal message error",
+		}
+	}
+
+	byteMessage, err := messageService.MarshalMessage(message)
+	if err != nil {
+		loger.Log.Errorf("Marshal message error: ", err.Error())
+
+		return msgerror.MsgError {
+			Code:"004",
+			Message:"Marshal message error",
 		}
 	}
 
@@ -162,5 +171,8 @@ func writeMsg(text []byte, receiver_id string, messageType int) msgerror.MsgErro
 		}
 	}
 
-	return msgerror.MsgError{}
+	return msgerror.MsgError{
+		Code:"200",
+		Message:"Good",
+	}
 }

@@ -2,11 +2,12 @@ package core
 
 import (
 	"net/http"
+	"encoding/json"
 	"github.com/gorilla/websocket"
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
+	"github.com/8tomat8/SSU-Golang-252-Chat/msgerror"
 )
-
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
@@ -32,7 +33,6 @@ func MessageHandler(w http.ResponseWriter, r *http.Request) {
 		for {
 			messageType, text, err := conn.ReadMessage()
 			if err != nil {
-				conn.Close()
 				loger.Log.Warningf("Read message error: ", err.Error())
 				break
 			}
@@ -48,15 +48,6 @@ func MessageHandler(w http.ResponseWriter, r *http.Request) {
 	}()
 }
 
-func sendMessage(message *messageService.Message, messageType int) {
-	byteMessage, err := messageService.MarshalMessage(message)
-	if err != nil {
-		loger.Log.Errorf("Unmarshal message error: ", err.Error())
-	}
-
-	writeMsg(byteMessage, message.Body.ReceiverName, messageType) //I send this text []byte to receiver
-}
-
 func validateMessage(message *messageService.Message, messageType int, conn *websocket.Conn) {
 
 	if message.Header.Type_ == "" {
@@ -65,7 +56,17 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 	}
 
 	if message.Header.Type_ == "message" {
-		sendMessage(message, messageType)
+		err := sendMessage(message, messageType)
+		byteError, er := json.Marshal(err)
+
+		if er != nil {
+			loger.Log.Errorf("Marshal Error Message")
+		}
+
+		if err.Code != "" {
+			conn.WriteMessage(messageType, byteError)
+		}
+
 		return
 	}
 
@@ -125,16 +126,41 @@ func addNewConnect(w http.ResponseWriter, r *http.Request) (*websocket.Conn, err
 	return conn, err
 }
 
+func sendMessage(message *messageService.Message, messageType int) msgerror.MsgError {
+	msgBody := messageService.MessageBody{}
+	json.Unmarshal(message.Body, &msgBody)
+	byteMessage, err := messageService.MarshalMessage(message)
 
-func writeMsg(text []byte, receiver_id string, messageType int) {
+	if err != nil {
+		loger.Log.Errorf("Unmarshal message error: ", err.Error())
+
+		return msgerror.MsgError {
+			Code:"001",
+			Message:"Unmarshal message error",
+		}
+	}
+
+	return writeMsg(byteMessage, msgBody.ReceiverName, messageType) //I send this text []byte to receiver
+}
+
+func writeMsg(text []byte, receiver_id string, messageType int) msgerror.MsgError {
 	client, ok := clients[receiver_id]
 	if !ok {
 		loger.Log.Warn("Receiver not found")
-		return
+		return msgerror.MsgError {
+			Code:"002",
+			Message:"Receiver not found",
+		}
 	}
 
 	err := client.conn.WriteMessage(messageType, text)
 	if err != nil {
 		loger.Log.Errorf("Write message error: ", err.Error())
+		return msgerror.MsgError {
+			Code:"003",
+			Message:"Write message error",
+		}
 	}
+
+	return msgerror.MsgError{}
 }

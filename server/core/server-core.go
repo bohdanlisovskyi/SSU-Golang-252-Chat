@@ -1,8 +1,9 @@
 package core
 
 import (
-	"net/http"
 	"encoding/json"
+	"net/http"
+
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
 	"github.com/8tomat8/SSU-Golang-252-Chat/server/auth"
@@ -87,6 +88,10 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 				return
 			}
 			us, tok, err := auth.RegisterNewUser(user)
+			if err != nil {
+				loger.Log.Errorf("failed to register user", err)
+				return
+			}
 			newMessageHeader := messageService.MessageHeader{
 				Type_:    "authorization",
 				Command:  "registrissucc",
@@ -117,7 +122,7 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 			return
 		} else {
 			if clientToken.token != message.Header.Token {
-				loger.Log.Warn("Not valid token")
+				loger.Log.Errorf("Not valid token")
 				newMessageHeader := messageService.MessageHeader{
 					Type_:   "authorization",
 					Command: "loginnotsucc",
@@ -212,12 +217,12 @@ func sendMessage(message *messageService.Message, messageType int) messageServic
 	byteMessage, err := messageService.MarshalMessage(message)
 	if err != nil {
 		loger.Log.Errorf("Marshal message error: ", err.Error())
-		return messageService.Message {
-			Header:messageService.MessageHeader{
-				Type_: "message",
-				Command:"Marshal message error",
+		return messageService.Message{
+			Header: messageService.MessageHeader{
+				Type_:   "message",
+				Command: "Marshal message error",
 			},
-			Body:message.Body,
+			Body: message.Body,
 		}
 	}
 
@@ -230,44 +235,44 @@ func writeMsg(text []byte, message *messageService.Message, messageType int) mes
 	if err != nil {
 		loger.Log.Errorf("Unmarshal message error: ", err.Error())
 
-		return messageService.Message {
-			Header:messageService.MessageHeader{
-				Type_: "message",
-				Command:"Unmarshal message error",
+		return messageService.Message{
+			Header: messageService.MessageHeader{
+				Type_:   "message",
+				Command: "Unmarshal message error",
 			},
-			Body:message.Body,
+			Body: message.Body,
 		}
 	}
 
 	client, ok := clients[msgBody.ReceiverName]
 	if !ok {
 		loger.Log.Warn("Receiver not found")
-		return messageService.Message {
-			Header:messageService.MessageHeader{
-				Type_: "message",
-				Command:"Receiver not found",
+		return messageService.Message{
+			Header: messageService.MessageHeader{
+				Type_:   "message",
+				Command: "Receiver not found",
 			},
-			Body:message.Body,
+			Body: message.Body,
 		}
 	}
 
 	err = client.conn.WriteMessage(messageType, text)
 	if err != nil {
 		loger.Log.Errorf("Write message error: ", err.Error())
-		return messageService.Message {
-			Header:messageService.MessageHeader{
-				Type_: "message",
-				Command:"Write message error",
+		return messageService.Message{
+			Header: messageService.MessageHeader{
+				Type_:   "message",
+				Command: "Write message error",
 			},
-			Body:message.Body,
+			Body: message.Body,
 		}
 	}
 
-	return messageService.Message {
-		Header:messageService.MessageHeader{
-			Type_: "message",
-			Command:"Ok",
+	return messageService.Message{
+		Header: messageService.MessageHeader{
+			Type_:   "message",
+			Command: "Ok",
 		},
-		Body:message.Body,
+		Body: message.Body,
 	}
 }

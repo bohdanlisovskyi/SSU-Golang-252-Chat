@@ -4,40 +4,48 @@ import (
 	"encoding/json"
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"errors"
-	"github.com/8tomat8/SSU-Golang-252-Chat/database"
+	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
+	//import 	"github.com/8tomat8/SSU-Golang-252-Chat/database"
 
 )
 
-// ChangeNickNameRequest is a structure for request to change nick-name of users
-type ChangeNickNameRequest struct {
-	Header RequestHeader `json:"header"`
-	Body   json.RawMessage `json:"body"`
+// ChangeNickNameRequestBody is a custom body for ChangeNickNameRequest
+type ChangeNickNameRequestBody struct {
+	NickName string `json:"nick_name"`
 }
 
-// UnmarshalChangeNickNameRequest is a function for unmarshaling request for changing nick-name from []byte JSON
-// to map[string]interface{}
-func UnmarshalChangeNickNameRequest(changeNickNameRequest [] byte) (map[string]interface{}, error) {
-	var unmarshaledRequest map[string]interface{}
-	err := json.Unmarshal(changeNickNameRequest, unmarshaledRequest)
+// UnmarshalNickNameRequest function unmarshals request for changing NickName into ChangeNickNameRequestBody struct
+// and retrieves value of NickName.
+// Function returns: if succeed - NickName value to be stored in users table, nil,
+// if failed - empty string, err
+func UnmarshalChangeNickNameRequestBody(request messageService.Message) (string, error) {
+	var body *ChangeNickNameRequestBody
+	err := json.Unmarshal(request.Body, &body)
 	if err != nil {
-		loger.Log.Errorf("Error has occured: ", err)
-		return nil, err
+		loger.Log.Errorf("Error has occurred: ", err)
+		return "", err
 	}
-	return unmarshaledRequest, nil
+	nickName := body.NickName
+	if nickName == "" {
+		err := errors.New("NickName value is empty")
+		loger.Log.Errorf("Error has occurred: ", err)
+		return "", err
+	}
+	return nickName, nil
 }
 
-// ChangeNickName perform changing nick-name of users
-func ChangeNickName(changeNickNameRequest [] byte) (bool, error) {
-	unmarshaledRequest, err := UnmarshalChangeNickNameRequest(changeNickNameRequest)
-	if err != nil {
-		loger.Log.Errorf("Error has occured: ", err)
+// ChangeNickName perform changing users NickName value in users table.
+// Function returns: if succeed - true and nil, if failed - false and error
+func ChangeNickName(request messageService.Message) (bool, error) {
+	userName := request.Header.UserName
+	if userName == "" {
+		err := errors.New("User name value is empty")
+		loger.Log.Errorf("Error has occurred: ", err)
 		return false, err
 	}
-	nickName := unmarshaledRequest["nick_name"]
-	userName := unmarshaledRequest["user_name"]
-	if nickName == nil || userName == nil{
-		err := errors.New("Empty field or fields")
-		loger.Log.Errorf("Some field or fields are empty: ")
+	nickName, err := UnmarshalChangeNickNameRequestBody(request)
+	if err != nil {
+		loger.Log.Errorf("Error has occurred: ", err)
 		return false, err
 	}
 	db, err := GetStorage() // common gorm-connection from database package
@@ -46,7 +54,9 @@ func ChangeNickName(changeNickNameRequest [] byte) (bool, error) {
 		loger.Log.Errorf("DB error has occurred: ", err)
 		return false, err
 	}
-	db.Update("nick_name", nickName).Where("user_name = ?", userName)
+	// UPDATE users SET nick_name = "nickName value from request body"
+	// WHERE user_name = "userName value from request header"
+	db.Model(&User).Where("user_name = ?", userName).Update("nick_name", nickName)
 	if db.Error != nil {
 		loger.Log.Errorf("Error has occurred: ", err)
 		return false, err

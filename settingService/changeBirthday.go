@@ -4,40 +4,43 @@ import (
 	"encoding/json"
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"errors"
-	"github.com/8tomat8/SSU-Golang-252-Chat/database"
+	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
+	//import 	"github.com/8tomat8/SSU-Golang-252-Chat/database"
 
 )
 
-// ChangeBirthdayRequest is a structure for request to change user nick-name
-type ChangeBirthdayRequest struct {
-	Header RequestHeader `json:"header"`
-	Body   json.RawMessage `json:"body"`
+// ChangeBirthdayRequestBody is a custom body for ChangeBirthdayRequest
+type ChangeBirthdayRequestBody struct {
+	Birthday int `json:"birthday"`
 }
 
-// UnmarshalBirthdayRequest is a function for unmarshaling request for changing nick-name from []byte JSON
-// to map[string]interface{}
-func UnmarshalChangeBirthdayRequest(changeBirthdayRequest [] byte) (map[string]interface{}, error) {
-	var unmarshaledRequest map[string]interface{}
-	err := json.Unmarshal(changeBirthdayRequest, unmarshaledRequest)
+// UnmarshalBirthdayRequest function unmarshals request for changing birthday into ChangeBirthdayRequestBody struct
+// and retrieves value of birthday.
+// Function returns: if succeed - birthday value to be stored in users table, nil,
+// if failed - nil, err
+func UnmarshalChangeBirthdayRequestBody(request messageService.Message) (int, error) {
+	var body *ChangeBirthdayRequestBody
+	err := json.Unmarshal(request.Body, &body)
 	if err != nil {
-		loger.Log.Errorf("Error has occured: ", err)
+		loger.Log.Errorf("Error has occurred: ", err)
 		return nil, err
 	}
-	return unmarshaledRequest, nil
+	birthday := body.Birthday
+	return birthday, nil
 }
 
-// ChangeBirthday perform changing birthday of user
-func ChangeBirthday(changeBirthdayRequest [] byte) (bool, error) {
-	unmarshaledRequest, err := UnmarshalChangeBirthdayRequest(changeBirthdayRequest)
-	if err != nil {
-		loger.Log.Errorf("Error has occured: ", err)
+// ChangeBirthday perform changing users birthday value in users table.
+// Function returns: if succeed - true and nil, if failed - false and error
+func ChangeBirthday(request messageService.Message) (bool, error) {
+	userName := request.Header.UserName
+	if userName == "" {
+		err := errors.New("User name value is empty")
+		loger.Log.Errorf("Error has occurred: ", err)
 		return false, err
 	}
-	birthday := unmarshaledRequest["birthday"]
-	userName := unmarshaledRequest["user_name"]
-	if birthday == nil || userName == nil{
-		err := errors.New("Empty field or fields")
-		loger.Log.Errorf("Some field or fields are empty: ")
+	birthday, err := UnmarshalChangeBirthdayRequestBody(request)
+	if err != nil {
+		loger.Log.Errorf("Error has occurred: ", err)
 		return false, err
 	}
 	db, err := GetStorage() // common gorm-connection from database package
@@ -46,7 +49,9 @@ func ChangeBirthday(changeBirthdayRequest [] byte) (bool, error) {
 		loger.Log.Errorf("DB error has occurred: ", err)
 		return false, err
 	}
-	db.Update("birthday", birthday).Where("user_name = ?", userName)
+	// UPDATE users SET birthday = "birthday value from request body"
+	// WHERE user_name = "userName value from request header"
+	db.Model(&User).Where("user_name = ?", userName).Update("birthday", birthday)
 	if db.Error != nil {
 		loger.Log.Errorf("Error has occurred: ", err)
 		return false, err

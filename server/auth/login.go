@@ -13,6 +13,7 @@ import (
 func getUserByName(UserName string) (*messageService.User, error) {
 
 	db, err := database.GetStorage()
+	defer db.Close()
 	if err != nil {
 		loger.Log.Errorf("Failed to open db", err)
 		return nil, err

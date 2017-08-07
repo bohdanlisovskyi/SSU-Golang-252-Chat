@@ -11,31 +11,31 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
-func RegisterNewUser(user *messageService.User) (*messageService.User, error) {
+func RegisterNewUser(user *messageService.User) (*messageService.User, string, error) {
 	if checkUsername(user.UserName) != true {
 		err := errors.New("input username not valid")
-		return nil, err
+		return nil, "", err
 	}
 	if checkPassword(user.Password) != true {
 		err := errors.New("input password not valid")
-		return nil, err
+		return nil, "", err
 	}
 	db, err := database.GetStorage()
 	if err != nil {
 		loger.Log.Errorf("Failed to open db", err)
-		return nil, err
+		return nil, "", err
 	}
 	err = db.Create(&user).Error
 	if err != nil {
 		loger.Log.Errorf("failed to create new user or user exist", err)
-		return nil, err
+		return nil, "", err
 	}
-	_, _, err = Login(user.UserName, user.Password)
+	user, tok, err := Login(user.UserName, user.Password)
 	if err != nil {
 		loger.Log.Errorf("Login failed", err)
-		return nil, err
+		return nil, "", err
 	}
-	return user, nil
+	return user, tok, nil
 }
 
 func checkPassword(password string) (b bool) {

@@ -8,10 +8,8 @@ import (
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
 	"golang.org/x/crypto/bcrypt"
-	"github.com/gorilla/websocket"
 )
 
-//+token
 func getUserByName(UserName string) (*messageService.User, error) {
 
 	db, err := database.GetStorage()
@@ -42,19 +40,13 @@ func Login(username, password string) (*messageService.User, string, error) {
 		loger.Log.Errorf("hash generation failed!", err)
 		return nil, "", err
 	}
-
-	userPassword2 := password
-	hashFromDatabase := hash
-
 	// Comparing the password with the hash
-	if err := bcrypt.CompareHashAndPassword(hashFromDatabase, []byte(userPassword2)); err != nil {
+	if err := bcrypt.CompareHashAndPassword(hash, []byte(password)); err != nil {
 		loger.Log.Errorf("Password check failed!", err)
 		return nil, "", err
 	}
 
 	token := randToken()
-
-	//write message with header & body
 	return foundUser, token, nil
 }
 

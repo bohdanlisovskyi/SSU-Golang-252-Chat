@@ -63,7 +63,11 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 		}
 
 		if err.Header.Command != "Ok" {
-			conn.WriteMessage(messageType, byteError)
+			err := conn.WriteMessage(messageType, byteError)
+
+			if err != nil {
+				loger.Log.Errorf("Write Message Error")
+			}
 		}
 
 		return

@@ -98,7 +98,10 @@ func IsUserBlocked(byteRequest [] byte) (isBlocked int, err error) {
 	// SELECT main_user, contact_user, is_blocked FROM contacts
 	// WHERE main_user = "mainUser value from request body"
 	// AND contact_user = "contactUser value from request body"
-	db.Table("contacts").Select("main_user, contact_user, is_blocked").Where("main_user = ? AND contact_user = ?", mainUser, contactUser).Scan(&result)
+	db.Table("contacts").
+		Select("main_user, contact_user, is_blocked").
+		Where("main_user = ? AND contact_user = ?", mainUser, contactUser).
+		Scan(&result)
 	if db.Error != nil {
 		err := errors.New("Bad parsing")
 		loger.Log.Errorf("Error has occurred: ", err)

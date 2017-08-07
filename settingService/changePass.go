@@ -34,14 +34,12 @@ func UnmarshalChangePassRequestBody(request messageService.Message) (string, err
 	return newPass, nil
 }
 
-// UserResult struct is a copy of Users struct from database package,
+// AuthResult struct is a copy of Users struct from database package,
 // it is used for storing result of querying from users table
-type UserResult struct {
+type AuthResult struct {
 	UserName string
 	NickName string
 	Password string
-	Birthday int
-	AboutUser string
 }
 
 // ChangePass perform changing users Password value in users table.
@@ -64,13 +62,14 @@ func ChangePass(request messageService.Message) (bool, error) {
 		loger.Log.Errorf("DB error has occurred: ", err)
 		return false, err
 	}
-	var result UserResult //variable for storing result of querying into UserResult struct
+	var result AuthResult //variable for storing result of querying into AuthResult struct
 	// SELECT user_name, nick_name, password, birthday, about_user FROM users
 	// WHERE main_user = "mainUser value from request body"
 	// AND contact_user = "contactUser value from request body"
 	db.Table("users").
-		Select("user_name, nick_name, password, birthday, about_user").
-		Where("user_name = ?", userName).Scan(&result)
+		Select("user_name, nick_name, password").
+		Where("user_name = ?", userName).
+		Scan(&result)
 	oldPass := result.Password
 	if newPass == oldPass {
 		loger.Log.Warnf(" Password is the same as old")

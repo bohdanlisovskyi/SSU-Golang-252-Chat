@@ -6,8 +6,7 @@ import (
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"errors"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
-	//import 	"github.com/8tomat8/SSU-Golang-252-Chat/database"
-
+	"github.com/8tomat8/SSU-Golang-252-Chat/database"
 )
 
 // BlockUserRequestBody is a custom body for BlockUserRequest
@@ -53,7 +52,7 @@ func BlockUnblockUser(request messageService.Message) (bool, error) {
 		loger.Log.Errorf("Error has occurred: ", err)
 		return false, err
 	}
-	db, err := GetStorage() // common gorm-connection from database package
+	db, err := database.GetStorage() // common gorm-connection from database package
 	defer db.Close()
 	if err != nil {
 		loger.Log.Errorf("DB error has occurred: ", err)
@@ -88,7 +87,7 @@ func IsUserBlocked(byteRequest [] byte) (isBlocked int, err error) {
 	}
 	contactUser := request.Body.ReceiverName
 	mainUser := request.Header.UserName
-	db, err := GetStorage() // common gorm-connection from database package
+	db, err := database.GetStorage() // common gorm-connection from database package
 	defer db.Close()
 	if err != nil {
 		loger.Log.Errorf("DB error has occurred: ", err)

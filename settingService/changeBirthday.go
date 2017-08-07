@@ -5,8 +5,7 @@ import (
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"errors"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
-	//import 	"github.com/8tomat8/SSU-Golang-252-Chat/database"
-
+	"github.com/8tomat8/SSU-Golang-252-Chat/database"
 )
 
 // ChangeBirthdayRequestBody is a custom body for ChangeBirthdayRequest
@@ -43,7 +42,7 @@ func ChangeBirthday(request messageService.Message) (bool, error) {
 		loger.Log.Errorf("Error has occurred: ", err)
 		return false, err
 	}
-	db, err := GetStorage() // common gorm-connection from database package
+	db, err := database.GetStorage() // common gorm-connection from database package
 	defer db.Close()
 	if err != nil {
 		loger.Log.Errorf("DB error has occurred: ", err)

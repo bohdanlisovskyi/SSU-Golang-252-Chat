@@ -19,7 +19,7 @@ var (
 )
 
 func Test1UnmarshalBlockUserRequest(t *testing.T) {
-	IsBlocked, name, err := UnmarshalBlockUserRequest(byteRequest)
+	IsBlocked, name, err := UnmarshalBlockUserRequestBody(byteRequest)
 	if err != nil {
 		t.Fatal("Error has occured: ", err)
 	}
@@ -28,7 +28,7 @@ func Test1UnmarshalBlockUserRequest(t *testing.T) {
 }
 
 func Test2UnmarshalBlockUserRequest(t *testing.T) {
-	if _, _, err := UnmarshalBlockUserRequest(badRequest); err == nil {
+	if _, _, err := UnmarshalBlockUserRequestBody(badRequest); err == nil {
 		t.Fatal("Error expected, but absent: ", err)
 	} else {
 		t.Logf("Expected error has occurred : %+v \n ", err)
@@ -36,7 +36,7 @@ func Test2UnmarshalBlockUserRequest(t *testing.T) {
 }
 
 func Test3UnmarshalBlockUserRequest(t *testing.T) {
-	if _, _, err := UnmarshalBlockUserRequest(badRequest2); err == nil {
+	if _, _, err := UnmarshalBlockUserRequestBody(badRequest2); err == nil {
 		t.Fatal("Error expected, but absent: ", err)
 	} else {
 		t.Logf("Expected error has occurred : %+v \n ", err)

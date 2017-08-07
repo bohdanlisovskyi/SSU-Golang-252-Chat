@@ -2,9 +2,10 @@ package settingService
 
 import (
 	"encoding/json"
-	"github.com/jinzhu/gorm"
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"errors"
+	"github.com/8tomat8/SSU-Golang-252-Chat/database"
+
 )
 
 // ChangePassRequest is a structure for request to changing of password
@@ -43,14 +44,12 @@ func ChangePass(changePassRequest [] byte) (bool, error) {
 	if OldPass == NewPass {
 		loger.Log.Warn("Old and new passwords are the same ")
 	}
-
-	db, err := gorm.Open("sqlite3", "users.db/users") // change to common connection
-	defer db.Close()// change to common connection
-	if err != nil {// change to common connection
-		loger.Log.Errorf("Error has occurred: ", err)// change to common connection
-		return false, err// change to common connection
-	}// change to common connection
-
+	db, err := GetStorage() // common gorm-connection from database package
+	defer db.Close()
+	if err != nil {
+		loger.Log.Errorf("DB error has occurred: ", err)
+		return false, err
+	}
 	db.Update("password", NewPass).Where("user_name = ?", userName)
 	if db.Error != nil {
 		loger.Log.Errorf("Error has occurred: ", err)

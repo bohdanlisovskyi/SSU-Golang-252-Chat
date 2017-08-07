@@ -6,7 +6,6 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
-	"github.com/8tomat8/SSU-Golang-252-Chat/msgerror"
 )
 
 var upgrader = websocket.Upgrader{
@@ -63,7 +62,7 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 			loger.Log.Errorf("Marshal Error Message")
 		}
 
-		if err.Code != "" {
+		if err.Header.Command != "Ok" {
 			conn.WriteMessage(messageType, byteError)
 		}
 
@@ -126,53 +125,67 @@ func addNewConnect(w http.ResponseWriter, r *http.Request) (*websocket.Conn, err
 	return conn, err
 }
 
-func sendMessage(message *messageService.Message, messageType int) msgerror.MsgError {
-	msgBody := messageService.MessageBody{}
-	err := json.Unmarshal(message.Body, &msgBody)
-
-	if err != nil {
-		loger.Log.Errorf("Unmarshal message error: ", err.Error())
-
-		return msgerror.MsgError {
-			Code:"001",
-			Message:"Unmarshal message error",
-		}
-	}
+func sendMessage(message *messageService.Message, messageType int) messageService.Message {
 
 	byteMessage, err := messageService.MarshalMessage(message)
 	if err != nil {
 		loger.Log.Errorf("Marshal message error: ", err.Error())
-
-		return msgerror.MsgError {
-			Code:"004",
-			Message:"Marshal message error",
+		return messageService.Message {
+			Header:messageService.MessageHeader{
+				Type_: "message",
+				Command:"Marshal message error",
+			},
+			Body:message.Body,
 		}
 	}
 
-	return writeMsg(byteMessage, msgBody.ReceiverName, messageType) //I send this text []byte to receiver
+	return writeMsg(byteMessage, message, messageType) //I send this text []byte to receiver
 }
 
-func writeMsg(text []byte, receiver_id string, messageType int) msgerror.MsgError {
-	client, ok := clients[receiver_id]
+func writeMsg(text []byte, message *messageService.Message, messageType int) messageService.Message {
+	msgBody := messageService.MessageBody{}
+	err := json.Unmarshal(message.Body, &msgBody)
+	if err != nil {
+		loger.Log.Errorf("Unmarshal message error: ", err.Error())
+
+		return messageService.Message {
+			Header:messageService.MessageHeader{
+				Type_: "message",
+				Command:"Unmarshal message error",
+			},
+			Body:message.Body,
+		}
+	}
+
+	client, ok := clients[msgBody.ReceiverName]
 	if !ok {
 		loger.Log.Warn("Receiver not found")
-		return msgerror.MsgError {
-			Code:"002",
-			Message:"Receiver not found",
+		return messageService.Message {
+			Header:messageService.MessageHeader{
+				Type_: "message",
+				Command:"Receiver not found",
+			},
+			Body:message.Body,
 		}
 	}
 
-	err := client.conn.WriteMessage(messageType, text)
+	err = client.conn.WriteMessage(messageType, text)
 	if err != nil {
 		loger.Log.Errorf("Write message error: ", err.Error())
-		return msgerror.MsgError {
-			Code:"003",
-			Message:"Write message error",
+		return messageService.Message {
+			Header:messageService.MessageHeader{
+				Type_: "message",
+				Command:"Write message error",
+			},
+			Body:message.Body,
 		}
 	}
 
-	return msgerror.MsgError{
-		Code:"200",
-		Message:"Good",
+	return messageService.Message {
+		Header:messageService.MessageHeader{
+			Type_: "message",
+			Command:"Ok",
+		},
+		Body:message.Body,
 	}
 }

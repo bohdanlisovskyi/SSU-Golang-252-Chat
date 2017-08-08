@@ -40,7 +40,7 @@ func UnmarshalAboutUserRequestBody(request messageService.Message) (string, erro
 
 // ChangeAboutUser perform changing field about_user in users table.
 // Function returns: if succeed - true and nil, if failed - false and error
-func ChangeAboutUserInfo(request messageService.Message) (bool, error) {
+func ChangeAboutUserInfo(request *messageService.Message) (bool, error) {
 	userName := request.Header.UserName
 	if userName == "" {
 		err := errors.New("User name value is empty")

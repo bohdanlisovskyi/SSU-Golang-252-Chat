@@ -36,7 +36,7 @@ func UnmarshalChangeNickNameRequestBody(request messageService.Message) (string,
 
 // ChangeNickName perform changing users NickName value in users table.
 // Function returns: if succeed - true and nil, if failed - false and error
-func ChangeNickName(request messageService.Message) (bool, error) {
+func ChangeNickName(request *messageService.Message) (bool, error) {
 	userName := request.Header.UserName
 	if userName == "" {
 		err := errors.New("User name value is empty")

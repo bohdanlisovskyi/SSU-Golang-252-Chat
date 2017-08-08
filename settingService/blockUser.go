@@ -39,7 +39,7 @@ func UnmarshalBlockUserRequestBody(request messageService.Message) (*BlockUserRe
 // BlockUnblockUser perform blocking and unblocking of users by clicking the button on UI.
 // Button works like a trigger: first push - block user, second push - unblock user.
 // Function returns: if succeed - true and nil, if failed - false and error
-func BlockUnblockUser(request messageService.Message) (bool, error) {
+func BlockUnblockUser(request *messageService.Message) (bool, error) {
 	body, IsBlocked, err := UnmarshalBlockUserRequestBody(request)
 	if err != nil {
 		loger.Log.Errorf("Error has occurred: ", err)
@@ -79,12 +79,7 @@ type ContactResult struct {
 
 // IsUserBlocked checks if user is blocked for chatting in contacts table
 // Function returns: if succeed - is_blocked value(0 or 1) from contacts table and nil, if failed - nil and error
-func IsUserBlocked(byteRequest [] byte) (isBlocked int, err error) {
-	request, err := messageService.UnmarshalMessage(byteRequest)
-	if err != nil {
-		loger.Log.Errorf("Error has occurred: ", err)
-		return nil, err
-	}
+func IsUserBlocked(request *messageService.Message) (isBlocked int, err error) {
 	contactUser := request.Body.ReceiverName
 	mainUser := request.Header.UserName
 	db, err := database.GetStorage() // common gorm-connection from database package

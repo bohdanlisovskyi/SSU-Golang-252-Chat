@@ -10,11 +10,11 @@ import (
 
 func TestRegisterNewUser(t *testing.T) {
 
-	test_user := messageService.User{
+	test_user := messageService.Authentification{
 		UserName: "fklds$222d",
 		Password: "vasya$22sss",
 		NickName: "voron",
 	}
-	user, err := RegisterNewUser(&test_user)
-	fmt.Println(user, err)
+	user, tok, err := RegisterNewUser(&test_user)
+	fmt.Println(user, tok, err)
 }

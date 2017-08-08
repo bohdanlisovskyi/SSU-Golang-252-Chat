@@ -8,7 +8,7 @@ import (
 )
 
 func TestLogin(t *testing.T) {
-	test_data := messageService.User{
+	test_data := messageService.Authentification{
 		UserName: "vasya",
 		Password: "vasya2vasya444",
 	}

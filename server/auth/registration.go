@@ -11,7 +11,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
-func RegisterNewUser(user *messageService.User) (*messageService.User, string, error) {
+func RegisterNewUser(user *messageService.Authentification) (*messageService.Authentification, string, error) {
 	if checkUsername(user.UserName) != true {
 		err := errors.New("input username not valid")
 		return nil, "", err

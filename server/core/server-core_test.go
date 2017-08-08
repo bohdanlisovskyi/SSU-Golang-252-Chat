@@ -18,15 +18,15 @@ import (
 var (
 	Type_       = "messageService"
 	Command     = "send message"
-	UserName    = "use90ddgOne"
+	UserName    = "u90ddgOne"
 	NickName    = "nick"
 	Password    = "1234324234"
 	CurrentTime = 1500373713
 	Token       = "333"
 	Text        = "msg from user 1 to user 2"
-	header      = messageService.MessageHeader{Type_: "auth", Command: "registrissucc", UserName: UserName, Token: Token}
+	header      = messageService.MessageHeader{Type_: "register", Command: "registrissucc", UserName: UserName, Token: Token}
 
-	body = messageService.User{UserName: UserName, Password: Password, NickName: NickName}
+	body = messageService.Authentification{UserName: UserName, Password: Password, NickName: NickName}
 	addr = flag.String("addr", "localhost:3002", "http service address")
 )
 

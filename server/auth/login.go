@@ -10,7 +10,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func getUserByName(UserName string) (*messageService.User, error) {
+func getUserByName(UserName string) (*messageService.Authentification, error) {
 
 	db, err := database.GetStorage()
 	defer db.Close()
@@ -19,7 +19,7 @@ func getUserByName(UserName string) (*messageService.User, error) {
 		return nil, err
 	}
 	db_search := db.Where("user_name=?", UserName)
-	ret := &messageService.User{}
+	ret := &messageService.Authentification{}
 	err = db_search.First(ret).Error
 	if err != nil {
 		loger.Log.Errorf("Failed to find user in DB")
@@ -28,7 +28,7 @@ func getUserByName(UserName string) (*messageService.User, error) {
 	return ret, err
 }
 
-func Login(username, password string) (*messageService.User, string, error) {
+func Login(username, password string) (*messageService.Authentification, string, error) {
 	foundUser, err := getUserByName(username)
 	if err != nil {
 		loger.Log.Errorf("No user with that Username")

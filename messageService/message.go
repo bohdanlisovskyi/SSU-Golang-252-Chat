@@ -7,7 +7,7 @@ import (
 )
 
 //Message for client after registration
-type User struct {
+type Authentification struct {
 	UserName string `gorm:"primary_key"`
 	Password string
 	NickName string

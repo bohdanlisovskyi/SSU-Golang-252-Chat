@@ -45,12 +45,12 @@ func MessageHandler(w http.ResponseWriter, r *http.Request) {
 				continue
 			}
 
-			validateMessage(msg, messageType, conn)
+			ValidateMessage(msg, messageType, conn)
 		}
 	}()
 }
 
-func validateMessage(message *messageService.Message, messageType int, conn *websocket.Conn) {
+func ValidateMessage(message *messageService.Message, messageType int, conn *websocket.Conn) {
 
 	if message.Header.Type_ == "" {
 		loger.Log.Errorf("Message Header Type Empty")
@@ -81,7 +81,7 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 			loger.Log.Warn("User already exist")
 			return
 		} else {
-			var user *messageService.User
+			var user *messageService.Authentification
 			err := json.Unmarshal(message.Body, &user)
 			if err != nil {
 				loger.Log.Warn("failed to unmarshal body")
@@ -143,7 +143,7 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 
 			}
 		}
-		var user *messageService.User
+		var user *messageService.Authentification
 		err := json.Unmarshal(message.Body, &user)
 		if err != nil {
 			loger.Log.Warn("failed to unmarshal body")

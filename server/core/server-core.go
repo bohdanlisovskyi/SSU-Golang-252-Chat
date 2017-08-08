@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
+	"github.com/8tomat8/SSU-Golang-252-Chat/settingService"
 )
 
 var upgrader = websocket.Upgrader{
@@ -110,8 +111,14 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 	}
 
 	if message.Header.Type_ == "change_pass" {
-
-		//run change_pass function
+		ok, err := settingService.ChangePass(message)
+		if err != nil {
+			loger.Log.Errorf(" Error has occurred : ", err)
+		}
+		if !ok {
+			loger.Log.Warnf(" Password has not changed. Please try again")
+		}
+		return
 	}
 
 	if message.Header.Type_ == "change_info" {

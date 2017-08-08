@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
+	"github.com/8tomat8SSU-Golang-252-Chat/settingService"
 )
 
 var upgrader = websocket.Upgrader{
@@ -55,6 +56,7 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 	}
 
 	if message.Header.Type_ == "message" {
+
 		err := sendMessage(message, messageType)
 		byteError, er := json.Marshal(err)
 
@@ -78,9 +80,9 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 			loger.Log.Warn("User already exist")
 			return
 
-		}else {
+		} else {
 
-			clients[message.Header.UserName] = Client{conn:conn}
+			clients[message.Header.UserName] = Client{conn: conn}
 		}
 		//run register function
 		return
@@ -91,9 +93,9 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 			loger.Log.Warn("User already exist")
 			return
 
-		}else {
+		} else {
 
-			clients[message.Header.UserName] = Client{conn:conn}
+			clients[message.Header.UserName] = Client{conn: conn}
 		}
 		//run auth function
 		return
@@ -118,6 +120,17 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 
 		//run change_user_info function
 	}
+
+	if message.Header.Type_ == "blocking_user" {
+		ok, err := settingService.BlockUnblockUser(message)
+		if err != nil {
+			loger.Log.Errorf(" Error has occurred : ", err)
+		}
+		if !ok {
+			loger.Log.Warnf(" Error. Please try again")
+		}
+		return
+	}
 }
 
 func addNewConnect(w http.ResponseWriter, r *http.Request) (*websocket.Conn, error) {
@@ -134,12 +147,12 @@ func sendMessage(message *messageService.Message, messageType int) messageServic
 	byteMessage, err := messageService.MarshalMessage(message)
 	if err != nil {
 		loger.Log.Errorf("Marshal message error: ", err.Error())
-		return messageService.Message {
-			Header:messageService.MessageHeader{
-				Type_: "message",
-				Command:"Marshal message error",
+		return messageService.Message{
+			Header: messageService.MessageHeader{
+				Type_:   "message",
+				Command: "Marshal message error",
 			},
-			Body:message.Body,
+			Body: message.Body,
 		}
 	}
 
@@ -152,44 +165,44 @@ func writeMsg(text []byte, message *messageService.Message, messageType int) mes
 	if err != nil {
 		loger.Log.Errorf("Unmarshal message error: ", err.Error())
 
-		return messageService.Message {
-			Header:messageService.MessageHeader{
-				Type_: "message",
-				Command:"Unmarshal message error",
+		return messageService.Message{
+			Header: messageService.MessageHeader{
+				Type_:   "message",
+				Command: "Unmarshal message error",
 			},
-			Body:message.Body,
+			Body: message.Body,
 		}
 	}
 
 	client, ok := clients[msgBody.ReceiverName]
 	if !ok {
 		loger.Log.Warn("Receiver not found")
-		return messageService.Message {
-			Header:messageService.MessageHeader{
-				Type_: "message",
-				Command:"Receiver not found",
+		return messageService.Message{
+			Header: messageService.MessageHeader{
+				Type_:   "message",
+				Command: "Receiver not found",
 			},
-			Body:message.Body,
+			Body: message.Body,
 		}
 	}
 
 	err = client.conn.WriteMessage(messageType, text)
 	if err != nil {
 		loger.Log.Errorf("Write message error: ", err.Error())
-		return messageService.Message {
-			Header:messageService.MessageHeader{
-				Type_: "message",
-				Command:"Write message error",
+		return messageService.Message{
+			Header: messageService.MessageHeader{
+				Type_:   "message",
+				Command: "Write message error",
 			},
-			Body:message.Body,
+			Body: message.Body,
 		}
 	}
 
-	return messageService.Message {
-		Header:messageService.MessageHeader{
-			Type_: "message",
-			Command:"Ok",
+	return messageService.Message{
+		Header: messageService.MessageHeader{
+			Type_:   "message",
+			Command: "Ok",
 		},
-		Body:message.Body,
+		Body: message.Body,
 	}
 }

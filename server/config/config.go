@@ -26,14 +26,14 @@ func init() {
 	data, err := ioutil.ReadFile("./config.json")
 
 	if err != nil {
-		loger.Log.Panicf("Can't read config. %s", err.Error())
+		loger.Log.Panicf("Can't read config file: %s", err.Error())
 	}
 
 	config = Config{}
 
 	if err := json.Unmarshal(data, &config); err != nil {
 
-		loger.Log.Panicf("Can't read config. %s", err.Error())
+		loger.Log.Panicf("Can't unmarshal config file: %s", err.Error())
 	}
 }
 

@@ -2,41 +2,45 @@ package listener
 
 import (
 	"github.com/8tomat8/SSU-Golang-252-Chat/client/config"
-	"github.com/8tomat8/SSU-Golang-252-Chat/client/resolvers"
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
 	"github.com/gorilla/websocket"
 )
 
-var LoginStatusChannel chan messageService.ResponseFromServerBody
-var MessageSentStatusChannel chan messageService.ResponseFromServerBody
-var RegisterStatusChannel chan messageService.ResponseFromServerBody
-var QuitChannel chan bool
-
-//var MessageChannel chan messageService.MessageBody
+var AuthorizationChannel chan messageService.Message
+var MessageChannel chan messageService.Message
+var ContactsChannel chan messageService.Message
+var SettingsChannel chan messageService.Message
+var QuitChannel chan struct{}
 
 func ListenToServer(conn *websocket.Conn) {
+	defer conn.Close()
 	for {
 		_, data, err := conn.ReadMessage()
 		if err != nil {
-			loger.Log.Warningf("Can not read message from server. %s", err)
-			continue
+			loger.Log.Errorf("Can not read message from server. %s", err)
+			break
 		}
-		unmarshalMessage, err := messageService.UnmarshalMessage(data)
+		unmarshaledMessage, err := messageService.UnmarshalMessage(data)
 		if err != nil {
 			loger.Log.Warningf("Can not unmarshal message. %s", err)
 			continue
 		}
-		ValidateAndRedirectMessage(unmarshalMessage)
-		//
+		ValidateAndRedirectMessage(unmarshaledMessage)
 	}
 }
 
 func ValidateAndRedirectMessage(message *messageService.Message) {
 	switch message.Header.Type_ {
 	case config.GetConfig().MessageType.Message:
-		resolvers.ReceiveMessage(message, MessageSentStatusChannel)
+		MessageChannel <- *message
 	case config.GetConfig().MessageType.Settings:
+		SettingsChannel <- *message
 	case config.GetConfig().MessageType.Auth:
+		AuthorizationChannel <- *message
+	case config.GetConfig().MessageType.Contacts:
+		ContactsChannel <- *message
+	default:
+		loger.Log.Warningf("Can not recognize message type of received message. Received %s type.", message.Header.Type_)
 	}
 }

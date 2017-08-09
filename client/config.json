@@ -10,7 +10,12 @@
     "settings":       "setting"
   },
   "messagecommand": {
-    "sendmessage":    "sendMessage",
-    "messagesended":  "messageSent"
+    "sendmessage":      "sendMessage",
+    "receivemessage":   "receiveMessage",
+    "messagesended":    "messageSent",
+    "messagewasntsent": "messagewasntsent",
+    "sendlogindata":    "sendlogindata",
+    "loginissucc":      "loginissucc",
+    "loginisnotsucc":   "loginisnotsucc"
   }
 }

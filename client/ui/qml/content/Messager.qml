@@ -168,9 +168,8 @@ Item {
 
         ColumnLayout {
             id: rightColumnLayout
-            width: 110
-            height: 300
-            clip: false
+            x: 540
+            y: 0
             Layout.maximumWidth: 170
             visible: true
             Layout.minimumHeight: 300
@@ -178,10 +177,20 @@ Item {
             Layout.fillHeight: true
             Layout.fillWidth: true
 
+            width: 100
+            height: 100
+            Layout.maximumHeight: 1000
+            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+            Layout.columnSpan: 0
+            Layout.rowSpan: 0
+
             RowLayout {
                 id: searchingRowLayout
                 width: 100
                 height: 100
+                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                Layout.fillHeight: false
+                Layout.fillWidth: false
                 Layout.maximumHeight: 30
                 Layout.minimumHeight: 30
 
@@ -212,61 +221,45 @@ Item {
                     Layout.minimumWidth: 30
                 }
             }
-
-            ListView {
-                id: contactsListView
-                width: 110
-                height: 160
-                Layout.minimumHeight: 300
-                Layout.minimumWidth: 150
-                highlightRangeMode: ListView.NoHighlightRange
-                orientation: ListView.Vertical
-                maximumFlickVelocity: 2492
-                Layout.fillWidth: true
+            RowLayout{
+                id: contactsRowLayout
+                width: 100
+                height: 100
                 Layout.fillHeight: true
-                delegate: Item {
-                    x: 5
-                    width: 80
-                    height: 40
-                    Row {
-                        id: row1
-                        Rectangle {
-                            width: 40
+                Layout.fillWidth: true
+
+
+                ListView {
+                    id: contactsListView
+                    y: 100
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    model: ContactModel
+                    delegate: Component {
+                        Item {
+                            width: parent.width
                             height: 40
-                            color: colorCode
+                            Column {
+                                Text { text: 'UserName:' + model.display.username }
+                                Text { text: 'NickName:' + model.display.nickname }
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: contactsListView.currentIndex = index
+                            }
                         }
-
+                    }
+                    highlight: Rectangle {
+                        color: 'grey'
                         Text {
-                            text: name
-                            anchors.verticalCenter: parent.verticalCenter
-                            font.bold: true
+                            anchors.centerIn: parent
+                            color: 'white'
                         }
-                        spacing: 10
                     }
+                    focus: true
                 }
-                model: ListModel {
-                    ListElement {
-                        name: "Bohdan"
-                        colorCode: "grey"
-                    }
 
-                    ListElement {
-                        name: "Vitaliy"
-                        colorCode: "red"
-                    }
-
-                    ListElement {
-                        name: "Valeriy"
-                        colorCode: "blue"
-                    }
-
-                    ListElement {
-                        name: "Volodymyr"
-                        colorCode: "green"
-                    }
-                }
             }
-
         }
 
     }

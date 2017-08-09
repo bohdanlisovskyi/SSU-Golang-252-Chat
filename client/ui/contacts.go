@@ -2,18 +2,29 @@
 package ui
 
 import (
+	"strconv"
+
+	"github.com/emirpasic/gods/lists/arraylist"
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/quick"
 )
 
-////binding to qml
+//binding to qml
 var qmlContacts *QmlContacts
+var listOfContacts *arraylist.List
 
-//
+//ContactObject struct needed to build model for listView
+type ContactObject struct {
+	core.QObject
 
-//represent contacts as QObject
+	_ string `property:"username"`
+	_ string `property:"nickname"`
+}
+
+//QmlContacts represent contacts as QObject
 type QmlContacts struct {
 	core.QObject
+
 	_ func(newIndex int)                    `slot:"changeCurrentContact"`
 	_ func(searchedUser string)             `slot:"searchUser"`
 	_ func(newUsername, newNickname string) `slot:"addUser"`
@@ -39,6 +50,47 @@ func initQmlContacts(quickWidget *quick.QQuickWidget) {
 	//
 }
 
-func GetQmlContacts() *QmlContacts {
-	return qmlContacts
+func initContactObject(quickWidget *quick.QQuickWidget) {
+	listOfContacts = arraylist.New()
+
+	//test contacts
+	var testContact *ContactObject
+	for i := 0; i < 5; i++ {
+		testContact = NewContactObject(nil)
+		testContact.SetUsername("Me " + strconv.Itoa(i))
+		testContact.SetNickname("Volodymyr " + strconv.Itoa(i))
+		listOfContacts.Add(testContact)
+	}
+	var test2Contact = NewContactObject(nil)
+	test2Contact.SetUsername("Me " + "test2")
+	test2Contact.SetNickname("Volodymyr " + "test2")
+	listOfContacts.Add(test2Contact)
+	var model = core.NewQAbstractListModel(nil)
+	model.ConnectData(contactsData)
+	model.ConnectRowCount(rowCount)
+	quickWidget.RootContext().SetContextProperty("ContactModel", model)
+}
+
+//this function provide connect between listView (on UI) and modelView (in code)
+func contactsData(index *core.QModelIndex, role int) *core.QVariant {
+	//when we click on list not guaranteed that data wasn't change before update UI
+	//if we out of range, or < 0 - return empty *QVariant
+	if !index.IsValid() {
+		return core.NewQVariant()
+	}
+	//iData - list element, i have no idea, why it is not already ContactObject
+	//example of code taken from developers of therecipe/qt library code
+	var iData, exists = listOfContacts.Get(index.Row())
+	if !exists {
+		return core.NewQVariant()
+	}
+	//if all right - get *ContactObject from list ellement
+	resultContact := iData.(*ContactObject)
+
+	return resultContact.ToVariant()
+}
+
+//we need manualy provide function for count of row in model
+func rowCount(parent *core.QModelIndex) int {
+	return listOfContacts.Size()
 }

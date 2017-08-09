@@ -7,6 +7,7 @@ import (
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
 	"github.com/8tomat8/SSU-Golang-252-Chat/server/modules"
 	"github.com/8tomat8/SSU-Golang-252-Chat/server/message"
+	"github.com/8tomat8/SSU-Golang-252-Chat/server/config"
 )
 
 var upgrader = websocket.Upgrader{
@@ -27,13 +28,13 @@ func MessageHandler(w http.ResponseWriter, r *http.Request) {
 		for {
 			messageType, text, err := conn.ReadMessage()
 			if err != nil {
-				loger.Log.Warningf("Read message error: ", err.Error())
+				loger.Log.Warningf("Read message error: %s", err.Error())
 				break
 			}
 
 			msg, err := messageService.UnmarshalMessage(text)
 			if err != nil {
-				loger.Log.Warnf("Unmarshal message error: ", err.Error())
+				loger.Log.Warnf("Unmarshal message error: %s", err.Error())
 				continue
 			}
 
@@ -59,8 +60,18 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 func addNewConnect(w http.ResponseWriter, r *http.Request) (*websocket.Conn, error) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		loger.Log.Errorf("Connect new user Error: ", err.Error())
+		loger.Log.Errorf("Connect new user Error: %s", err.Error())
 	}
 
 	return conn, err
+}
+
+func ReturnPort() string{
+
+	port := config.GetConfig().Server.Port
+	if port == "" {
+		loger.Log.Panic("Port is Empty")
+	}
+
+	return port
 }

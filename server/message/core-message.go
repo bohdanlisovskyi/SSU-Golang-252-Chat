@@ -13,17 +13,21 @@ const (
 	RegisterType = "register"
 	AuthType = "auth"
 	StatusOk = "Ok"
+	MarshalError = "Marshal message error"
+	UnmarshalError = "Unmarshal message error"
+	ReceiverNotFound = "Receiver not found"
+	WriteMsgError = "Write message error"
 )
 
 func SendMessage(message *messageService.Message, messageType int) messageService.Message {
 
 	byteMessage, err := messageService.MarshalMessage(message)
 	if err != nil {
-		loger.Log.Errorf("Marshal message error: ", err.Error())
+		loger.Log.Errorf("Marshal message error: %s", err.Error())
 		return messageService.Message {
 			Header:messageService.MessageHeader{
 				Type_: MessageType,
-				Command: "Marshal message error",
+				Command: MarshalError,
 			},
 			Body:message.Body,
 		}
@@ -36,12 +40,12 @@ func writeMsg(text []byte, message *messageService.Message, messageType int) mes
 	msgBody := messageService.MessageBody{}
 	err := json.Unmarshal(message.Body, &msgBody)
 	if err != nil {
-		loger.Log.Errorf("Unmarshal message error: ", err.Error())
+		loger.Log.Errorf("Unmarshal message error: %s", err.Error())
 
 		return messageService.Message {
 			Header:messageService.MessageHeader{
 				Type_: MessageType,
-				Command: "Unmarshal message error",
+				Command: UnmarshalError,
 			},
 			Body:message.Body,
 		}
@@ -53,7 +57,7 @@ func writeMsg(text []byte, message *messageService.Message, messageType int) mes
 		return messageService.Message {
 			Header:messageService.MessageHeader{
 				Type_: MessageType,
-				Command: "Receiver not found",
+				Command: ReceiverNotFound,
 			},
 			Body:message.Body,
 		}
@@ -61,11 +65,11 @@ func writeMsg(text []byte, message *messageService.Message, messageType int) mes
 
 	err = client.Conn.WriteMessage(messageType, text)
 	if err != nil {
-		loger.Log.Errorf("Write message error: ", err.Error())
+		loger.Log.Errorf("Write message error: %s", err.Error())
 		return messageService.Message {
 			Header:messageService.MessageHeader{
 				Type_: MessageType,
-				Command: "Write message error",
+				Command: WriteMsgError,
 			},
 			Body:message.Body,
 		}

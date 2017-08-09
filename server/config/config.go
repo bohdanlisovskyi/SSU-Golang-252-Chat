@@ -10,9 +10,13 @@ type Storage struct {
 	Driver string `json:"driver"`
 	Name string `json:"name"`
 }
+type Server struct {
+	Port string `json:"port"`
+}
 
 type Config struct {
 	Storage Storage `json:"storage"`
+	Server Server `json:"server"`
 }
 
 var config Config

@@ -8,6 +8,7 @@ import (
 	"github.com/8tomat8/SSU-Golang-252-Chat/server/config"
 	"github.com/8tomat8/SSU-Golang-252-Chat/server/modules"
 	"github.com/gorilla/websocket"
+	"github.com/8tomat8/SSU-Golang-252-Chat/server/message"
 )
 
 var upgrader = websocket.Upgrader{

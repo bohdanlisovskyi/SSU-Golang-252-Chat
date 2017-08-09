@@ -20,7 +20,7 @@ type BlockUserRequestBody struct {
 // checks and retrieves value of is_blocked variable.
 // Function returns: if succeed - *BlockUserRequestBody, is_blocked value, nil,
 // if failed - nil, nil, err
-func UnmarshalBlockUserRequestBody(request messageService.Message) (*BlockUserRequestBody, int, error) {
+func UnmarshalBlockUserRequestBody(request *messageService.Message) (*BlockUserRequestBody, int, error) {
 	var body *BlockUserRequestBody
 	err := json.Unmarshal(request.Body, &body)
 	if err != nil {
@@ -39,7 +39,7 @@ func UnmarshalBlockUserRequestBody(request messageService.Message) (*BlockUserRe
 // BlockUnblockUser perform blocking and unblocking of users by clicking the button on UI.
 // Button works like a trigger: first push - block user, second push - unblock user.
 // Function returns: if succeed - true and nil, if failed - false and error
-func BlockUnblockUser(request messageService.Message) (bool, error) {
+func BlockUnblockUser(request *messageService.Message) (bool, error) {
 	body, IsBlocked, err := UnmarshalBlockUserRequestBody(request)
 	if err != nil {
 		loger.Log.Errorf("Error has occurred: ", err)
@@ -53,7 +53,6 @@ func BlockUnblockUser(request messageService.Message) (bool, error) {
 		return false, err
 	}
 	db, err := database.GetStorage() // common gorm-connection from database package
-	defer db.Close()
 	if err != nil {
 		loger.Log.Errorf("DB error has occurred: ", err)
 		return false, err

@@ -46,15 +46,29 @@ func MessageHandler(w http.ResponseWriter, r *http.Request) {
 func validateMessage(message *messageService.Message, messageType int, conn *websocket.Conn) {
 
 	switch message.Header.Type_ {
-	case coremessage.EmptyType :
+	case coremessage.EmptyType:
 		modules.EmptyType()
-	case coremessage.MessageType :
+	case coremessage.MessageType:
 		modules.Message(message, messageType, conn)
-	case coremessage.RegisterType :
+	case coremessage.RegisterType:
 		modules.Register(message, conn)
-	case coremessage.AuthType :
+	case coremessage.AuthType:
 		modules.Auth(message, conn)
+	case coremessage.SettingType:
+		switch message.Header.Command {
+		case coremessage.ChangePassComm:
+			modules.ChangePass(message, messageType, conn)
+		case coremessage.ChangeNicknameComm:
+			modules.ChangeNickName(message, messageType, conn)
+		case coremessage.ChangeBirthdayComm:
+			modules.ChangeBirthday(message, messageType, conn)
+		case coremessage.ChangeUserInfoComm:
+			modules.ChangeAboutUserInfo(message, messageType, conn)
+		case coremessage.BlockUserComm:
+			modules.BlockUnblockUser(message, messageType, conn)
+		}
 	}
+
 }
 
 func addNewConnect(w http.ResponseWriter, r *http.Request) (*websocket.Conn, error) {
@@ -66,7 +80,7 @@ func addNewConnect(w http.ResponseWriter, r *http.Request) (*websocket.Conn, err
 	return conn, err
 }
 
-func ReturnPort() string{
+func ReturnPort() string {
 
 	port := config.GetConfig().Server.Port
 	if port == "" {

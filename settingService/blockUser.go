@@ -77,17 +77,11 @@ type ContactResult struct {
 }
 
 // IsUserBlocked checks if user is blocked for chatting in contacts table
-// Function returns: if succeed - is_blocked value(0 or 1) from contacts table and nil, if failed - nil and error
-func IsUserBlocked(byteRequest [] byte) (isBlocked int, err error) {
-	request, err := messageService.UnmarshalMessage(byteRequest)
-	if err != nil {
-		loger.Log.Errorf("Error has occurred: ", err)
-		return nil, err
-	}
+// Function returns: if succeed - true or false from contacts table(depend is contact blocked or not) and nil, if failed - nil and error
+func IsUserBlocked(request *messageService.Message) (isBlocked bool, err error) {
 	contactUser := request.Body.ReceiverName
 	mainUser := request.Header.UserName
 	db, err := database.GetStorage() // common gorm-connection from database package
-	defer db.Close()
 	if err != nil {
 		loger.Log.Errorf("DB error has occurred: ", err)
 		return nil, err
@@ -105,12 +99,11 @@ func IsUserBlocked(byteRequest [] byte) (isBlocked int, err error) {
 		loger.Log.Errorf("Error has occurred: ", err)
 		return nil, err
 	}
-	isBlocked = result.IsBlocked
-	if isBlocked == 0 {
-		return 0, nil
+	if result.IsBlocked == 0 {
+		return false, nil
 	}
-	if isBlocked == 1 {
-		return 1, nil
+	if result.IsBlocked == 1 {
+		return true, nil
 	}
 	err = errors.New("Function has failed")
 	return nil, err

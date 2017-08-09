@@ -21,7 +21,6 @@ func RegisterNewUser(user *messageService.Authentification) (*messageService.Aut
 		return nil, "", err
 	}
 	db, err := database.GetStorage()
-	defer db.Close()
 	if err != nil {
 		loger.Log.Errorf("Failed to open db", err)
 		return nil, "", err

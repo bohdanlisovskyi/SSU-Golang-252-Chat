@@ -3,17 +3,18 @@ package auth
 import (
 	"crypto/rand"
 	"encoding/base64"
+	"errors"
 
 	"github.com/8tomat8/SSU-Golang-252-Chat/database"
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
 	"golang.org/x/crypto/bcrypt"
+	"golang.org/x/net/websocket"
 )
 
 func getUserByName(UserName string) (*messageService.Authentification, error) {
 
 	db, err := database.GetStorage()
-	defer db.Close()
 	if err != nil {
 		loger.Log.Errorf("Failed to open db", err)
 		return nil, err
@@ -24,7 +25,6 @@ func getUserByName(UserName string) (*messageService.Authentification, error) {
 	if err != nil {
 		loger.Log.Errorf("Failed to find user in DB")
 	}
-
 	return ret, err
 }
 
@@ -49,6 +49,23 @@ func Login(username, password string) (*messageService.Authentification, string,
 
 	token := randToken()
 	return foundUser, token, nil
+}
+
+func VerifyToken(clientToken, serverToken string) (bool, error) {
+	if clientToken == "" {
+		err := errors.New("Empty token, pls relogin!")
+		return false, err
+	}
+	if serverToken == "" {
+		err := errors.New("No token in connection!")
+		return false, err
+	}
+	if clientToken == serverToken {
+		return true, nil
+	}
+	err := errors.New("token verification failed!")
+	return false, err
+
 }
 
 func randToken() string {

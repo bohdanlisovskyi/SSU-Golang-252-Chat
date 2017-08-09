@@ -10,9 +10,13 @@ type Storage struct {
 	Driver string `json:"driver"`
 	Name string `json:"name"`
 }
+type Server struct {
+	Port string `json:"port"`
+}
 
 type Config struct {
 	Storage Storage `json:"storage"`
+	Server Server `json:"server"`
 }
 
 var config Config
@@ -22,14 +26,14 @@ func init() {
 	data, err := ioutil.ReadFile("./config.json")
 
 	if err != nil {
-		loger.Log.Panicf("Can't read config. %s", err.Error())
+		loger.Log.Panicf("Can't read config file: %s", err.Error())
 	}
 
 	config = Config{}
 
 	if err := json.Unmarshal(data, &config); err != nil {
 
-		loger.Log.Panicf("Can't read config. %s", err.Error())
+		loger.Log.Panicf("Can't unmarshal config file: %s", err.Error())
 	}
 }
 

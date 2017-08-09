@@ -1,0 +1,82 @@
+package coremessage
+
+import (
+	"encoding/json"
+	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
+	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
+	"github.com/8tomat8/SSU-Golang-252-Chat/server/customers"
+)
+
+const (
+	EmptyType = ""
+	MessageType = "message"
+	RegisterType = "register"
+	AuthType = "auth"
+	StatusOk = "Ok"
+)
+
+func SendMessage(message *messageService.Message, messageType int) messageService.Message {
+
+	byteMessage, err := messageService.MarshalMessage(message)
+	if err != nil {
+		loger.Log.Errorf("Marshal message error: ", err.Error())
+		return messageService.Message {
+			Header:messageService.MessageHeader{
+				Type_: MessageType,
+				Command: "Marshal message error",
+			},
+			Body:message.Body,
+		}
+	}
+
+	return writeMsg(byteMessage, message, messageType) //I send this text []byte to receiver
+}
+
+func writeMsg(text []byte, message *messageService.Message, messageType int) messageService.Message {
+	msgBody := messageService.MessageBody{}
+	err := json.Unmarshal(message.Body, &msgBody)
+	if err != nil {
+		loger.Log.Errorf("Unmarshal message error: ", err.Error())
+
+		return messageService.Message {
+			Header:messageService.MessageHeader{
+				Type_: MessageType,
+				Command: "Unmarshal message error",
+			},
+			Body:message.Body,
+		}
+	}
+
+	client, ok := customers.Clients[msgBody.ReceiverName]
+	if !ok {
+		loger.Log.Warn("Receiver not found")
+		return messageService.Message {
+			Header:messageService.MessageHeader{
+				Type_: MessageType,
+				Command: "Receiver not found",
+			},
+			Body:message.Body,
+		}
+	}
+
+	err = client.Conn.WriteMessage(messageType, text)
+	if err != nil {
+		loger.Log.Errorf("Write message error: ", err.Error())
+		return messageService.Message {
+			Header:messageService.MessageHeader{
+				Type_: MessageType,
+				Command: "Write message error",
+			},
+			Body:message.Body,
+		}
+	}
+
+	return messageService.Message {
+		Header:messageService.MessageHeader{
+			Type_: MessageType,
+			Command: StatusOk,
+		},
+		Body:message.Body,
+	}
+}
+

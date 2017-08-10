@@ -19,6 +19,7 @@ type ContactObject struct {
 
 	_ string `property:"username"`
 	_ string `property:"nickname"`
+	_ bool   `property:"isblocked"`
 }
 
 //QmlContacts represent contacts as QObject
@@ -28,6 +29,7 @@ type QmlContacts struct {
 	_ func(newIndex int)                    `slot:"changeCurrentContact"`
 	_ func(searchedUser string)             `slot:"searchUser"`
 	_ func(newUsername, newNickname string) `slot:"addUser"`
+	_ func(status bool, index int)          `slot:"blockContact"`
 	_ func(lastMessage string, index int)   `signal:"sendLastMessage"`
 	_ func(history string, index int)       `signal:"sendHistory"`
 }
@@ -47,23 +49,29 @@ func initQmlContacts(quickWidget *quick.QQuickWidget) {
 	qmlContacts.ConnectAddUser(func(newUsername, newNickname string) {
 
 	})
-	//
+	//set isBlocked field
+	qmlContacts.ConnectBlockContact(func(status bool, index int) {
+		//this code will be uncommented after Contacts will be born
+		//contacts.ContactsList.ContactsList[index].IsBlocked = status
+	})
 }
 
 func initContactObject(quickWidget *quick.QQuickWidget) {
 	listOfContacts = arraylist.New()
 
-	//test contacts
+	//test contacts. will be removed after implement Contacts service
 	var testContact *ContactObject
 	for i := 0; i < 5; i++ {
 		testContact = NewContactObject(nil)
 		testContact.SetUsername("Me " + strconv.Itoa(i))
 		testContact.SetNickname("Volodymyr " + strconv.Itoa(i))
+		testContact.SetIsblocked(i%2 == 0)
 		listOfContacts.Add(testContact)
 	}
 	var test2Contact = NewContactObject(nil)
 	test2Contact.SetUsername("Me " + "test2")
 	test2Contact.SetNickname("Volodymyr " + "test2")
+	test2Contact.SetIsblocked(false)
 	listOfContacts.Add(test2Contact)
 	var model = core.NewQAbstractListModel(nil)
 	model.ConnectData(contactsData)
@@ -84,7 +92,7 @@ func contactsData(index *core.QModelIndex, role int) *core.QVariant {
 	if !exists {
 		return core.NewQVariant()
 	}
-	//if all right - get *ContactObject from list ellement
+	//if all right - get *ContactObject from list element
 	resultContact := iData.(*ContactObject)
 
 	return resultContact.ToVariant()

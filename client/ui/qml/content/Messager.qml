@@ -11,6 +11,7 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
     signal send(string message)
+    signal block(bool status, int index)
     property Text historyText: historyTextView
     property TextEdit messageText: messageEdit
 
@@ -239,9 +240,35 @@ Item {
                         Item {
                             width: parent.width
                             height: 40
-                            Column {
-                                Text { text: 'UserName:' + model.display.username }
-                                Text { text: 'NickName:' + model.display.nickname }
+                            Row{
+                                Column {
+                                    Text { text: 'UserName:' + model.display.username }
+                                    Text { text: 'NickName:' + model.display.nickname }
+                                }
+                                Button {
+                                    x: 0
+                                    y: 0
+                                    width: 40
+                                    height: 50
+                                    text: qsTr("B")
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: 0
+                                    Layout.maximumHeight: 40
+                                    Layout.maximumWidth: 50
+                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                                    z: 0
+                                    scale: 1
+                                    Layout.minimumHeight: 40
+                                    Layout.minimumWidth: 50
+                                    Layout.fillHeight: false
+                                    Layout.fillWidth: false
+                                    checkable: true
+                                    checked: model.display.isblocked
+                                    onCheckedChanged: {
+                                        model.isblocked = checked
+                                        block(checked, index)
+                                    }
+                                }
                             }
                             MouseArea {
                                 anchors.fill: parent

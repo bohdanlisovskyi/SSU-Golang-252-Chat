@@ -32,6 +32,10 @@ func newQmlWidget() *quick.QQuickWidget {
 	initQmlMessage(quickWidget)
 	//add qmlStatus to widget as context_property
 	initQmlStatus(quickWidget)
+	//add qmlContacts to widget as context_property
+	initQmlContacts(quickWidget)
+	//add qmlSettings to widget as context_property
+	initQmlSettings(quickWidget)
 	//add listmodel of ContactObject to widget as model
 	initContactObject(quickWidget)
 	quickWidget.SetSource(core.NewQUrl3("qrc:/qml/main.qml", 0))

@@ -40,7 +40,7 @@ func initQmlLogin(quickWidget *quick.QQuickWidget) {
 
 func checkLoginDataAndConnect(userName, password string) {
 	if userName == "" || password == "" {
-		/*loger.Log.Info("Login faild. userName and/or password field are empty")
+		/*loger.Log.Info("Login failed. userName and/or password field are empty")
 		qmlStatus.SendStatus("Please, fill the fields")
 		qmlLogin.LoginDataIsValid(false)
 		return*/
@@ -85,7 +85,7 @@ func checkLoginDataAndConnect(userName, password string) {
 	newRawMessageBody, err := json.Marshal(newMessageBody)
 	if err != nil {
 		qmlLogin.LoginDataIsValid(false)
-		loger.Log.Errorf("Can`t marshal login message. %s", err)
+		loger.Log.Warningf("Can`t marshal login message. %s", err)
 		qmlStatus.SendStatus("Login data can't be sent")
 		return
 	}
@@ -96,11 +96,12 @@ func checkLoginDataAndConnect(userName, password string) {
 	marshaledMessage, err := messageService.MarshalMessage(&newMessage)
 	if err := connection.WriteMessage(websocket.TextMessage, marshaledMessage); err != nil {
 		qmlLogin.LoginDataIsValid(false)
-		loger.Log.Errorf("Can not send login data. %s", err)
+		loger.Log.Warningf("Can not send login data. %s", err)
 		qmlStatus.SendStatus("Login data can't be sent")
 		return
 	}
 	qmlStatus.SendStatus("Waiting for server response.")
+	loger.Log.Info("Login data sent to server. Waiting for response.")
 	//start listening for login response
 	//if all right - we need to start listening other channels
 	listener.AuthorizationChannel = make(chan messageService.Message)
@@ -112,7 +113,7 @@ func checkLoginDataAndConnect(userName, password string) {
 func logOut() {
 	err := connection.Close()
 	if err != nil {
-		loger.Log.Errorf("Can not close connection. %s", err)
+		loger.Log.Warningf("Can not close connection. %s", err)
 		qmlStatus.SendStatus("Can not log out")
 		qmlLogin.LogOutIsSuccessfull(false)
 		return

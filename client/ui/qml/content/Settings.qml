@@ -12,7 +12,7 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
     signal backToMessager()
-    signal applyChanges()
+    signal applyChanges(string newPassword, string oldPassword, string newNickname, date birthday, string about)
 
     RowLayout {
         id: rowLayout
@@ -54,7 +54,7 @@ Item {
                 Button {
                     id: applyButton
                     text: qsTr("Apply")
-                    onClicked: applyChanges()
+                    onClicked: applyChanges(newPasswordTextInput.text, oldPasswordTextInput.text, nicknameTextInput.text, calendar.selectedDate, aboutEdit.text)
                 }
 
             }
@@ -84,7 +84,7 @@ Item {
                     property string placeholderText: "Enter new password here..."
                     Rectangle {
                         id: rectangleNewPasswordInput
-                        width: newPasswordTextInput.width
+                        width: 200
                         color: "#827fb2"
                         radius: 0
                         border.width: 2
@@ -130,7 +130,7 @@ Item {
                     property string placeholderText: "Enter old password here..."
                     Rectangle {
                         id: rectangleOldPasswordInput
-                        width: oldPasswordTextInput.width
+                        width: 200
                         color: "#827fb2"
                         radius: 0
                         border.width: 2
@@ -174,7 +174,7 @@ Item {
                     font.pixelSize: 12
                     Rectangle {
                         id: rectangleNicknameInput
-                        width: oldPasswordTextInput.width
+                        width: 200
                         color: "#827fb2"
                         radius: 0
                         border.width: 2
@@ -199,8 +199,8 @@ Item {
                     frameVisible: true
                     weekNumbersVisible: true
                     selectedDate: new Date(1995, 0, 1)
+                    onSelectedDateChanged: console.debug(calendar.selectedDate)
                     focus: true
-
                     style: CalendarStyle {
                         dayDelegate: Item {
                             readonly property color sameMonthDateTextColor: "#444"
@@ -285,7 +285,7 @@ Item {
                     contentWidth: aboutEdit.paintedWidth
                     contentHeight: aboutEdit.paintedHeight
                     clip: true
-                    ScrollBar.vertical: ScrollBar { id: vbar; active: hbar.active }
+                    //ScrollBar.vertical: ScrollBar { id: vbar; active: hbar.active }
                     function ensureVisible(r)
                     {
                         if (contentX >= r.x)

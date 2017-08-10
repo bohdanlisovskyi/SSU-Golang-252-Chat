@@ -68,6 +68,6 @@ func sendMessage(message string) {
 		qmlStatus.SendStatus("Message wasn`t sent. It`s not your fall. Life is just a PAIN")
 		return
 	}
-
+	qmlStatus.SendStatus("Waiting for server response.")
 	//now we just waiting for server response
 }

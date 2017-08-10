@@ -21,13 +21,19 @@ type MessageType struct {
 }
 
 type MessageCommand struct {
-	SendMessage      string `json:"sendmessage"`
-	ReceiveMessage   string `json:"receivemessage"`
-	MessageSent      string `json:"messagesent"`
-	MessageWasntSent string `json:"messagewasntsent"`
-	SendLoginData    string `json:"sendlogindata"`
-	LoginIsSucc      string `json:"authissucc"`
-	LoginIsNotSucc   string `json:"authisnotsucc"`
+	SendMessage          string `json:"sendmessage"`
+	ReceiveMessage       string `json:"receivemessage"`
+	MessageSent          string `json:"messagesent"`
+	MessageWasntSent     string `json:"messagewasntsent"`
+	SendLoginData        string `json:"sendlogindata"`
+	LoginIsSucc          string `json:"authissucc"`
+	LoginIsNotSucc       string `json:"authisnotsucc"`
+	SendRegisterData     string `json:"sendregisterdata"`
+	RegisterIsSucc       string `json:"registerissucc"`
+	RegisterIsNotSucc    string `json:"registerisnotsucc"`
+	SendSettings         string `json:"sendsettings"`
+	SettingsChanged      string `json:"settingschsnged"`
+	SettingsWasntChanged string `json:"settingswasntchanged"`
 }
 
 type LoginCommand struct {

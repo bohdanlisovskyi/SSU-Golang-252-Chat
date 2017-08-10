@@ -1,6 +1,6 @@
 {
   "server": {
-    "host": "127.0.0.1:3002",
+    "host": "127.0.0.1:3006",
     "path": "/message"
   },
   "messagetype": {
@@ -16,6 +16,12 @@
     "messagewasntsent": "messagewasntsent",
     "sendlogindata":    "sendlogindata",
     "loginissucc":      "loginissucc",
-    "loginisnotsucc":   "loginisnotsucc"
+    "loginisnotsucc":   "loginisnotsucc",
+    "sendregisterdata": "sendregisterdata",
+    "registerissucc":   "registerissucc",
+    "registerisnotsucc":"registerisnotsucc",
+    "sendsettings":     "sendsettings",
+    "settingschanged":  "settingschanged",
+    "settingswasntchanged": "settingswasntchanged"
   }
 }

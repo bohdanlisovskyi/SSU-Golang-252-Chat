@@ -5,20 +5,9 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"encoding/json"
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
+	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
 	dbGorm "github.com/8tomat8/SSU-Golang-252-Chat/database"
 )
-
-type ContactHeader struct {
-	Type_    string `json:"type"`
-	Command  string `json:"command"`
-	UserName string `json:"userName"`
-	Token    string `json:"token"`
-}
-
-type ContactStructure struct {
-	Header ContactHeader `json:"header"`
-	Body json.RawMessage `json:"body"`
-}
 
 type Authentifications struct {
 	UserName string `json:"username"`
@@ -27,21 +16,24 @@ type Authentifications struct {
 }
 
 type Users struct {
-	UserName string `json:"username"`
-	Birthday int `json:"birthday"`
+	UserName  string `json:"username"`
+	Birthday  int    `json:"birthday"`
 	AboutUser string `json:"aboutuser"`
 	UserImage string `json:"userimage`
 }
 
 type Contacts struct {
-	MainUser string `json:"mainuser"`
+	MainUser    string `json:"mainuser"`
 	ContactUser string `json:"contactuser"`
-	IsBlocked int `json:"isblocked`
+	IsBlocked   int    `json:"isblocked`
+}
+
+type Search struct {
+	SearchContact string `json:"searchvalue"`
 }
 
 func AddContact(contact Contacts) (bool, error){
 	db, err := dbGorm.GetStorage()
-	defer db.Close()
 	if err != nil{
 		loger.Log.Errorf("AddContact db connection ERROR: ", err)
 		return false, err
@@ -57,7 +49,6 @@ func AddContact(contact Contacts) (bool, error){
 
 func AddNewUser(user Users) (bool, error){
 	db, err := dbGorm.GetStorage()
-	defer db.Close()
 	if err != nil{
 		loger.Log.Errorf("AddNewUser db connection ERROR: ", err)
 		return false, err
@@ -74,8 +65,6 @@ func AddNewUser(user Users) (bool, error){
 func GetContacts(id string) ([]Users, error){
 	users := []Users{}
 	db, err := dbGorm.GetStorage()
-	defer db.Close()
-
 	if err != nil{
 		loger.Log.Errorf("GetContacts db connection ERROR: ", err)
 		return users, err
@@ -85,15 +74,12 @@ func GetContacts(id string) ([]Users, error){
 	if err != nil {
 		loger.Log.Errorf("GetContacts func ERROR: ", err)
 	}
-
 	return users, err
 }
 
 func GetUserInfo(id string) (Users, error){
 	var user Users
 	db, err := dbGorm.GetStorage()
-	defer db.Close()
-
 	if err != nil{
 		loger.Log.Errorf("GetUserInfo db connection ERROR: ", err)
 		return user, err
@@ -108,7 +94,6 @@ func GetUserInfo(id string) (Users, error){
 
 func RemoveContacts(id string)(bool, error){
 	db, err := dbGorm.GetStorage()
-	defer db.Close()
 	if err != nil{
 		loger.Log.Errorf("RemoveContacts db connection ERROR: ", err)
 		return false, err
@@ -128,7 +113,6 @@ func RemoveContacts(id string)(bool, error){
 
 func RemoveUser(id string)(bool, error) {
 	db, err := dbGorm.GetStorage()
-	defer db.Close()
 	if err != nil{
 		loger.Log.Errorf("RemoveUser db connection ERROR: ", err)
 		return false, err
@@ -170,8 +154,6 @@ func RemoveUser(id string)(bool, error) {
 func SearchContacts(search string)([]Users, error){
 	users := []Users{}
 	db, err := dbGorm.GetStorage()
-
-	defer db.Close()
 	if err != nil{
 		loger.Log.Errorf("SearchContact db connection ERROR: ", err)
 		return users, err
@@ -183,4 +165,34 @@ func SearchContacts(search string)([]Users, error){
 		loger.Log.Errorf("SearchContact func search data ERROR: ", err)
 	}
 	return users, err
+}
+
+func UnmarshalContacts(request messageService.Message) (*Contacts, error) {
+	var body *Contacts
+	err := json.Unmarshal(request.Body, &body)
+	if err != nil {
+		loger.Log.Errorf("UnmarshalContacts func Error has occurred: ", err)
+		return body, err
+	}
+	return body, err
+}
+
+func UnmarshalUsers(request messageService.Message) (*Users, error) {
+	var body *Users
+	err := json.Unmarshal(request.Body, &body)
+	if err != nil {
+		loger.Log.Errorf("UnmarshalUsers func Error has occurred: ", err)
+		return body, err
+	}
+	return body, err
+}
+
+func UnmarshalSearch(request messageService.Message) (*Search, error) {
+	var body *Search
+	err := json.Unmarshal(request.Body, &body)
+	if err != nil {
+		loger.Log.Errorf("UnmarshalSearch func Error has occurred: ", err)
+		return body, err
+	}
+	return body, err
 }

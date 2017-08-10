@@ -8,15 +8,22 @@ import (
 )
 
 const (
-	EmptyType = ""
-	MessageType = "message"
-	RegisterType = "register"
-	AuthType = "auth"
-	StatusOk = "Ok"
-	MarshalError = "Marshal message error"
-	UnmarshalError = "Unmarshal message error"
-	ReceiverNotFound = "Receiver not found"
-	WriteMsgError = "Write message error"
+	EmptyType              = ""
+	MessageType            = "message"
+	RegisterType           = "register"
+	AuthType               = "auth"
+	ContactType            = "contact"
+	AddContactCommand      = "add_contact"
+	DeleteContactCommand   = "delete_contact"
+	DeleteUserCommand      = "delete_user"
+	ShowUserInfoCommand    = "user_info"
+	ShowAllContactsCommand = "all_contacts"
+	SearchContactCommand   = "search_contact"
+	StatusOk               = "Ok"
+	MarshalError           = "Marshal message error"
+	UnmarshalError         = "Unmarshal message error"
+	ReceiverNotFound       = "Receiver not found"
+	WriteMsgError          = "Write message error"
 )
 
 func SendMessage(message *messageService.Message, messageType int) messageService.Message {

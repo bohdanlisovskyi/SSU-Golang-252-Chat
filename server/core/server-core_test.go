@@ -33,7 +33,7 @@ var (
 func TestValidateMessage(t *testing.T) {
 
 	u := url.URL{Scheme: "ws", Host: *addr, Path: "/message"}
-	log.Printf("connecting to %s", u.String())
+	fmt.Println("connecting to %s", u.String())
 
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 
@@ -48,10 +48,10 @@ func TestValidateMessage(t *testing.T) {
 		for {
 			_, message, err := c.ReadMessage()
 			if err != nil {
-				log.Println("read:", err)
+				fmt.Println("read:", err)
 				return
 			}
-			log.Printf("recv: %s", message)
+			fmt.Println("recv: %s", message)
 		}
 	}()
 	byteUser, err := json.Marshal(body)

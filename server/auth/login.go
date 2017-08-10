@@ -8,6 +8,7 @@ import (
 	"github.com/8tomat8/SSU-Golang-252-Chat/database"
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
+	"github.com/8tomat8/SSU-Golang-252-Chat/server/customers"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -50,9 +51,9 @@ func Login(username, password string) (*messageService.Authentification, string,
 	return foundUser, token, nil
 }
 
-func VerifyToken(clientToken, serverToken string) (bool, error) {
-	//clientToken == messageService.Header.Token
-	//serverToken == customers.Clients[message.Header.UserName].Token
+func VerifyToken(message *messageService.Message, client customers.Client) (bool, error) {
+	clientToken := message.Header.Token
+	serverToken := client.Token
 	if clientToken == "" {
 		err := errors.New("Empty token, pls relogin!")
 		return false, err

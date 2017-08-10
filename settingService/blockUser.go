@@ -84,7 +84,7 @@ func IsUserBlocked(request *messageService.Message) (isBlocked bool, err error) 
 	db, err := database.GetStorage() // common gorm-connection from database package
 	if err != nil {
 		loger.Log.Errorf("DB error has occurred: ", err)
-		return nil, err
+		return true, err
 	}
 	var result ContactResult //variable for storing result of querying into ContactResult struct
 	// SELECT main_user, contact_user, is_blocked FROM contacts
@@ -97,7 +97,7 @@ func IsUserBlocked(request *messageService.Message) (isBlocked bool, err error) 
 	if db.Error != nil {
 		err := errors.New("Bad parsing")
 		loger.Log.Errorf("Error has occurred: ", err)
-		return nil, err
+		return true, err
 	}
 	if result.IsBlocked == 0 {
 		return false, nil
@@ -106,5 +106,5 @@ func IsUserBlocked(request *messageService.Message) (isBlocked bool, err error) 
 		return true, nil
 	}
 	err = errors.New("Function has failed")
-	return nil, err
+	return true, err
 }

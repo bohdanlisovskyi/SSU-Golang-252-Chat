@@ -55,6 +55,21 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 		modules.Register(message, conn)
 	case coremessage.AuthType:
 		modules.Auth(message, conn)
+	case coremessage.ContactType :
+		switch message.Header.Command {
+			case coremessage.AddContactCommand:
+				modules.AddContact(message, messageType, conn)
+			case coremessage.DeleteContactCommand:
+				modules.DeleteContact(message, messageType, conn)
+			case coremessage.DeleteUserCommand:
+				modules.DeleteUser(message, messageType, conn)
+			case coremessage.ShowUserInfoCommand:
+				modules.ShowUserInfo(message, messageType, conn)
+			case coremessage.ShowAllContactsCommand:
+				modules.ShowAllContacts(message, messageType, conn)
+			case coremessage.SearchContactCommand:
+				modules.SearchContact(message, messageType, conn)
+		}
 	}
 }
 

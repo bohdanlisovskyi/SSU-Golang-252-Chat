@@ -53,7 +53,7 @@ func Auth(message *messageService.Message, conn *websocket.Conn) {
 }
 
 func ChangePass(message *messageService.Message, messageType int, conn *websocket.Conn) {
-	ok, err := settingService.ChangePass(*message)
+	ok, err := settingService.ChangePass(message)
 	if err != nil {
 		loger.Log.Errorf(" Error has occurred : ", err)
 		byteError, _ := json.Marshal(changePassError) // this for UI
@@ -72,7 +72,7 @@ func ChangePass(message *messageService.Message, messageType int, conn *websocke
 }
 
 func ChangeNickName(message *messageService.Message, messageType int, conn *websocket.Conn) {
-	ok, err := settingService.ChangeNickName(*message)
+	ok, err := settingService.ChangeNickName(message)
 	if err != nil {
 		loger.Log.Errorf(" Error has occurred : ", err)
 		byteError, _ := json.Marshal(changeNicknameError) // this for UI
@@ -91,7 +91,7 @@ func ChangeNickName(message *messageService.Message, messageType int, conn *webs
 }
 
 func ChangeBirthday(message *messageService.Message, messageType int, conn *websocket.Conn) {
-	ok, err := settingService.ChangeBirthday(*message)
+	ok, err := settingService.ChangeBirthday(message)
 	if err != nil {
 		loger.Log.Errorf(" Error has occurred : ", err)
 		byteError, _ := json.Marshal(changeBirthdayError) // this for UI
@@ -110,7 +110,7 @@ func ChangeBirthday(message *messageService.Message, messageType int, conn *webs
 }
 
 func ChangeAboutUserInfo(message *messageService.Message, messageType int, conn *websocket.Conn) {
-	ok, err := settingService.ChangeAboutUserInfo(*message)
+	ok, err := settingService.ChangeAboutUserInfo(message)
 	if err != nil {
 		loger.Log.Errorf(" Error has occurred : ", err)
 		byteError, _ := json.Marshal(changeUserInfoError) // this for UI
@@ -127,7 +127,7 @@ func ChangeAboutUserInfo(message *messageService.Message, messageType int, conn 
 }
 
 func BlockUnblockUser(message *messageService.Message, messageType int, conn *websocket.Conn) {
-	ok, err := settingService.BlockUnblockUser(*message)
+	ok, err := settingService.BlockUnblockUser(message)
 	if err != nil {
 		loger.Log.Errorf(" Error has occurred : ", err)
 		byteError, _ := json.Marshal(blockUserError) // this for UI

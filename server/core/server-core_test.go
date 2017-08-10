@@ -15,16 +15,16 @@ import (
 var (
 	Type_       = "messageService"
 	Command     = "send message"
-	UserName    = "u90ddgOne"
+	UserName    = "num0ddgOne"
 	NickName    = "nick"
 	Password    = "1234324234"
 	CurrentTime = 1500373713
 	Token       = "333"
 	Text        = "msg from user 1 to user 2"
-	header      = messageService.MessageHeader{Type_: "register", Command: "registrissucc", UserName: UserName, Token: Token}
+	header      = messageService.MessageHeader{Type_: "auth", Command: "authissucc", UserName: UserName, Token: Token}
 
 	body = messageService.Authentification{UserName: UserName, Password: Password, NickName: NickName}
-	addr = flag.String("addr", "localhost:3002", "http service address")
+	addr = flag.String("addr", "localhost:3006", "http service address")
 )
 
 func TestValidateMessage(t *testing.T) {

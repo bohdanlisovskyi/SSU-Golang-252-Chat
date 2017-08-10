@@ -34,7 +34,6 @@ func Message(message *messageService.Message, messageType int, conn *websocket.C
 }
 
 func Register(message *messageService.Message, conn *websocket.Conn) {
-
 	if _, ok := customers.Clients[message.Header.UserName]; ok {
 		loger.Log.Warn("User already exist")
 		conn.Close()
@@ -89,7 +88,7 @@ func Auth(message *messageService.Message, conn *websocket.Conn) {
 		conn.Close()
 		return
 	}
-	us, tok, err := auth.RegisterNewUser(user)
+	us, tok, err := auth.Login(user.UserName, user.Password)
 	if err != nil {
 		loger.Log.Errorf("failed to register user", err)
 		conn.Close()

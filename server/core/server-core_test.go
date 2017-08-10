@@ -4,9 +4,6 @@ import (
 	"encoding/json"
 	"testing"
 
-	"fmt"
-
-	"log"
 	"net/url"
 
 	"flag"
@@ -33,12 +30,12 @@ var (
 func TestValidateMessage(t *testing.T) {
 
 	u := url.URL{Scheme: "ws", Host: *addr, Path: "/message"}
-	fmt.Println("connecting to %s", u.String())
+	t.Logf("connecting to %s", u.String())
 
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 
 	if err != nil {
-		log.Fatal("dial:", err)
+		t.Logf("dial:", err)
 	}
 
 	defer c.Close()
@@ -48,10 +45,10 @@ func TestValidateMessage(t *testing.T) {
 		for {
 			_, message, err := c.ReadMessage()
 			if err != nil {
-				fmt.Println("read:", err)
+				t.Logf("read:", err)
 				return
 			}
-			fmt.Println("recv: %s", message)
+			t.Logf("recv: %s", message)
 		}
 	}()
 	byteUser, err := json.Marshal(body)
@@ -61,6 +58,6 @@ func TestValidateMessage(t *testing.T) {
 
 	message := &messageService.Message{Header: header, Body: byteUser}
 	ValidateMessage(message, 1, c)
-	fmt.Println("ok")
+	t.Logf("ok")
 
 }

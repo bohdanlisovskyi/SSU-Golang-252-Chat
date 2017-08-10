@@ -92,22 +92,22 @@ func GetUserInfo(id string) (Users, error){
 	return user, err
 }
 
-func RemoveContacts(id string)(bool, error){
+func RemoveContact(id string, contactId string)(bool, error){
 	db, err := dbGorm.GetStorage()
 	if err != nil{
 		loger.Log.Errorf("RemoveContacts db connection ERROR: ", err)
 		return false, err
 	}
 
-	tr := db.Begin()
-	err = tr.Where("contact_user = ?", id).Delete(Contacts{}).Error
+	if id == "" {
+		err = db.Where("contact_user = ?", contactId).Delete(Contacts{}).Error
+	} else {
+		err = db.Where("main_user = ? and contact_user = ?", id, contactId).Delete(Contacts{}).Error
+	}
 	if err != nil {
 		loger.Log.Errorf("Delete contacts from contacts table ERROR: ", err)
-		tr.Rollback()
 		return false, err
 	}
-
-	tr.Commit()
 	return true, err
 }
 
@@ -121,7 +121,7 @@ func RemoveUser(id string)(bool, error) {
 	// begin a transaction
 	tr := db.Begin()
 
-	if _, err := RemoveContacts(id); err != nil {
+	if _, err := RemoveContact("", id); err != nil {
 		loger.Log.Errorf("Delete contacts ERROR: ", err)
 		tr.Rollback()
 		return false, err

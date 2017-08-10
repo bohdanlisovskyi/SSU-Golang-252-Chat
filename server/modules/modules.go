@@ -156,7 +156,7 @@ func DeleteContact(message *messageService.Message, messageType int, conn *webso
 	var err error
 	deleteContact, err = contactService.UnmarshalContacts(*message)
 
-	if _, err = contactService.RemoveContacts(deleteContact.ContactUser); err != nil {
+	if _, err = contactService.RemoveContact(deleteContact.MainUser, deleteContact.ContactUser); err != nil {
 		loger.Log.Errorf("deleting contact from contacts table failed server error: ", err)
 		byteError, _ := json.Marshal(
 			messageService.Message{

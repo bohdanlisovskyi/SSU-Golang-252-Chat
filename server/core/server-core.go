@@ -67,7 +67,7 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 		case coremessage.BlockUserComm:
 			modules.BlockUnblockUser(message, messageType, conn)
 		default:
-			loger.Log.Println("Command does not exist")
+			loger.Log.Warnf("Command does not exist")
 		}
 	}
 

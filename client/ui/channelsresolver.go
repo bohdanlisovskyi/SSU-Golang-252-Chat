@@ -63,10 +63,7 @@ func receiveAuth(message messageService.Message) {
 		listener.AuthorizationChannel = nil
 		err := connection.Close()
 		if err != nil {
-			loger.Log.Errorf("Cannot close connection after register is not successfully. %s", err)
-			qmlRegister.RegisterDataIsValid(false)
-			qmlStatus.SendStatus("Register not successfully. Please, try again later!")
-			return
+			loger.Log.Errorf("Cannot close connection after register is successfully. %s", err)
 		}
 		loger.Log.Infof("User %s register successfully.", message.Header.UserName)
 		qmlRegister.RegisterDataIsValid(true)

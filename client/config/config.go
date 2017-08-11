@@ -36,10 +36,6 @@ type MessageCommand struct {
 	SettingsWasntChanged string `json:"settingswasntchanged"`
 }
 
-type LoginCommand struct {
-	//Login
-}
-
 type Config struct {
 	Server         Server         `json:"server"`
 	MessageType    MessageType    `json:"messagetype"`

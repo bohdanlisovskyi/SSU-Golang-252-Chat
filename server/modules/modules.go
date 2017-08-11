@@ -5,12 +5,10 @@ import (
 
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
-	"github.com/gorilla/websocket"
-
-	"github.com/8tomat8/SSU-Golang-252-Chat/settingService"
 	"github.com/8tomat8/SSU-Golang-252-Chat/server/auth"
 	"github.com/8tomat8/SSU-Golang-252-Chat/server/customers"
 	"github.com/8tomat8/SSU-Golang-252-Chat/server/message"
+	"github.com/8tomat8/SSU-Golang-252-Chat/settingService"
 	"github.com/gorilla/websocket"
 )
 
@@ -129,6 +127,7 @@ func Auth(message *messageService.Message, conn *websocket.Conn) {
 		conn.Close()
 		return
 	}
+}
 
 func ChangePass(message *messageService.Message, messageType int, conn *websocket.Conn) {
 	ok, err := settingService.ChangePass(message)

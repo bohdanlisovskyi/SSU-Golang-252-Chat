@@ -8,6 +8,7 @@ import (
 
 	"github.com/8tomat8/SSU-Golang-252-Chat/server/customers"
 	"github.com/8tomat8/SSU-Golang-252-Chat/settingService"
+	"github.com/8tomat8/SSU-Golang-252-Chat/server/message"
 )
 
 func EmptyType() {
@@ -16,7 +17,19 @@ func EmptyType() {
 
 func Message(message *messageService.Message, messageType int, conn *websocket.Conn) {
 
-	err := coremessage.SendMessage(message, messageType)
+	isBlocked, err := settingService.IsUserBlocked(message)
+	if err != nil {
+		loger.Log.Errorf(" Error has occurred : ", err)
+		byteError, _ := json.Marshal(changeNicknameError) // this for UI
+		conn.WriteMessage(messageType, byteError)         // this for UI
+		return
+	}
+	if isBlocked {
+		loger.Log.Errorf("This contact is blocked")
+		return
+	}
+
+	err = coremessage.SendMessage(message, messageType)
 	byteError, er := json.Marshal(err)
 
 	if er != nil {

@@ -2,12 +2,13 @@ package core
 
 import (
 	"net/http"
-	"github.com/gorilla/websocket"
+
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
+	"github.com/8tomat8/SSU-Golang-252-Chat/server/config"
 	"github.com/8tomat8/SSU-Golang-252-Chat/server/modules"
 	"github.com/8tomat8/SSU-Golang-252-Chat/server/message"
-	"github.com/8tomat8/SSU-Golang-252-Chat/server/config"
+	"github.com/gorilla/websocket"
 )
 
 var upgrader = websocket.Upgrader{

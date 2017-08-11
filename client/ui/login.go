@@ -114,9 +114,14 @@ func logOut() {
 	err := connection.Close()
 	if err != nil {
 		loger.Log.Warningf("Can not close connection. %s", err)
-		qmlStatus.SendStatus("Can not log out")
-		qmlLogin.LogOutIsSuccessfull(false)
-		return
+		//if it`s not already closed - we have no idea what happened
+		if !websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseAbnormalClosure) {
+			qmlStatus.SendStatus("Can not log out")
+			qmlLogin.LogOutIsSuccessfull(false)
+			return
+		}
+		//if it`s closed, error spawns, but connection in stay we want
+		//so just signal UI to change window
 	}
 	loger.Log.Info("Connection closed")
 	qmlLogin.LogOutIsSuccessfull(true)

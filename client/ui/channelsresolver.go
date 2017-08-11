@@ -15,6 +15,11 @@ func channelsResolver() {
 	for {
 		select {
 		case <-listener.QuitChannel:
+			listener.ContactsChannel = nil
+			listener.MessageChannel = nil
+			listener.SettingsChannel = nil
+			listener.AuthorizationChannel = nil
+			listener.QuitChannel = nil
 			return
 		case msg := <-listener.AuthorizationChannel:
 			switch msg.Header.Command {
@@ -62,11 +67,7 @@ func loginIsSuccessfully(message messageService.Message) {
 }
 
 func loginIsNotSuccessfully(message messageService.Message) {
-	//login data is invalid, so we close conn and inform UI
-	listener.QuitChannel <- struct{}{}
-	//we blocked Auth channel until user want to send login data again
-	listener.AuthorizationChannel = nil
-	//just close connection
+	//just close connection. in listener after closing connection excutes QuitChannel <- struct{}{}
 	err := connection.Close()
 	if err != nil {
 		loger.Log.Errorf("Cannot close connection after login is not successfully. %s", err)
@@ -80,9 +81,6 @@ func loginIsNotSuccessfully(message messageService.Message) {
 func registerIsSuccessfully(message messageService.Message) {
 	//however register successfully we need to close connection
 	//because all register actions have ended
-	listener.QuitChannel <- struct{}{}
-	//we blocked Auth channel until user want to send Auth data again
-	listener.AuthorizationChannel = nil
 	err := connection.Close()
 	if err != nil {
 		loger.Log.Errorf("Cannot close connection after register is successfully. %s", err)
@@ -94,9 +92,6 @@ func registerIsSuccessfully(message messageService.Message) {
 
 func registerIsNotSuccessfully(message messageService.Message) {
 	//register is not successfully we need to close connection
-	listener.QuitChannel <- struct{}{}
-	//we blocked Auth channel until user want to send Auth data again
-	listener.AuthorizationChannel = nil
 	err := connection.Close()
 	if err != nil {
 		loger.Log.Errorf("Cannot close connection after register is not successfully. %s", err)

@@ -18,7 +18,7 @@ type ChangeNickNameRequestBody struct {
 // and retrieves value of NickName.
 // Function returns: if succeed - NickName value to be stored in users table, nil,
 // if failed - empty string, err
-func UnmarshalChangeNickNameRequestBody(request messageService.Message) (string, error) {
+func UnmarshalChangeNickNameRequestBody(request *messageService.Message) (string, error) {
 	var body *ChangeNickNameRequestBody
 	err := json.Unmarshal(request.Body, &body)
 	if err != nil {
@@ -36,7 +36,7 @@ func UnmarshalChangeNickNameRequestBody(request messageService.Message) (string,
 
 // ChangeNickName perform changing users NickName value in users table.
 // Function returns: if succeed - true and nil, if failed - false and error
-func ChangeNickName(request messageService.Message) (bool, error) {
+func ChangeNickName(request *messageService.Message) (bool, error) {
 	userName := request.Header.UserName
 	if userName == "" {
 		err := errors.New("User name value is empty")
@@ -49,7 +49,6 @@ func ChangeNickName(request messageService.Message) (bool, error) {
 		return false, err
 	}
 	db, err := database.GetStorage() // common gorm-connection from database package
-	defer db.Close()
 	if err != nil {
 		loger.Log.Errorf("DB error has occurred: ", err)
 		return false, err

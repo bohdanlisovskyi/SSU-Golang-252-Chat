@@ -65,7 +65,7 @@ func checkLoginDataAndConnect(userName, password string) {
 	}
 	connection, _, err = websocket.DefaultDialer.Dial(connUrl.String(), nil)
 	if err != nil {
-		loger.Log.Errorf("Can not dial. %s", err)
+		loger.Log.Warningf("Can not dial. %s", err)
 		qmlLogin.LoginDataIsValid(false)
 		qmlStatus.SendStatus("Loging failed")
 		return
@@ -77,7 +77,7 @@ func checkLoginDataAndConnect(userName, password string) {
 		UserName: "",
 		Token:    "",
 	}
-	newMessageBody := messageService.User{
+	newMessageBody := messageService.Authentification{
 		UserName: userName,
 		NickName: "",
 		Password: password,

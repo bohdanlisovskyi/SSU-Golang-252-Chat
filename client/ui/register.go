@@ -44,7 +44,7 @@ func initQmlRegister(quickWidget *quick.QQuickWidget) {
 		//this connection should be closed just after server response
 		connection, _, err = websocket.DefaultDialer.Dial(connUrl.String(), nil)
 		if err != nil {
-			loger.Log.Errorf("Can not dial. %s", err)
+			loger.Log.Warningf("Can not dial. %s", err)
 			qmlLogin.LoginDataIsValid(false)
 			qmlStatus.SendStatus("Register failed")
 			return
@@ -55,7 +55,7 @@ func initQmlRegister(quickWidget *quick.QQuickWidget) {
 			UserName: "",
 			Token:    "",
 		}
-		newMessageBody := messageService.User{
+		newMessageBody := messageService.Authentification{
 			UserName: userName,
 			NickName: nickName,
 			Password: password,
@@ -63,7 +63,7 @@ func initQmlRegister(quickWidget *quick.QQuickWidget) {
 		newRawMessageBody, err := json.Marshal(newMessageBody)
 		if err != nil {
 			qmlLogin.LoginDataIsValid(false)
-			loger.Log.Errorf("Can`t marshal register message. %s", err)
+			loger.Log.Warningf("Can`t marshal register message. %s", err)
 			qmlStatus.SendStatus("Register data can't be sent")
 			return
 		}
@@ -74,7 +74,7 @@ func initQmlRegister(quickWidget *quick.QQuickWidget) {
 		marshaledMessage, err := messageService.MarshalMessage(&newMessage)
 		if err := connection.WriteMessage(websocket.TextMessage, marshaledMessage); err != nil {
 			qmlLogin.LoginDataIsValid(false)
-			loger.Log.Errorf("Can not send register data. %s", err)
+			loger.Log.Warningf("Can not send register data. %s", err)
 			qmlStatus.SendStatus("Register data can't be sent")
 			return
 		}

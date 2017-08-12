@@ -15,11 +15,6 @@ func channelsResolver() {
 	for {
 		select {
 		case <-listener.QuitChannel:
-			listener.ContactsChannel = nil
-			listener.MessageChannel = nil
-			listener.SettingsChannel = nil
-			listener.AuthorizationChannel = nil
-			listener.QuitChannel = nil
 			return
 		case msg := <-listener.AuthorizationChannel:
 			switch msg.Header.Command {

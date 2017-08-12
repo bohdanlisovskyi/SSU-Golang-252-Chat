@@ -23,15 +23,12 @@ func initQmlSettings(quickWidget *quick.QQuickWidget) {
 	qmlSettings.ConnectApplySettings(func(oldPassword, newPassword, newNickname string, date time.Time, about string) {
 		//we need to form settings message and sent it to server
 		//code will be uncommented after fix Settings functionality
-		/*
-			newMessageHeader := messageService.MessageHeader{
-				Type_:    config.GetConfig().MessageType.Settings,
-				Command:  config.GetConfig().MessageCommand.SendSettings,
-				UserName: userinfo.CurrentUserInfo.UserName,
-				Token:    userinfo.CurrentUserInfo.Token,
-			}*/
-
-		//i need body. i have no body. find graveyard for me. arggggggggg
+		/*newMessageHeader := messageService.MessageHeader{
+			Type_:    config.GetConfig().MessageType.Settings,
+			Command:  config.GetConfig().MessageCommand.SendSettings,
+			UserName: userinfo.CurrentUserInfo.UserName,
+			Token:    userinfo.CurrentUserInfo.Token,
+		}*/
 
 		//after send message we just waiting for response
 

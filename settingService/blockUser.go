@@ -80,8 +80,14 @@ type ContactResult struct {
 // Function returns: if succeed - true or false from contacts table(depend is contact blocked or not) and nil, if failed - nil and error
 func IsUserBlocked(request *messageService.Message) (isBlocked bool, err error) {
 	isBlocked = true
-	contactUser := request.Body.ReceiverName
-	mainUser := request.Header.UserName
+	var body messageService.MessageBody
+	err = json.Unmarshal(request.Body, &body)
+	if err != nil {
+		loger.Log.Errorf("Error has occurred: ", err)
+		return nil, err
+	}
+	mainUser := body.ReceiverName
+	contactUser := request.Header.UserName
 	db, err := database.GetStorage() // common gorm-connection from database package
 	if err != nil {
 		loger.Log.Errorf("DB error has occurred: ", err)

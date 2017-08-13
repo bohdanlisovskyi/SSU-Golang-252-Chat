@@ -151,6 +151,9 @@ ApplicationWindow {
         onSend: {
             qmlMessage.sendMessage(message)
         }
+        onBlock: {
+            qmlContacts.blockContact(status, index)
+        }
     }
 
     Settings {
@@ -159,6 +162,9 @@ ApplicationWindow {
         onBackToMessager: {
             messagerWindowLocal.visible = true
             visible = false
+        }
+        onApplyChanges: {
+            qmlSettings.applySettings(newPassword, oldPassword, newNickname, birthday, about)
         }
     }
 

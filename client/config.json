@@ -1,5 +1,27 @@
 {
   "server": {
-    "connection": "ws://127.0.0.1:3002/message"
+    "host": "127.0.0.1:3006",
+    "path": "/message"
+  },
+  "messagetype": {
+    "message":        "message",
+    "authorization":  "authorization",
+    "contacts":       "contact",
+    "settings":       "setting"
+  },
+  "messagecommand": {
+    "sendmessage":      "sendMessage",
+    "receivemessage":   "receiveMessage",
+    "messagesended":    "messageSent",
+    "messagewasntsent": "messagewasntsent",
+    "sendlogindata":    "sendlogindata",
+    "loginissucc":      "loginissucc",
+    "loginisnotsucc":   "loginisnotsucc",
+    "sendregisterdata": "sendregisterdata",
+    "registerissucc":   "registerissucc",
+    "registerisnotsucc":"registerisnotsucc",
+    "sendsettings":     "sendsettings",
+    "settingschanged":  "settingschanged",
+    "settingswasntchanged": "settingswasntchanged"
   }
 }

@@ -22,7 +22,7 @@ func UnmarshalChangeBirthdayRequestBody(request *messageService.Message) (int, e
 	err := json.Unmarshal(request.Body, &body)
 	if err != nil {
 		loger.Log.Errorf("Error has occurred: ", err)
-		return nil, err
+		return -1, err
 	}
 	birthday := body.Birthday
 	return birthday, nil

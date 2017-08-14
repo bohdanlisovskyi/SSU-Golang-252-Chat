@@ -22,18 +22,18 @@ func UnmarshalAboutUserRequestBody(request *messageService.Message) (string, err
 	err := json.Unmarshal(request.Body, &body)
 	if err != nil {
 		loger.Log.Errorf("Error has occurred: ", err)
-		return nil, err
+		return "", err
 	}
 	aboutUser := body.AboutUser
 	if aboutUser == "" {
 		err := errors.New("Info hasn't been filled")
 		loger.Log.Errorf("Error has occurred: ", err)
-		return nil, err
+		return "", err
 	}
 	if len(aboutUser) >= 999{ // column about_user in table users has length restriction - VARCHAR(1000)
 		err := errors.New("Too many symbols have been filled")
 		loger.Log.Errorf("Error has occurred: ", err)
-		return nil, err
+		return "", err
 	}
 	return aboutUser, nil
 }

@@ -25,13 +25,13 @@ func UnmarshalBlockUserRequestBody(request *messageService.Message) (*BlockUserR
 	err := json.Unmarshal(request.Body, &body)
 	if err != nil {
 		loger.Log.Errorf("Error has occurred: ", err)
-		return nil, nil, err
+		return nil, -1, err
 	}
 	IsBlocked := body.IsBlocked // IsBlocked value could be int 0 or 1
 	if IsBlocked != 0 && IsBlocked != 1 {
 		err := errors.New("IsBlocked value is not valid. IsBlocked = " + string(IsBlocked))
 		loger.Log.Errorf("IsBlocked value is not 1 or 0:", err)
-		return nil, nil, err
+		return nil, -1, err
 	}
 	return body, IsBlocked, nil
 }
@@ -84,14 +84,14 @@ func IsUserBlocked(request *messageService.Message) (isBlocked bool, err error) 
 	err = json.Unmarshal(request.Body, &body)
 	if err != nil {
 		loger.Log.Errorf("Error has occurred: ", err)
-		return nil, err
+		return true, err
 	}
 	mainUser := body.ReceiverName
 	contactUser := request.Header.UserName
 	db, err := database.GetStorage() // common gorm-connection from database package
 	if err != nil {
 		loger.Log.Errorf("DB error has occurred: ", err)
-		return
+		return true, err
 	}
 	var result ContactResult //variable for storing result of querying into ContactResult struct
 	// SELECT main_user, contact_user, is_blocked FROM contacts

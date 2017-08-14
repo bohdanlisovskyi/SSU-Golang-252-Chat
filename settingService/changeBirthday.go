@@ -16,7 +16,7 @@ type ChangeBirthdayRequestBody struct {
 // UnmarshalBirthdayRequest function unmarshals request for changing birthday into ChangeBirthdayRequestBody struct
 // and retrieves value of birthday.
 // Function returns: if succeed - birthday value to be stored in users table, nil,
-// if failed - nil, err
+// if failed - -1, err
 func UnmarshalChangeBirthdayRequestBody(request *messageService.Message) (int, error) {
 	var body *ChangeBirthdayRequestBody
 	err := json.Unmarshal(request.Body, &body)

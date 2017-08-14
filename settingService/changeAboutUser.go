@@ -16,7 +16,7 @@ type ChangeAboutUserRequestBody struct {
 // UnmarshalAboutUserRequestBody function unmarshals request for changing field about_user(in table users)
 // into ChangeBirthdayRequestBody struct and retrieves value of to be stored in about_user field.
 // Function returns: if succeed - about_user value to be stored in users table, nil,
-// if failed - nil, err
+// if failed - "", err
 func UnmarshalAboutUserRequestBody(request *messageService.Message) (string, error) {
 	var body *ChangeAboutUserRequestBody
 	err := json.Unmarshal(request.Body, &body)

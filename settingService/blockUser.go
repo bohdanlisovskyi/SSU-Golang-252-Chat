@@ -19,7 +19,7 @@ type BlockUserRequestBody struct {
 // UnmarshalBlockUserRequestBody function unmarshals request for blocking of users into BlockUserRequestBody struct,
 // checks and retrieves value of is_blocked variable.
 // Function returns: if succeed - *BlockUserRequestBody, is_blocked value, nil,
-// if failed - nil, nil, err
+// if failed - nil, -1, err
 func UnmarshalBlockUserRequestBody(request *messageService.Message) (*BlockUserRequestBody, int, error) {
 	var body *BlockUserRequestBody
 	err := json.Unmarshal(request.Body, &body)
@@ -77,7 +77,8 @@ type ContactResult struct {
 }
 
 // IsUserBlocked checks if user is blocked for chatting in contacts table
-// Function returns: if succeed - true or false from contacts table(depend is contact blocked or not) and nil, if failed - nil and error
+// Function returns: if succeed - true or false from contacts table(depend is contact blocked or not) and nil,
+// if failed - true and error
 func IsUserBlocked(request *messageService.Message) (isBlocked bool, err error) {
 	isBlocked = true
 	var body messageService.MessageBody

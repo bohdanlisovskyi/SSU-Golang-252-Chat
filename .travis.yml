@@ -3,8 +3,7 @@ language: go
 go:
   - 1.8.x
 
-install:
-  - go get github.com/gorilla/mux
+install: make get-deps
 
 go_import_path: ./
 

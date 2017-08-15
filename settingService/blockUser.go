@@ -19,19 +19,19 @@ type BlockUserRequestBody struct {
 // UnmarshalBlockUserRequestBody function unmarshals request for blocking of users into BlockUserRequestBody struct,
 // checks and retrieves value of is_blocked variable.
 // Function returns: if succeed - *BlockUserRequestBody, is_blocked value, nil,
-// if failed - nil, nil, err
+// if failed - nil, -1, err
 func UnmarshalBlockUserRequestBody(request *messageService.Message) (*BlockUserRequestBody, int, error) {
 	var body *BlockUserRequestBody
 	err := json.Unmarshal(request.Body, &body)
 	if err != nil {
 		loger.Log.Errorf("Error has occurred: ", err)
-		return nil, nil, err
+		return nil, -1, err
 	}
 	IsBlocked := body.IsBlocked // IsBlocked value could be int 0 or 1
 	if IsBlocked != 0 && IsBlocked != 1 {
 		err := errors.New("IsBlocked value is not valid. IsBlocked = " + string(IsBlocked))
 		loger.Log.Errorf("IsBlocked value is not 1 or 0:", err)
-		return nil, nil, err
+		return nil, -1, err
 	}
 	return body, IsBlocked, nil
 }
@@ -77,21 +77,22 @@ type ContactResult struct {
 }
 
 // IsUserBlocked checks if user is blocked for chatting in contacts table
-// Function returns: if succeed - true or false from contacts table(depend is contact blocked or not) and nil, if failed - nil and error
+// Function returns: if succeed - true or false from contacts table(depend is contact blocked or not) and nil,
+// if failed - true and error
 func IsUserBlocked(request *messageService.Message) (isBlocked bool, err error) {
 	isBlocked = true
 	var body messageService.MessageBody
 	err = json.Unmarshal(request.Body, &body)
 	if err != nil {
 		loger.Log.Errorf("Error has occurred: ", err)
-		return nil, err
+		return true, err
 	}
 	mainUser := body.ReceiverName
 	contactUser := request.Header.UserName
 	db, err := database.GetStorage() // common gorm-connection from database package
 	if err != nil {
 		loger.Log.Errorf("DB error has occurred: ", err)
-		return
+		return true, err
 	}
 	var result ContactResult //variable for storing result of querying into ContactResult struct
 	// SELECT main_user, contact_user, is_blocked FROM contacts

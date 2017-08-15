@@ -2,10 +2,4 @@ language: go
 
 go:
   - 1.8.x
-before_install:
-  - sudo add-apt-repository --yes ppa:beineri/opt-qt551-trusty
-  - sudo apt-get update -qq
 
-install:
-  - sudo apt-get -y install qt55[QTPACKAGE]
-  - go get -t ./...

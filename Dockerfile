@@ -12,6 +12,5 @@ RUN go get ./...
 ENV PORT 5000
 # Expose port 8080 to the host so we can access our application
 EXPOSE 5000
-# Now tell Docker what command to run when the container starts
 #CMD ["go-wrapper","run"]
 CMD go run /go/src/chat/server/main.go

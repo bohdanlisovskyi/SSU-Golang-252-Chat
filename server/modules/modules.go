@@ -1,12 +1,13 @@
 package modules
 
 import (
-	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"encoding/json"
+
+	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
+	"github.com/8tomat8/SSU-Golang-252-Chat/server/customers"
 	"github.com/gorilla/websocket"
 	"github.com/8tomat8/SSU-Golang-252-Chat/server/message"
-	"github.com/8tomat8/SSU-Golang-252-Chat/server/customers"
 )
 
 func EmptyType() {
@@ -38,7 +39,7 @@ func Register(message *messageService.Message, conn *websocket.Conn) {
 		return
 
 	}
-	customers.Clients[message.Header.UserName] = customers.Client{Conn:conn}
+	customers.Clients[message.Header.UserName] = customers.Client{Conn: conn}
 }
 
 func Auth(message *messageService.Message, conn *websocket.Conn) {
@@ -48,5 +49,5 @@ func Auth(message *messageService.Message, conn *websocket.Conn) {
 		return
 
 	}
-	customers.Clients[message.Header.UserName] = customers.Client{Conn:conn}
+	customers.Clients[message.Header.UserName] = customers.Client{Conn: conn}
 }

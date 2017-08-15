@@ -3,8 +3,8 @@ language: go
 go:
   - 1.8.x
 
-install: make get-deps
+install:
+  - go get -u -v $(go list -f '{{join .Imports "\n"}}{{"\n"}}{{join .TestImports "\n"}}' ./... | sort | uniq | grep -v 8tomat8)
+
 
 go_import_path: ./
-
-script: go test ./server/auth/

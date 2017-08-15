@@ -12,4 +12,4 @@ install:
 script:
   - source /opt/qt55/bin/qt55-env.sh
   - /opt/qt55/bin/qmake
-  - make
+  - makefile

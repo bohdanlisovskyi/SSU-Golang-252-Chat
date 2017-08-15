@@ -4,6 +4,8 @@ go:
   - 1.8.x
 
 install:
-  - go get -t ./...
+  - go get github.com/gorilla/mux
 
-go_import_path: ./
+go_import_path: ./server/auth
+
+script: go test ./server/auth

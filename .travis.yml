@@ -2,6 +2,7 @@ language: go
 
 go:
   - 1.8.x
-
-ignore:
-  - client/*
+before_install:
+  - docker pull therecipe/qt:linux
+  - go get -v github.com/therecipe/qt/cmd/...
+  - $GOPATH/bin/qtsetup -docker

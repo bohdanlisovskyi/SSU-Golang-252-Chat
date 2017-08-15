@@ -4,6 +4,6 @@ go:
   - 1.8.x
 
 install:
-  - go get -t -v ./...
+  - go get github.com/gorilla/mux
 
 go_import_path: ./

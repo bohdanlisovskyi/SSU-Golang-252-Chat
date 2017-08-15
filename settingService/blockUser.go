@@ -20,7 +20,7 @@ type BlockUserRequestBody struct {
 // checks and retrieves value of is_blocked variable.
 // Function returns: if succeed - *BlockUserRequestBody, is_blocked value, nil,
 // if failed - nil, nil, err
-func UnmarshalBlockUserRequestBody(request messageService.Message) (*BlockUserRequestBody, int, error) {
+func UnmarshalBlockUserRequestBody(request *messageService.Message) (*BlockUserRequestBody, int, error) {
 	var body *BlockUserRequestBody
 	err := json.Unmarshal(request.Body, &body)
 	if err != nil {
@@ -39,7 +39,7 @@ func UnmarshalBlockUserRequestBody(request messageService.Message) (*BlockUserRe
 // BlockUnblockUser perform blocking and unblocking of users by clicking the button on UI.
 // Button works like a trigger: first push - block user, second push - unblock user.
 // Function returns: if succeed - true and nil, if failed - false and error
-func BlockUnblockUser(request messageService.Message) (bool, error) {
+func BlockUnblockUser(request *messageService.Message) (bool, error) {
 	body, IsBlocked, err := UnmarshalBlockUserRequestBody(request)
 	if err != nil {
 		loger.Log.Errorf("Error has occurred: ", err)
@@ -53,7 +53,6 @@ func BlockUnblockUser(request messageService.Message) (bool, error) {
 		return false, err
 	}
 	db, err := database.GetStorage() // common gorm-connection from database package
-	defer db.Close()
 	if err != nil {
 		loger.Log.Errorf("DB error has occurred: ", err)
 		return false, err
@@ -78,20 +77,21 @@ type ContactResult struct {
 }
 
 // IsUserBlocked checks if user is blocked for chatting in contacts table
-// Function returns: if succeed - is_blocked value(0 or 1) from contacts table and nil, if failed - nil and error
-func IsUserBlocked(byteRequest [] byte) (isBlocked int, err error) {
-	request, err := messageService.UnmarshalMessage(byteRequest)
+// Function returns: if succeed - true or false from contacts table(depend is contact blocked or not) and nil, if failed - nil and error
+func IsUserBlocked(request *messageService.Message) (isBlocked bool, err error) {
+	isBlocked = true
+	var body messageService.MessageBody
+	err = json.Unmarshal(request.Body, &body)
 	if err != nil {
 		loger.Log.Errorf("Error has occurred: ", err)
 		return nil, err
 	}
-	contactUser := request.Body.ReceiverName
-	mainUser := request.Header.UserName
+	mainUser := body.ReceiverName
+	contactUser := request.Header.UserName
 	db, err := database.GetStorage() // common gorm-connection from database package
-	defer db.Close()
 	if err != nil {
 		loger.Log.Errorf("DB error has occurred: ", err)
-		return nil, err
+		return
 	}
 	var result ContactResult //variable for storing result of querying into ContactResult struct
 	// SELECT main_user, contact_user, is_blocked FROM contacts
@@ -104,15 +104,15 @@ func IsUserBlocked(byteRequest [] byte) (isBlocked int, err error) {
 	if db.Error != nil {
 		err := errors.New("Bad parsing")
 		loger.Log.Errorf("Error has occurred: ", err)
-		return nil, err
+		return true, err
 	}
-	isBlocked = result.IsBlocked
-	if isBlocked == 0 {
-		return 0, nil
+	switch result.IsBlocked {
+	case 0:
+		return false, nil
+	case 1:
+		return
+	default:
+		return
 	}
-	if isBlocked == 1 {
-		return 1, nil
-	}
-	err = errors.New("Function has failed")
-	return nil, err
+	return
 }

@@ -17,7 +17,7 @@ type ChangeAboutUserRequestBody struct {
 // into ChangeBirthdayRequestBody struct and retrieves value of to be stored in about_user field.
 // Function returns: if succeed - about_user value to be stored in users table, nil,
 // if failed - nil, err
-func UnmarshalAboutUserRequestBody(request messageService.Message) (string, error) {
+func UnmarshalAboutUserRequestBody(request *messageService.Message) (string, error) {
 	var body *ChangeAboutUserRequestBody
 	err := json.Unmarshal(request.Body, &body)
 	if err != nil {
@@ -40,7 +40,7 @@ func UnmarshalAboutUserRequestBody(request messageService.Message) (string, erro
 
 // ChangeAboutUser perform changing field about_user in users table.
 // Function returns: if succeed - true and nil, if failed - false and error
-func ChangeAboutUserInfo(request messageService.Message) (bool, error) {
+func ChangeAboutUserInfo(request *messageService.Message) (bool, error) {
 	userName := request.Header.UserName
 	if userName == "" {
 		err := errors.New("User name value is empty")
@@ -53,7 +53,6 @@ func ChangeAboutUserInfo(request messageService.Message) (bool, error) {
 		return false, err
 	}
 	db, err := database.GetStorage() // common gorm-connection from database package
-	defer db.Close()
 	if err != nil {
 		loger.Log.Errorf("DB error has occurred: ", err)
 		return false, err

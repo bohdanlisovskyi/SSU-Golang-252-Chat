@@ -47,11 +47,11 @@ func ChangeAboutUserInfo(request *messageService.Message) (bool, error) {
 		loger.Log.Errorf("Error has occurred: ", err)
 		return false, err
 	}
-	/*aboutUser, err := UnmarshalAboutUserRequestBody(request)
+	aboutUser, err := UnmarshalAboutUserRequestBody(request)
 	if err != nil {
 		loger.Log.Errorf("Error has occurred: ", err)
 		return false, err
-	}*/
+	}
 	db, err := database.GetStorage() // common gorm-connection from database package
 	if err != nil {
 		loger.Log.Errorf("DB error has occurred: ", err)
@@ -59,7 +59,7 @@ func ChangeAboutUserInfo(request *messageService.Message) (bool, error) {
 	}
 	// UPDATE users SET about_user = "aboutUser value from request body"
 	// WHERE user_name = "userName value from request header"
-//	db.Model(&User).Where("user_name = ?", userName).Update("about_user", aboutUser)
+	db.Model(&User).Where("user_name = ?", userName).Update("about_user", aboutUser)
 	if db.Error != nil {
 		loger.Log.Errorf("Error has occurred: ", err)
 		return false, err

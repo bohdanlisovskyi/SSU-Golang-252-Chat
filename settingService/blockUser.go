@@ -40,7 +40,7 @@ func UnmarshalBlockUserRequestBody(request *messageService.Message) (*BlockUserR
 // Button works like a trigger: first push - block user, second push - unblock user.
 // Function returns: if succeed - true and nil, if failed - false and error
 func BlockUnblockUser(request *messageService.Message) (bool, error) {
-	body, _, err := UnmarshalBlockUserRequestBody(request)
+	body, IsBlocked, err := UnmarshalBlockUserRequestBody(request)
 	if err != nil {
 		loger.Log.Errorf("Error has occurred: ", err)
 		return false, err
@@ -60,7 +60,7 @@ func BlockUnblockUser(request *messageService.Message) (bool, error) {
 	// UPDATE contacts SET IsBlocked = "IsBlocked value from request body"
 	// WHERE main_user = "mainUser value from request body"
 	// AND  contact_user = "contactUser value from request body"
-//	db.Model(&Contact).Where("main_user = ? AND contact_user = ?", mainUser, contactUser).Update("is_blocked", IsBlocked)
+	db.Model(&Contact).Where("main_user = ? AND contact_user = ?", mainUser, contactUser).Update("is_blocked", IsBlocked)
 	if db.Error != nil {
 		loger.Log.Errorf("Error has occurred: ", err)
 		return false, err

@@ -9,6 +9,7 @@ import (
 	"github.com/8tomat8/SSU-Golang-252-Chat/server/customers"
 	"github.com/8tomat8/SSU-Golang-252-Chat/server/message"
 	"github.com/gorilla/websocket"
+	"github.com/Greckas/SSU-Golang-252-Chat/server/message"
 )
 
 func EmptyType() {
@@ -53,7 +54,7 @@ func Register(message *messageService.Message, conn *websocket.Conn) {
 		return
 	}
 	newMessageHeader := messageService.MessageHeader{
-		Type_:    "authorization",
+		Type_:    coremessage.RegisterType,
 		Command:  "registrissucc",
 		UserName: us.UserName,
 		Token:    tok,
@@ -95,8 +96,8 @@ func Auth(message *messageService.Message, conn *websocket.Conn) {
 		return
 	}
 	newMessageHeader := messageService.MessageHeader{
-		Type_:    "authorization",
-		Command:  "authissucc",
+		Type_:    coremessage.AuthType,
+		Command:  "loginissucc",
 		UserName: us.UserName,
 		Token:    tok,
 	}

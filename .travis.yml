@@ -3,6 +3,5 @@ language: go
 go:
   - 1.8.x
 
-install:
-  - go get -v github.com/therecipe/qt/cmd/...
-  - go get -t -v ./...
+ignore:
+  - ./client

@@ -7,10 +7,12 @@ import (
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/server/core"
 	"github.com/gorilla/mux"
+	"fmt"
 )
 
 func main() {
 
+	fmt.Println(os.Getenv("GOPATH"))
 	port := os.Getenv("PORT")
 	loger.Log.Infof("Server run with port: " + port)
 	r := mux.NewRouter()

@@ -4,6 +4,6 @@ go:
   - 1.8.x
 
 install:
-  - go get -u -v
+  - go get -t -v ./...
 
 go_import_path: ./

@@ -5,5 +5,6 @@ go:
 
 install:
   - go get github.com/gorilla/mux
+  - go get github.com/8tomat8/SSU-Golang-252-Chat/client/ui
 
 go_import_path: ./server/auth

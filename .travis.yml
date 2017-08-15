@@ -1,0 +1,11 @@
+language: go
+
+go:
+  - 1.8.x
+
+install:
+  - go get github.com/gorilla/mux
+
+go_import_path: ./server/core
+
+script: go test ./server/auth/

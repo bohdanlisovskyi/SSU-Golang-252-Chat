@@ -4,7 +4,6 @@ go:
   - 1.8.x
 
 install:
-  - go get -u -v $(go list -f '{{join .Imports "\n"}}{{"\n"}}{{join .TestImports "\n"}}' ./... | sort | uniq | grep -v 8tomat8)
-
+  - go get -u -v
 
 go_import_path: ./

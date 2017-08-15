@@ -15,5 +15,4 @@ EXPOSE 5000
 # Now tell Docker what command to run when the container starts
 #CMD ["go-wrapper","run"]
 #CMD go run /go/src/github.com/8tomat8/SSU-Golang-252-Chat/server/main.go
-CMD build -i -race -o /private/var/folders/3z/0098mxj13glcv34vgk4wh0980000gn/T/Server_Appgo github.com/8tomat8/SSU-Golang-252-Chat/server
-    /private/var/folders/3z/0098mxj13glcv34vgk4wh0980000gn/T/Server_Appgo
+CMD go run /go/src/github.com/8tomat8/SSU-Golang-252-Chat/server/main.go

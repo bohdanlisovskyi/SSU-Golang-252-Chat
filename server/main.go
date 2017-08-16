@@ -17,7 +17,9 @@ func main() {
 	loger.Log.Infof("Server run with port: " + port)
 	r := mux.NewRouter()
 	r.HandleFunc("/message", core.MessageHandler) // listen message
-	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { fmt.Fprintf(w, "Chat project working fine") })
+	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "Chat project working fine")
+	})
 
 	err := http.ListenAndServe(":"+port, r)
 

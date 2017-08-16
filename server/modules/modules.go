@@ -30,14 +30,14 @@ func Message(message *messageService.Message, messageType int, conn *websocket.C
 		return
 	}
 
-	err = coremessage.SendMessage(message, messageType)
-	byteError, er := json.Marshal(err)
+	errMessage := coremessage.SendMessage(message, messageType)
+	byteError, er := json.Marshal(errMessage)
 
 	if er != nil {
 		loger.Log.Errorf("Marshal Error Message")
 	}
 
-	if err.Header.Command != "Ok" {
+	if errMessage.Header.Command != "Ok" {
 		err := conn.WriteMessage(messageType, byteError)
 
 		if err != nil {

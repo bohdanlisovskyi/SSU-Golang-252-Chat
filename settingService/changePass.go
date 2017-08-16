@@ -75,7 +75,7 @@ func ChangePass(request *messageService.Message) (bool, error) {
 	}
 	// UPDATE users SET password = "newPass value from request body"
 	// WHERE user_name = "userName value from request header"
-	db.Model(&User).Where("user_name = ?", userName).Update("password", newPass)
+	//db.Model(&User).Where("user_name = ?", userName).Update("password", newPass)
 	if db.Error != nil {
 		loger.Log.Errorf("Error has occurred: ", err)
 		return false, err

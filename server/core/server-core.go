@@ -5,7 +5,6 @@ import (
 
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
-	"github.com/8tomat8/SSU-Golang-252-Chat/server/config"
 	"github.com/8tomat8/SSU-Golang-252-Chat/server/message"
 	"github.com/8tomat8/SSU-Golang-252-Chat/server/modules"
 	"github.com/gorilla/websocket"
@@ -81,14 +80,4 @@ func addNewConnect(w http.ResponseWriter, r *http.Request) (*websocket.Conn, err
 	}
 
 	return conn, err
-}
-
-func ReturnPort() string {
-
-	port := config.GetConfig().Server.Port
-	if port == "" {
-		loger.Log.Panic("Port is Empty")
-	}
-
-	return port
 }

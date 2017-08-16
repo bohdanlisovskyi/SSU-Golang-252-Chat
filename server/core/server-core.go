@@ -83,7 +83,6 @@ func addNewConnect(w http.ResponseWriter, r *http.Request) (*websocket.Conn, err
 	return conn, err
 }
 
-
 func CheckConnect(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Chat working fine")
 }

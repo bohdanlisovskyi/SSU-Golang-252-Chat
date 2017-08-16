@@ -103,7 +103,7 @@ func Auth(message *messageService.Message, conn *websocket.Conn) {
 	}
 	us, tok, err := auth.Login(user.UserName, user.Password)
 	if err != nil {
-		loger.Log.Errorf("failed to register user", err)
+		loger.Log.Errorf("failed to login user", err)
 		conn.Close()
 		return
 	}

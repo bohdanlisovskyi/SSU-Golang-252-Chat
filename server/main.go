@@ -15,7 +15,9 @@ func main() {
 	loger.Log.Infof("Server run with port: " + port)
 	r := mux.NewRouter()
 	r.HandleFunc("/message", core.MessageHandler) // listen message
-	err := http.ListenAndServe(":" + port, r)
+	r.HandleFunc("/", core.CheckConnect)
+
+	err := http.ListenAndServe(":"+port, r)
 
 	if err != nil {
 		loger.Log.Panicf("Cannot run server %s", err.Error())

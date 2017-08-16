@@ -17,7 +17,7 @@ type ChangePassRequestBody struct {
 // and retrieves value of NewPass.
 // Function returns: if succeed - NewPass value to be stored in users table, nil,
 // if failed - empty string, err
-func UnmarshalChangePassRequestBody(request messageService.Message) (string, error) {
+func UnmarshalChangePassRequestBody(request *messageService.Message) (string, error) {
 	var body *ChangePassRequestBody
 	err := json.Unmarshal(request.Body, &body)
 	if err != nil {
@@ -43,7 +43,7 @@ type AuthResult struct {
 
 // ChangePass perform changing users Password value in users table.
 // Function returns: if succeed - true and nil, if failed - false and error
-func ChangePass(request messageService.Message) (bool, error) {
+func ChangePass(request *messageService.Message) (bool, error) {
 	userName := request.Header.UserName
 	if userName == "" {
 		err := errors.New("User name value is empty")
@@ -56,7 +56,6 @@ func ChangePass(request messageService.Message) (bool, error) {
 		return false, err
 	}
 	db, err := database.GetStorage() // common gorm-connection from database package
-	defer db.Close()
 	if err != nil {
 		loger.Log.Errorf("DB error has occurred: ", err)
 		return false, err
@@ -76,7 +75,7 @@ func ChangePass(request messageService.Message) (bool, error) {
 	}
 	// UPDATE users SET password = "newPass value from request body"
 	// WHERE user_name = "userName value from request header"
-	db.Model(&User).Where("user_name = ?", userName).Update("password", newPass)
+	//db.Model(&User).Where("user_name = ?", userName).Update("password", newPass)
 	if db.Error != nil {
 		loger.Log.Errorf("Error has occurred: ", err)
 		return false, err

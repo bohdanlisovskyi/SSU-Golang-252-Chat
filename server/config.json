@@ -2,8 +2,5 @@
   "storage": {
       "driver": "sqlite3",
       "name": "./foo.db"
-    },
-  "server": {
-      "port":"3006"
-  }
+    }
 }

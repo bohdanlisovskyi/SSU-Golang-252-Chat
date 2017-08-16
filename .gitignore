@@ -15,3 +15,5 @@
 .idea/
 server/glide.lock
 client/glide.lock
+server/vendor
+client/vendor

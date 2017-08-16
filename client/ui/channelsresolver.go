@@ -54,7 +54,7 @@ func loginIsSuccessfully(message messageService.Message) {
 	listener.ContactsChannel = make(chan messageService.Message)
 	//save received username and token
 	userinfo.CurrentUserInfo.UserName = message.Header.UserName
-	userinfo.CurrentUserInfo.UserName = message.Header.Token
+	userinfo.CurrentUserInfo.Token = message.Header.Token
 	//now we just inform UI that login was successfully
 	loger.Log.Infof("User %s login successfully.", message.Header.UserName)
 	qmlLogin.LoginDataIsValid(true)

@@ -106,6 +106,7 @@ func checkLoginDataAndConnect(userName, password string) {
 	//if all right - we need to start listening other channels
 	listener.AuthorizationChannel = make(chan messageService.Message)
 	listener.QuitChannel = make(chan struct{})
+	userinfo.CurrentUserInfo = &userinfo.UserInfo{}
 	go listener.ListenToServer(connection)
 	go channelsResolver()
 }

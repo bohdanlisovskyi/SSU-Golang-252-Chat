@@ -8,7 +8,6 @@ import (
 	"github.com/8tomat8/SSU-Golang-252-Chat/server/message"
 	"github.com/8tomat8/SSU-Golang-252-Chat/server/modules"
 	"github.com/gorilla/websocket"
-	"fmt"
 )
 
 var upgrader = websocket.Upgrader{
@@ -81,8 +80,4 @@ func addNewConnect(w http.ResponseWriter, r *http.Request) (*websocket.Conn, err
 	}
 
 	return conn, err
-}
-
-func CheckConnect(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Chat working fine")
 }

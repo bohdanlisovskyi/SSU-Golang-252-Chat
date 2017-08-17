@@ -12,6 +12,7 @@ var qmlSettings *QmlSettings
 type QmlSettings struct {
 	core.QObject
 
+	_ func(nickName string, date time.Time, about string)                              `signal:"sendSettingsData"`
 	_ func(oldPassword, newPassword, newNickname string, date time.Time, about string) `slot:"applySettings"`
 }
 

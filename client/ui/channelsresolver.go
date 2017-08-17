@@ -15,25 +15,32 @@ func channelsResolver() {
 	for {
 		select {
 		case <-listener.QuitChannel:
+			//loger.Log.Info("Quit channel")
 			return
 		case msg := <-listener.AuthorizationChannel:
+			//loger.Log.Info("Authorization channel.")
 			switch msg.Header.Command {
 			case config.GetConfig().MessageCommand.LoginIsSucc:
 				loginIsSuccessfully(msg)
-			case config.GetConfig().MessageCommand.LoginIsNotSucc:
+			default:
 				loginIsNotSuccessfully(msg)
+			}
+		case msg := <-listener.RegistrationChannel:
+			//loger.Log.Info("Registration channel.")
+			switch msg.Header.Command {
 			case config.GetConfig().MessageCommand.RegisterIsSucc:
 				registerIsSuccessfully(msg)
-			case config.GetConfig().MessageCommand.RegisterIsNotSucc:
+			default:
 				registerIsNotSuccessfully(msg)
 			}
 		case msg := <-listener.MessageChannel:
+			//loger.Log.Infof("Message channel.")
 			switch msg.Header.Command {
 			case config.GetConfig().MessageCommand.ReceiveMessage:
 				receiveNewMessage(msg)
 			case config.GetConfig().MessageCommand.MessageSent:
 				messageSent(msg)
-			case config.GetConfig().MessageCommand.MessageWasntSent:
+			default:
 				messageWasntSent(msg)
 			}
 		case msg := <-listener.SettingsChannel:
@@ -48,27 +55,31 @@ func receiveSettings(message messageService.Message) {
 }
 
 func loginIsSuccessfully(message messageService.Message) {
+	loger.Log.Info("Open channels in loginIsSuccessfully")
 	//login data is valid, so we open other channels to listen to server
 	listener.MessageChannel = make(chan messageService.Message)
 	listener.SettingsChannel = make(chan messageService.Message)
 	listener.ContactsChannel = make(chan messageService.Message)
+	loger.Log.Info("Set userinfo in loginIsSuccessfully")
 	//save received username and token
 	userinfo.CurrentUserInfo.UserName = message.Header.UserName
-	userinfo.CurrentUserInfo.UserName = message.Header.Token
+	userinfo.CurrentUserInfo.Token = message.Header.Token
 	//now we just inform UI that login was successfully
 	loger.Log.Infof("User %s login successfully.", message.Header.UserName)
 	qmlLogin.LoginDataIsValid(true)
-	qmlStatus.SendStatus("Loging successfully. Be happy and write messages :)")
+	qmlStatus.SendStatus("Login successfully. Waiting for contacts list.")
+	sendContactsRequestToServer()
 }
 
 func loginIsNotSuccessfully(message messageService.Message) {
 	//just close connection. in listener after closing connection excutes QuitChannel <- struct{}{}
 	err := connection.Close()
 	if err != nil {
-		loger.Log.Errorf("Cannot close connection after login is not successfully. %s", err)
+		loger.Log.Warningf("Cannot close connection after login is not successfully. %s", err)
 		//for client it doesn`t matter. connection can`t close == login is not successfully
 	}
-	loger.Log.Infof("User %s login wasn't successfully.", message.Header.UserName)
+	//in this case message.Header.Command contains error message
+	loger.Log.Infof("User %s login wasn't successfully. %s", message.Header.UserName, message.Header.Command)
 	qmlLogin.LoginDataIsValid(false)
 	qmlStatus.SendStatus("Loging was unsuccessfully. Please check username or password again.")
 }
@@ -92,7 +103,8 @@ func registerIsNotSuccessfully(message messageService.Message) {
 		loger.Log.Errorf("Cannot close connection after register is not successfully. %s", err)
 		//for client it doesn`t matter. connection can`t close == register is not successfully
 	}
-	loger.Log.Infof("User %s register not successfully.", message.Header.UserName)
+	//in this case message.Header.Command contains error message
+	loger.Log.Infof("User %s register not successfully. %s", message.Header.UserName, message.Header.Command)
 	qmlRegister.RegisterDataIsValid(false)
 	qmlStatus.SendStatus("Register not successfully. Please, try again later!")
 }
@@ -140,5 +152,6 @@ func messageWasntSent(message messageService.Message) {
 	}
 	qmlStatus.SendStatus("Message wasn't sent to " + messageBody.ReceiverName)
 	qmlMessage.MessageSent(true)
-	loger.Log.Infof("Message wasn't sent to %s .", messageBody.ReceiverName)
+	//in this case message.Header.Command contains error message
+	loger.Log.Infof("Message wasn't sent to %s . %s", messageBody.ReceiverName, message.Header.Command)
 }

@@ -4,7 +4,14 @@ package ui
 import (
 	"strconv"
 
+	"encoding/json"
+
+	"github.com/8tomat8/SSU-Golang-252-Chat/client/config"
+	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
+	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
+	"github.com/8tomat8/SSU-Golang-252-Chat/userinfo"
 	"github.com/emirpasic/gods/lists/arraylist"
+	"github.com/gorilla/websocket"
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/quick"
 )
@@ -101,4 +108,38 @@ func contactsData(index *core.QModelIndex, role int) *core.QVariant {
 //we need manualy provide function for count of row in model
 func rowCount(parent *core.QModelIndex) int {
 	return listOfContacts.Size()
+}
+
+//
+func sendContactsRequestToServer() {
+	newMessageHeader := messageService.MessageHeader{
+		Type_:    config.GetConfig().MessageType.Contacts,
+		Command:  config.GetConfig().MessageCommand.ContactsRequest,
+		UserName: userinfo.CurrentUserInfo.UserName,
+		Token:    userinfo.CurrentUserInfo.Token,
+	}
+	//we have no data to send, so create empty Body
+	newMessageBody := messageService.MessageBody{}
+	newRawMessageBody, err := json.Marshal(&newMessageBody)
+	if err != nil {
+		loger.Log.Warningf("Can`t marshal contacts message body. %s", err)
+		qmlStatus.SendStatus("Can not load contacts.")
+		return
+	}
+	newMessage := messageService.Message{
+		Header: newMessageHeader,
+		Body:   newRawMessageBody,
+	}
+	marshaledMessage, err := messageService.MarshalMessage(&newMessage)
+	if err != nil {
+		loger.Log.Warningf("Can not marshal contacts message. %s", err)
+		qmlStatus.SendStatus("Can not load contacts.")
+		return
+	}
+	if err := connection.WriteMessage(websocket.TextMessage, marshaledMessage); err != nil {
+		loger.Log.Warningf("Can not send contacts request. %s", err)
+		qmlStatus.SendStatus("Can not load contacts.")
+		return
+	}
+	//connection.WriteMessage(websocket.TextMessage, marshaledMessage)
 }

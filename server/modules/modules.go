@@ -66,8 +66,8 @@ func Register(message *messageService.Message, conn *websocket.Conn) {
 		return
 	}
 	newMessageHeader := messageService.MessageHeader{
-		Type_:    "authorization",
-		Command:  "registrissucc",
+		Type_:    coremessage.RegisterType,
+		Command:  coremessage.RegisterSuccComm,
 		UserName: us.UserName,
 		Token:    tok,
 	}
@@ -103,13 +103,13 @@ func Auth(message *messageService.Message, conn *websocket.Conn) {
 	}
 	us, tok, err := auth.Login(user.UserName, user.Password)
 	if err != nil {
-		loger.Log.Errorf("failed to register user", err)
+		loger.Log.Errorf("failed to login user", err)
 		conn.Close()
 		return
 	}
 	newMessageHeader := messageService.MessageHeader{
-		Type_:    "authorization",
-		Command:  "authissucc",
+		Type_:    coremessage.AuthType,
+		Command:  coremessage.AuthSuccComm,
 		UserName: us.UserName,
 		Token:    tok,
 	}

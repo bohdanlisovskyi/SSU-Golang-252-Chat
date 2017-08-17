@@ -2,27 +2,32 @@ package coremessage
 
 import (
 	"encoding/json"
+
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
 	"github.com/8tomat8/SSU-Golang-252-Chat/server/customers"
 )
 
 const (
-	EmptyType          = ""
-	MessageType        = "message"
-	RegisterType       = "register"
-	AuthType           = "auth"
-	SettingType        = "settings"
-	ChangePassComm     = "change_pass"
-	BlockUserComm      = "block_user"
-	ChangeNicknameComm = "change_nickname"
-	ChangeBirthdayComm = "change_birthday"
-	ChangeUserInfoComm = "change_userInfo"
-	StatusOk           = "Ok"
-	MarshalError       = "Marshal message error"
-	UnmarshalError     = "Unmarshal message error"
-	ReceiverNotFound   = "Receiver not found"
-	WriteMsgError      = "Write message error"
+	EmptyType           = ""
+	MessageType         = "message"
+	RegisterType        = "register"
+	RegisterSuccComm    = "registerissucc"
+	RegisterNotSuccComm = "registerisnotsucc"
+	AuthType            = "auth"
+	AuthSuccComm        = "authissucc"
+	AuthNotSuccComm     = "authisnotsucc"
+	SettingType         = "settings"
+	ChangePassComm      = "change_pass"
+	BlockUserComm       = "block_user"
+	ChangeNicknameComm  = "change_nickname"
+	ChangeBirthdayComm  = "change_birthday"
+	ChangeUserInfoComm  = "change_userInfo"
+	StatusOk            = "Ok"
+	MarshalError        = "Marshal message error"
+	UnmarshalError      = "Unmarshal message error"
+	ReceiverNotFound    = "Receiver not found"
+	WriteMsgError       = "Write message error"
 )
 
 func SendMessage(message *messageService.Message, messageType int) messageService.Message {

@@ -3,6 +3,8 @@ package modules
 import (
 	"encoding/json"
 
+	"errors"
+
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
 	"github.com/8tomat8/SSU-Golang-252-Chat/server/auth"
@@ -45,10 +47,34 @@ func Message(message *messageService.Message, messageType int, conn *websocket.C
 		}
 	}
 }
+func sendMes(conn *websocket.Conn, newHeader messageService.MessageHeader) {
+	newMessage := messageService.Message{
+		Header: newHeader,
+	}
+	marshaledMessage, err := messageService.MarshalMessage(&newMessage)
+	if err != nil {
+		loger.Log.Errorf("Can`t marshal message. %s", err)
+		conn.Close()
+		return
+	}
+	if err := conn.WriteMessage(websocket.TextMessage, marshaledMessage); err != nil {
+		loger.Log.Errorf("Can not send message. %s", err)
+		conn.Close()
+		return
+	}
 
+}
 func Register(message *messageService.Message, conn *websocket.Conn) {
 	if _, ok := customers.Clients[message.Header.UserName]; ok {
 		loger.Log.Warn("User already exist")
+		err := errors.New("User already exist")
+		newMessageHeader := messageService.MessageHeader{
+			Type_:    coremessage.RegisterType,
+			Command:  err.Error(),
+			UserName: "",
+			Token:    "",
+		}
+		sendMes(conn, newMessageHeader)
 		conn.Close()
 		return
 	}
@@ -56,12 +82,27 @@ func Register(message *messageService.Message, conn *websocket.Conn) {
 	err := json.Unmarshal(message.Body, &user)
 	if err != nil {
 		loger.Log.Warn("failed to unmarshal body")
+		err := errors.New("failed to unmarshal body")
+		newMessageHeader := messageService.MessageHeader{
+			Type_:    coremessage.RegisterType,
+			Command:  err.Error(),
+			UserName: "",
+			Token:    "",
+		}
+		sendMes(conn, newMessageHeader)
 		conn.Close()
 		return
 	}
 	us, tok, err := auth.RegisterNewUser(user)
 	if err != nil {
 		loger.Log.Errorf("failed to register user", err)
+		newMessageHeader := messageService.MessageHeader{
+			Type_:    coremessage.RegisterType,
+			Command:  err.Error(),
+			UserName: "",
+			Token:    "",
+		}
+		sendMes(conn, newMessageHeader)
 		conn.Close()
 		return
 	}
@@ -71,26 +112,21 @@ func Register(message *messageService.Message, conn *websocket.Conn) {
 		UserName: us.UserName,
 		Token:    tok,
 	}
-	newMessage := messageService.Message{
-		Header: newMessageHeader,
-	}
-	marshaledMessage, err := messageService.MarshalMessage(&newMessage)
-	if err != nil {
-		loger.Log.Errorf("Can`t marshal message. %s", err)
-		conn.Close()
-		return
-	}
-	if err := conn.WriteMessage(websocket.TextMessage, marshaledMessage); err != nil {
-		loger.Log.Errorf("Can not send message. %s", err)
-		conn.Close()
-		return
-	}
+	sendMes(conn, newMessageHeader)
 	customers.Clients[message.Header.UserName] = customers.Client{Conn: conn, Token: tok}
 }
 
 func Auth(message *messageService.Message, conn *websocket.Conn) {
 	if _, ok := customers.Clients[message.Header.UserName]; ok {
-		loger.Log.Warn("User already exist")
+		loger.Log.Warn("User already loged in")
+		err := errors.New("User already loged in")
+		newMessageHeader := messageService.MessageHeader{
+			Type_:    coremessage.AuthType,
+			Command:  err.Error(),
+			UserName: "",
+			Token:    "",
+		}
+		sendMes(conn, newMessageHeader)
 		conn.Close()
 		return
 	}
@@ -98,12 +134,27 @@ func Auth(message *messageService.Message, conn *websocket.Conn) {
 	err := json.Unmarshal(message.Body, &user)
 	if err != nil {
 		loger.Log.Warn("failed to unmarshal body")
+		err := errors.New("failed to unmarshal body")
+		newMessageHeader := messageService.MessageHeader{
+			Type_:    coremessage.AuthType,
+			Command:  err.Error(),
+			UserName: "",
+			Token:    "",
+		}
+		sendMes(conn, newMessageHeader)
 		conn.Close()
 		return
 	}
 	us, tok, err := auth.Login(user.UserName, user.Password)
 	if err != nil {
 		loger.Log.Errorf("failed to login user", err)
+		newMessageHeader := messageService.MessageHeader{
+			Type_:    coremessage.AuthType,
+			Command:  err.Error(),
+			UserName: "",
+			Token:    "",
+		}
+		sendMes(conn, newMessageHeader)
 		conn.Close()
 		return
 	}
@@ -113,20 +164,7 @@ func Auth(message *messageService.Message, conn *websocket.Conn) {
 		UserName: us.UserName,
 		Token:    tok,
 	}
-	newMessage := messageService.Message{
-		Header: newMessageHeader,
-	}
-	marshaledMessage, err := messageService.MarshalMessage(&newMessage)
-	if err != nil {
-		loger.Log.Errorf("Can`t marshal message. %s", err)
-		conn.Close()
-		return
-	}
-	if err := conn.WriteMessage(websocket.TextMessage, marshaledMessage); err != nil {
-		loger.Log.Errorf("Can not send message. %s", err)
-		conn.Close()
-		return
-	}
+	sendMes(conn, newMessageHeader)
 }
 
 func ChangePass(message *messageService.Message, messageType int, conn *websocket.Conn) {

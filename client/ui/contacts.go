@@ -111,7 +111,8 @@ func rowCount(parent *core.QModelIndex) int {
 }
 
 //
-func sendContactsRequestToServer() {
+func sendContactsRequestToServer() error {
+	const errorStatusString = "Can not load contacts."
 	newMessageHeader := messageService.MessageHeader{
 		Type_:    config.GetConfig().MessageType.Contacts,
 		Command:  config.GetConfig().MessageCommand.ContactsRequest,
@@ -123,8 +124,8 @@ func sendContactsRequestToServer() {
 	newRawMessageBody, err := json.Marshal(&newMessageBody)
 	if err != nil {
 		loger.Log.Warningf("Can`t marshal contacts message body. %s", err)
-		qmlStatus.SendStatus("Can not load contacts.")
-		return
+		qmlStatus.SendStatus(errorStatusString)
+		return err
 	}
 	newMessage := messageService.Message{
 		Header: newMessageHeader,

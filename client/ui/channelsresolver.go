@@ -15,10 +15,8 @@ func channelsResolver() {
 	for {
 		select {
 		case <-listener.QuitChannel:
-			//loger.Log.Info("Quit channel")
 			return
 		case msg := <-listener.AuthorizationChannel:
-			//loger.Log.Info("Authorization channel.")
 			switch msg.Header.Command {
 			case config.GetConfig().MessageCommand.LoginIsSucc:
 				loginIsSuccessfully(msg)
@@ -26,7 +24,6 @@ func channelsResolver() {
 				loginIsNotSuccessfully(msg)
 			}
 		case msg := <-listener.RegistrationChannel:
-			//loger.Log.Info("Registration channel.")
 			switch msg.Header.Command {
 			case config.GetConfig().MessageCommand.RegisterIsSucc:
 				registerIsSuccessfully(msg)
@@ -34,7 +31,6 @@ func channelsResolver() {
 				registerIsNotSuccessfully(msg)
 			}
 		case msg := <-listener.MessageChannel:
-			//loger.Log.Infof("Message channel.")
 			switch msg.Header.Command {
 			case config.GetConfig().MessageCommand.ReceiveMessage:
 				receiveNewMessage(msg)

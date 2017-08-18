@@ -7,8 +7,8 @@ RUN mkdir -p /go/src/github.com/8tomat8/SSU-Golang-252-Chat
 COPY . /go/src/github.com/8tomat8/SSU-Golang-252-Chat
 WORKDIR /go/src/github.com/8tomat8/SSU-Golang-252-Chat/server
 # Download and install any required third party dependencies into the container.
-RUN go get ./...
-# RUN go get -u github.com/Masterminds/glide && glide install
+# RUN go get ./...
+RUN go get -u github.com/Masterminds/glide && glide install
 # Set the PORT environment variable inside the container
 ENV PORT 5000
 # Expose port 8080 to the host so we can access our application

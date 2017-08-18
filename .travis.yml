@@ -5,8 +5,6 @@ go:
 
 install: cd server && make install-helpers
 
-before_script: cd ..
-
 env:
   global:
     - COMMIT=${TRAVIS_COMMIT::8}

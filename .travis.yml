@@ -3,7 +3,9 @@ language: go
 go:
   - 1.8.x
 
-install: cd server && make install-helpers && cd ..
+install: cd server && make install-helpers
+
+before_script: cd ..
 
 env:
   global:

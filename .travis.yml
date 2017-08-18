@@ -3,7 +3,7 @@ language: go
 go:
   - 1.8.x
 
-script: cd server & make install-helpers
+before_script: cd server & make install-helpers
 
 script: go test ./messageService/
 

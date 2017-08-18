@@ -3,5 +3,4 @@ language: go
 go:
   - 1.8.x
 
-before_script:
-  - cd server & make install-helpers
+script: cd server & make install-helpers

@@ -3,4 +3,4 @@ language: go
 go:
   - 1.8.x
 
-install: cd server & make install-helpers
+install: cd server && make install-helpers

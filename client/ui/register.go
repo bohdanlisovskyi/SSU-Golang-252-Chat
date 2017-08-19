@@ -79,8 +79,9 @@ func initQmlRegister(quickWidget *quick.QQuickWidget) {
 			return
 		}
 		qmlStatus.SendStatus("Waiting for server response.")
-		listener.AuthorizationChannel = make(chan messageService.Message)
+		listener.RegistrationChannel = make(chan messageService.Message)
 		listener.QuitChannel = make(chan struct{})
+		responseWaiterChannel = make(chan struct{})
 		go listener.ListenToServer(connection)
 		go channelsResolver()
 	})

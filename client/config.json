@@ -5,23 +5,21 @@
   },
   "messagetype": {
     "message":        "message",
-    "authorization":  "authorization",
-    "contacts":       "contact",
-    "settings":       "setting"
+    "authorization":  "auth",
+    "registration":   "register",
+    "contacts":       "contacts",
+    "settings":       "settings"
   },
   "messagecommand": {
     "sendmessage":      "sendMessage",
     "receivemessage":   "receiveMessage",
     "messagesended":    "messageSent",
-    "messagewasntsent": "messagewasntsent",
     "sendlogindata":    "sendlogindata",
     "loginissucc":      "loginissucc",
-    "loginisnotsucc":   "loginisnotsucc",
     "sendregisterdata": "sendregisterdata",
     "registerissucc":   "registerissucc",
-    "registerisnotsucc":"registerisnotsucc",
     "sendsettings":     "sendsettings",
     "settingschanged":  "settingschanged",
-    "settingswasntchanged": "settingswasntchanged"
+    "contactsrequest":  "contactsrequest"
   }
 }

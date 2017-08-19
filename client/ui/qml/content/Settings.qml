@@ -204,7 +204,7 @@ Item {
                     style: CalendarStyle {
                         dayDelegate: Item {
                             readonly property color sameMonthDateTextColor: "#444"
-                            readonly property color selectedDateColor: Qt.platform.os === "osx" ? "#3778d0" : systemPalette.highlight
+                            readonly property color selectedDateColor: "#3778d0"
                             readonly property color selectedDateTextColor: "white"
                             readonly property color differentMonthDateTextColor: "#bbb"
                             readonly property color invalidDatecolor: "#dddddd"

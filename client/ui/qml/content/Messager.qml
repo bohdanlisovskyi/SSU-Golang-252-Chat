@@ -110,7 +110,7 @@ Item {
                     contentWidth: messageEdit.paintedWidth
                     contentHeight: messageEdit.paintedHeight
                     clip: true
-                    ScrollBar.vertical: ScrollBar { id: vbar; active: hbar.active }
+                    ScrollBar.vertical: ScrollBar { id: vbar; active: false }
                     function ensureVisible(r)
                     {
                         if (contentX >= r.x)
@@ -238,38 +238,57 @@ Item {
                     model: ContactModel
                     delegate: Component {
                         Item {
+                            property variant currentData: model
+
                             width: parent.width
-                            height: 40
-                            Row{
-                                Column {
-                                    Text { text: 'UserName:' + model.display.username }
-                                    Text { text: 'NickName:' + model.display.nickname }
+                            height: contactColumn.height
+
+                            Column {
+                                id: contactColumn
+                                onHeightChanged: {
+                                    parent.height = height
                                 }
-                                Button {
-                                    x: 0
-                                    y: 0
-                                    width: 40
-                                    height: 50
-                                    text: qsTr("B")
-                                    anchors.right: parent.right
-                                    anchors.rightMargin: 0
-                                    Layout.maximumHeight: 40
-                                    Layout.maximumWidth: 50
-                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                    z: 0
-                                    scale: 1
-                                    Layout.minimumHeight: 40
-                                    Layout.minimumWidth: 50
-                                    Layout.fillHeight: false
-                                    Layout.fillWidth: false
-                                    checkable: true
-                                    checked: model.display.isblocked
-                                    onCheckedChanged: {
-                                        model.isblocked = checked
-                                        block(checked, index)
-                                    }
+                                Text {
+                                    text: 'UserName:' + model.display.username
+                                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                                    width: contactsListView.width - 40
+                                    height: contentHeight
+
+
+                                }
+                                Text {
+                                    text: 'NickName:' + model.display.nickname
+                                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                                    width: contactsListView.width - 40
+                                    height: contentHeight
+
                                 }
                             }
+                            Button {
+                                x: 0
+                                y: 0
+                                width: 40
+                                height: 40
+                                text: qsTr("B")
+                                anchors.right: parent.right
+                                anchors.rightMargin: 0
+                                Layout.maximumHeight: 40
+                                Layout.maximumWidth: 50
+                                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                                z: 1
+                                scale: 1
+                                Layout.minimumHeight: 40
+                                Layout.minimumWidth: 50
+                                Layout.fillHeight: false
+                                Layout.fillWidth: false
+                                checkable: true
+                                checked: model.display.isblocked
+                                onCheckedChanged: {
+                                    model.isblocked = checked
+                                    block(checked, index)
+                                }
+                            }
+
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: contactsListView.currentIndex = index
@@ -283,6 +302,10 @@ Item {
                             color: 'white'
                         }
                     }
+                    onCurrentItemChanged: {
+                        currentTitle.text = contactsListView.currentItem.currentData.display.nickname
+                    }
+
                     focus: true
                 }
 

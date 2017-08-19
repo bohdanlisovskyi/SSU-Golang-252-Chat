@@ -8,6 +8,7 @@ import (
 )
 
 var AuthorizationChannel chan messageService.Message
+var RegistrationChannel chan messageService.Message
 var MessageChannel chan messageService.Message
 var ContactsChannel chan messageService.Message
 var SettingsChannel chan messageService.Message
@@ -42,6 +43,8 @@ func ValidateAndRedirectMessage(message *messageService.Message) {
 		SettingsChannel <- *message
 	case config.GetConfig().MessageType.Auth:
 		AuthorizationChannel <- *message
+	case config.GetConfig().MessageType.Register:
+		RegistrationChannel <- *message
 	case config.GetConfig().MessageType.Contacts:
 		ContactsChannel <- *message
 	default:

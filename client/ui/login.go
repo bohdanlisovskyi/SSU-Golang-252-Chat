@@ -6,6 +6,8 @@ import (
 
 	"encoding/json"
 
+	"time"
+
 	"github.com/8tomat8/SSU-Golang-252-Chat/client/config"
 	"github.com/8tomat8/SSU-Golang-252-Chat/client/listener"
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
@@ -29,6 +31,7 @@ type QmlLogin struct {
 	_ func()                          `slot:"logOut"`
 	_ func(isLoginValid bool)         `signal:"loginDataIsValid"`
 	_ func(isLogOutSuccessfull bool)  `signal:"logOutIsSuccessfull"`
+	_ func()                          `signal:"startBusyIndicator"`
 }
 
 func initQmlLogin(quickWidget *quick.QQuickWidget) {
@@ -106,8 +109,11 @@ func checkLoginDataAndConnect(userName, password string) {
 	//if all right - we need to start listening other channels
 	listener.AuthorizationChannel = make(chan messageService.Message)
 	listener.QuitChannel = make(chan struct{})
+	responseWaiterChannel = make(chan struct{})
+	userinfo.CurrentUserInfo = &userinfo.UserInfo{}
 	go listener.ListenToServer(connection)
 	go channelsResolver()
+	go loginResponseWaiter(5)
 }
 
 func logOut() {
@@ -125,4 +131,21 @@ func logOut() {
 	}
 	loger.Log.Info("Connection closed")
 	qmlLogin.LogOutIsSuccessfull(true)
+}
+
+func loginResponseWaiter(seconds time.Duration) {
+	timer := time.NewTimer(time.Second * seconds)
+	qmlLogin.StartBusyIndicator()
+	for {
+		select {
+		case <-timer.C:
+			//we haven't got response from server in time
+			qmlLogin.LoginDataIsValid(false)
+			qmlStatus.SendStatus("Server doesn't response. Pleas, try again later.")
+			connection.Close()
+		case <-responseWaiterChannel:
+			//we have got response in time
+			return
+		}
+	}
 }

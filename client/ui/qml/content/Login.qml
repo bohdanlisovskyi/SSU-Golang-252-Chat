@@ -9,6 +9,7 @@ Item {
     property TextInput userInput: userNameInput
     property TextInput passInput: passwordInput
     property Text errText: errorText
+    property BusyIndicator busyInd: busyIndicator
     signal login(string userNameLogin, string passwordLogin)
     signal goBackToRegister()
     signal inputFieldsChanged()
@@ -18,6 +19,15 @@ Item {
         border.color: "#363377"
         z: -1
         anchors.fill: parent
+    }
+
+    BusyIndicator {
+        id: busyIndicator
+        x: 170
+        y: 90
+        width: 60
+        z: 1
+        running: false
     }
 
     ColumnLayout {
@@ -152,6 +162,7 @@ Item {
         }
 
     }
+
 
 
 }

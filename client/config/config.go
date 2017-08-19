@@ -16,24 +16,22 @@ type Server struct {
 type MessageType struct {
 	Message  string `json:"message"`
 	Auth     string `json:"authorization"`
+	Register string `json:"registration"`
 	Contacts string `json:"contacts"`
 	Settings string `json:"settings"`
 }
 
 type MessageCommand struct {
-	SendMessage          string `json:"sendmessage"`
-	ReceiveMessage       string `json:"receivemessage"`
-	MessageSent          string `json:"messagesent"`
-	MessageWasntSent     string `json:"messagewasntsent"`
-	SendLoginData        string `json:"sendlogindata"`
-	LoginIsSucc          string `json:"authissucc"`
-	LoginIsNotSucc       string `json:"authisnotsucc"`
-	SendRegisterData     string `json:"sendregisterdata"`
-	RegisterIsSucc       string `json:"registerissucc"`
-	RegisterIsNotSucc    string `json:"registerisnotsucc"`
-	SendSettings         string `json:"sendsettings"`
-	SettingsChanged      string `json:"settingschsnged"`
-	SettingsWasntChanged string `json:"settingswasntchanged"`
+	SendMessage      string `json:"sendmessage"`
+	ReceiveMessage   string `json:"receivemessage"`
+	MessageSent      string `json:"messagesent"`
+	SendLoginData    string `json:"sendlogindata"`
+	LoginIsSucc      string `json:"loginissucc"`
+	SendRegisterData string `json:"sendregisterdata"`
+	RegisterIsSucc   string `json:"registerissucc"`
+	SendSettings     string `json:"sendsettings"`
+	SettingsChanged  string `json:"settingschsnged"`
+	ContactsRequest  string `json:"contactsrequest"`
 }
 
 type Config struct {

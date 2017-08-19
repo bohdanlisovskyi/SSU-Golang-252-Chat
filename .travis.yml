@@ -9,6 +9,4 @@ env:
   global:
     - COMMIT=${TRAVIS_COMMIT::8}
 
-after_success:
-    — sh .travis/deploy_dockerhub.sh
-    - sh .travis/deploy_heroku.sh
+after_success: sh .travis/deploy_dockerhub.sh && sh .travis/deploy_heroku.sh

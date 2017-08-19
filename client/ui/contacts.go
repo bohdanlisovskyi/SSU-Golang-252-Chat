@@ -135,12 +135,12 @@ func sendContactsRequestToServer() error {
 	if err != nil {
 		loger.Log.Warningf("Can not marshal contacts message. %s", err)
 		qmlStatus.SendStatus("Can not load contacts.")
-		return
+		return err
 	}
 	if err := connection.WriteMessage(websocket.TextMessage, marshaledMessage); err != nil {
 		loger.Log.Warningf("Can not send contacts request. %s", err)
 		qmlStatus.SendStatus("Can not load contacts.")
-		return
+		return err
 	}
-	//connection.WriteMessage(websocket.TextMessage, marshaledMessage)
+	return err
 }

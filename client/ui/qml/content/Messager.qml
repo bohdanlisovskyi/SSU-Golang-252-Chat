@@ -293,13 +293,6 @@ Item {
                                 anchors.fill: parent
                                 onClicked: contactsListView.currentIndex = index
                             }
-
-                            Rectangle {
-                                z: -1
-                                anchors.fill: parent
-                                border.color: "grey"
-                                border.width: 1
-                            }
                         }
                     }
                     highlight: Rectangle {

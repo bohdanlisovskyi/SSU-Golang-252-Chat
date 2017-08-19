@@ -210,6 +210,7 @@ ApplicationWindow {
     Connections {
         target: qmlLogin
         onLoginDataIsValid: {
+            loginWindowLocal.busyInd.running = false
             if (isLoginValid == true){
                 loginWindowLocal.errText.text = ""
                 //resize window to size of messanger
@@ -225,6 +226,9 @@ ApplicationWindow {
             } else {
                 loginWindowLocal.errText.text = "Something wrong. Check fields"
             }
+        }
+        onStartBusyIndicator: {
+            loginWindowLocal.busyInd.running = true
         }
     }
 

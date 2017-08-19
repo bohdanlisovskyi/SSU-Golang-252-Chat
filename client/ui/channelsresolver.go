@@ -11,23 +11,27 @@ import (
 	"github.com/8tomat8/SSU-Golang-252-Chat/userinfo"
 )
 
+var responseWaiterChannel chan struct{}
+
 func channelsResolver() {
 	for {
 		select {
 		case <-listener.QuitChannel:
 			return
 		case msg := <-listener.AuthorizationChannel:
-			switch msg.Header.Command {
-			case config.GetConfig().MessageCommand.LoginIsSucc:
+			//close this channel to end response-timer
+			close(responseWaiterChannel)
+			if msg.Header.Command == config.GetConfig().MessageCommand.LoginIsSucc {
 				loginIsSuccessfully(msg)
-			default:
+			} else {
 				loginIsNotSuccessfully(msg)
 			}
+
 		case msg := <-listener.RegistrationChannel:
-			switch msg.Header.Command {
-			case config.GetConfig().MessageCommand.RegisterIsSucc:
+			close(responseWaiterChannel)
+			if msg.Header.Command == config.GetConfig().MessageCommand.RegisterIsSucc {
 				registerIsSuccessfully(msg)
-			default:
+			} else {
 				registerIsNotSuccessfully(msg)
 			}
 		case msg := <-listener.MessageChannel:
@@ -51,20 +55,24 @@ func receiveSettings(message messageService.Message) {
 }
 
 func loginIsSuccessfully(message messageService.Message) {
-	loger.Log.Info("Open channels in loginIsSuccessfully")
 	//login data is valid, so we open other channels to listen to server
 	listener.MessageChannel = make(chan messageService.Message)
 	listener.SettingsChannel = make(chan messageService.Message)
 	listener.ContactsChannel = make(chan messageService.Message)
-	loger.Log.Info("Set userinfo in loginIsSuccessfully")
 	//save received username and token
 	userinfo.CurrentUserInfo.UserName = message.Header.UserName
 	userinfo.CurrentUserInfo.Token = message.Header.Token
-	//now we just inform UI that login was successfully
+	//TODO: send request every n seconds until we get response
+	//now we just inform UI that login was successfully and send contacts request
+	if err := sendContactsRequestToServer(); err != nil {
+		//it's no need to print error message,
+		//it has already printed in sendContactsRequestToServer function
+		qmlLogin.LoginDataIsValid(false)
+		return
+	}
 	loger.Log.Infof("User %s login successfully.", message.Header.UserName)
 	qmlLogin.LoginDataIsValid(true)
 	qmlStatus.SendStatus("Login successfully. Waiting for contacts list.")
-	sendContactsRequestToServer()
 }
 
 func loginIsNotSuccessfully(message messageService.Message) {

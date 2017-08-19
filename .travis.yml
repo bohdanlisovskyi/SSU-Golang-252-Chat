@@ -10,4 +10,5 @@ env:
     - COMMIT=${TRAVIS_COMMIT::8}
 
 after_success:
+  - ls
   - sh .travis/deploy_dockerhub.sh

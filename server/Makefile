@@ -13,4 +13,4 @@ install-helpers:
 	echo "Installing linters"
 	gometalinter --install
 	echo "Installing Glide"
-	curl https://glide.sh/get | sh
+	go get -u github.com/Masterminds/glide

@@ -1,0 +1,25 @@
+{
+  "server": {
+    "host": "127.0.0.1:3006",
+    "path": "/message"
+  },
+  "messagetype": {
+    "message":        "message",
+    "authorization":  "auth",
+    "registration":   "register",
+    "contacts":       "contacts",
+    "settings":       "settings"
+  },
+  "messagecommand": {
+    "sendmessage":      "sendMessage",
+    "receivemessage":   "receiveMessage",
+    "messagesended":    "messageSent",
+    "sendlogindata":    "sendlogindata",
+    "loginissucc":      "loginissucc",
+    "sendregisterdata": "sendregisterdata",
+    "registerissucc":   "registerissucc",
+    "sendsettings":     "sendsettings",
+    "settingschanged":  "settingschanged",
+    "contactsrequest":  "contactsrequest"
+  }
+}

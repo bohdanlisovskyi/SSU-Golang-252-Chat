@@ -1,54 +1,55 @@
 package settingService
 
 import (
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"encoding/json"
-	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"errors"
-	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
+
 	"github.com/8tomat8/SSU-Golang-252-Chat/database"
+	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
+	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
 )
 
 // BlockUserRequestBody is a custom body for BlockUserRequest
 type BlockUserRequestBody struct {
-	MainUser    string `json:"main_user"`
 	ContactUser string `json:"contact_user"`
 	IsBlocked   int `json:"is_blocked"`
 }
 
-// UnmarshalBlockUserRequestBody function unmarshals request for blocking of users into BlockUserRequestBody struct,
-// checks and retrieves value of is_blocked variable.
-// Function returns: if succeed - *BlockUserRequestBody, is_blocked value, nil,
-// if failed - nil, -1, err
-func UnmarshalBlockUserRequestBody(request *messageService.Message) (*BlockUserRequestBody, int, error) {
+// UnmarshalBlockUserRequestBody function unmarshals request for blocking of users and retrieves values of
+// contactUser and isBlocked variables.
+func UnmarshalBlockUserRequestBody(request *messageService.Message) (contactUser string, isBlocked int, err error) {
 	var body *BlockUserRequestBody
-	err := json.Unmarshal(request.Body, &body)
+	err = json.Unmarshal(request.Body, &body)
 	if err != nil {
 		loger.Log.Errorf("Error has occurred: ", err)
-		return nil, -1, err
+		return "", -1, err
 	}
-	IsBlocked := body.IsBlocked // IsBlocked value could be int 0 or 1
-	if IsBlocked != 0 && IsBlocked != 1 {
-		err := errors.New("IsBlocked value is not valid. IsBlocked = " + string(IsBlocked))
+	contactUser = body.ContactUser
+	isBlocked = body.IsBlocked // IsBlocked value could be int 0 or 1
+	if isBlocked != 0 && isBlocked != 1 {
+		err := errors.New("IsBlocked value is not valid. IsBlocked = " + string(isBlocked))
 		loger.Log.Errorf("IsBlocked value is not 1 or 0:", err)
-		return nil, -1, err
+		return "", -1, err
 	}
-	return body, IsBlocked, nil
+	if contactUser == "" {
+		err := errors.New("ContactUser value is empty")
+		loger.Log.Errorf("Error has occurred: ", err)
+		return "", -1, err
+	}
+	return contactUser, isBlocked, nil
 }
 
 // BlockUnblockUser perform blocking and unblocking of users by clicking the button on UI.
 // Button works like a trigger: first push - block user, second push - unblock user.
-// Function returns: if succeed - true and nil, if failed - false and error
 func BlockUnblockUser(request *messageService.Message) (bool, error) {
-	body, _, err := UnmarshalBlockUserRequestBody(request)
+	contactUser, isBlocked, err := UnmarshalBlockUserRequestBody(request)
 	if err != nil {
 		loger.Log.Errorf("Error has occurred: ", err)
 		return false, err
 	}
-	contactUser := body.ContactUser
-	mainUser := body.MainUser
-	if contactUser == "" || mainUser == "" {
-		err := errors.New("Some field or fields are empty")
+	mainUser := request.Header.UserName
+	if mainUser == "" {
+		err := errors.New("MainUser value is empty")
 		loger.Log.Errorf("Error has occurred: ", err)
 		return false, err
 	}
@@ -57,10 +58,8 @@ func BlockUnblockUser(request *messageService.Message) (bool, error) {
 		loger.Log.Errorf("DB error has occurred: ", err)
 		return false, err
 	}
-	// UPDATE contacts SET IsBlocked = "IsBlocked value from request body"
-	// WHERE main_user = "mainUser value from request body"
-	// AND  contact_user = "contactUser value from request body"
-	//db.Model(&Contact).Where("main_user = ? AND contact_user = ?", mainUser, contactUser).Update("is_blocked", IsBlocked)
+	contact := messageService.Contact{MainUser: mainUser, ContactUser: contactUser, IsBlocked: isBlocked}
+	db.Model(&contact).Update("is_blocked", isBlocked)
 	if db.Error != nil {
 		loger.Log.Errorf("Error has occurred: ", err)
 		return false, err
@@ -68,20 +67,10 @@ func BlockUnblockUser(request *messageService.Message) (bool, error) {
 	return true, nil
 }
 
-// ContactResult struct is a copy of Contact struct from database package,
-// it is used for storing result of querying from contacts table
-type ContactResult struct {
-	MainUser    string
-	ContactUser string
-	IsBlocked   int
-}
-
-// IsUserBlocked checks if user is blocked for chatting in contacts table
-// Function returns: if succeed - true or false from contacts table(depend is contact blocked or not) and nil,
-// if failed - true and error
+// IsUserBlocked checks if user is blocked in contacts table
 func IsUserBlocked(request *messageService.Message) (isBlocked bool, err error) {
 	isBlocked = true
-	var body messageService.MessageBody
+	var body *messageService.MessageBody
 	err = json.Unmarshal(request.Body, &body)
 	if err != nil {
 		loger.Log.Errorf("Error has occurred: ", err)
@@ -89,15 +78,15 @@ func IsUserBlocked(request *messageService.Message) (isBlocked bool, err error) 
 	}
 	mainUser := body.ReceiverName
 	contactUser := request.Header.UserName
-	db, err := database.GetStorage() // common gorm-connection from database package
+	db, err := database.GetStorage()
 	if err != nil {
 		loger.Log.Errorf("DB error has occurred: ", err)
 		return true, err
 	}
-	var result ContactResult //variable for storing result of querying into ContactResult struct
+	var result *messageService.Contact //variable for storing result of querying by contacts table
 	// SELECT main_user, contact_user, is_blocked FROM contacts
 	// WHERE main_user = "mainUser value from request body"
-	// AND contact_user = "contactUser value from request body"
+	// AND contact_user = "contactUser value from request header"
 	db.Table("contacts").
 		Select("main_user, contact_user, is_blocked").
 		Where("main_user = ? AND contact_user = ?", mainUser, contactUser).

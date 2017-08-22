@@ -9,8 +9,15 @@ import (
 //Message for client after registration
 type Authentification struct {
 	UserName string `gorm:"primary_key"`
-	Password string
 	NickName string
+	Password string
+}
+
+// Contact is a structure for table contacts in messager.db
+type Contact struct {
+	MainUser    string
+	ContactUser string
+	IsBlocked   int
 }
 
 // Message is a structure for message which is sending between users

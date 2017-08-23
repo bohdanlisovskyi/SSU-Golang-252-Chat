@@ -5,8 +5,6 @@ import (
 	"encoding/base64"
 	"errors"
 
-	"fmt"
-
 	"github.com/8tomat8/SSU-Golang-252-Chat/database"
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
@@ -14,13 +12,13 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type Result struct {
+type result struct {
 	main_user    string
 	contact_user string `gorm:"contact_user"`
 	is_blocked   int
 }
 
-type NickName struct {
+type nickName struct {
 	nick_name string `gorm:"contact_user"`
 }
 
@@ -89,7 +87,7 @@ func randToken() string {
 	return base64.StdEncoding.EncodeToString(b)
 }
 
-func SendNickName(message *messageService.Authentification)(string, error){
+func SendNickName(message *messageService.Authentification) (string, error) {
 	db, err := database.GetStorage()
 	if err != nil {
 		loger.Log.Errorf("Failed to open db andsend contacts", err)
@@ -106,7 +104,7 @@ func SendContacts(cont *messageService.Authentification) (*messageService.Contac
 		loger.Log.Errorf("Failed to open db andsend contacts", err)
 		return nil, err
 	}
-	var result []Result
+	var result []result
 
 	rows, err := db.Table("Contacts").Select("main_user, contact_user, is_blocked").
 		Where("main_user = ? and is_blocked == 0", cont.UserName).Rows()
@@ -114,7 +112,7 @@ func SendContacts(cont *messageService.Authentification) (*messageService.Contac
 		loger.Log.Errorf("query from contacts error:", err)
 		return nil, err
 	}
-	var row Result
+	var row result
 	for rows.Next() {
 		if err := rows.Scan(&row.main_user, &row.contact_user, &row.is_blocked); err != nil {
 			loger.Log.Errorf("scan error:", err)
@@ -125,7 +123,7 @@ func SendContacts(cont *messageService.Authentification) (*messageService.Contac
 	var nick []string
 
 	for _, item := range result {
-		var nickRow NickName
+		var nickRow nickName
 		rows, err := db.Table("Authentifications").Select("nick_name").
 			Where("user_name = ?", item.contact_user).Rows()
 		if err != nil {
@@ -141,16 +139,15 @@ func SendContacts(cont *messageService.Authentification) (*messageService.Contac
 		}
 	}
 
-	var co messageService.Contact
-	co = messageService.Contact{}
-	var contc *messageService.Contacts
-	contc = &messageService.Contacts{}
-	fmt.Println(result)
+	var contact messageService.Contact
+	contact = messageService.Contact{}
+	var contacts *messageService.Contacts
+	contacts = &messageService.Contacts{}
 	for i, j := range result {
-		co.NickName = nick[i]
-		co.UserName = j.contact_user
-		co.IsBlocked = j.is_blocked
-		contc.ContactsList = append(contc.ContactsList, co)
+		contact.NickName = nick[i]
+		contact.UserName = j.contact_user
+		contact.IsBlocked = j.is_blocked
+		contacts.ContactsList = append(contacts.ContactsList, contact)
 	}
-	return contc, err
+	return contacts, err
 }

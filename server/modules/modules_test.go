@@ -46,6 +46,10 @@ func TestSendContacts(t *testing.T) {
 		}
 	}()
 	byteUser, err := json.Marshal(body)
+	if err != nil {
+		t.Logf("Can`t marshal login message. %s", err)
+		return
+	}
 	test_user := messageService.Message{
 		Header: header,
 		Body:   byteUser,

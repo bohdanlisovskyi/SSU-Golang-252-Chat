@@ -192,6 +192,10 @@ func Auth(message *messageService.Message, conn *websocket.Conn) {
 		NickName: nick,
 	}
 	newRawMessageBody, err := json.Marshal(newMessageBody)
+	if err != nil {
+		loger.Log.Warningf("Can`t marshal login message. %s", err)
+		return
+	}
 	sendMsg(conn, newMessageHeader, newRawMessageBody)
 }
 
@@ -227,6 +231,10 @@ func SendContacts(message *messageService.Message, conn *websocket.Conn) {
 		ContactsList: cont.ContactsList,
 	}
 	newRawMessageBody, err := json.Marshal(newMessageBody)
+	if err != nil {
+		loger.Log.Warningf("Can`t marshal login message. %s", err)
+		return
+	}
 	sendMsg(conn, newMessageHeader, newRawMessageBody)
 
 }

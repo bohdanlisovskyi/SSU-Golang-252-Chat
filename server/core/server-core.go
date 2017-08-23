@@ -54,6 +54,8 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 		modules.Register(message, conn)
 	case coremessage.AuthType:
 		modules.Auth(message, conn)
+	case coremessage.ContactsType:
+		modules.SendContacts(message, conn)
 	case coremessage.SettingType:
 		switch message.Header.Command {
 		case coremessage.ChangePassComm:

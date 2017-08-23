@@ -15,8 +15,8 @@ type Authentification struct {
 
 // Contact is a structure for table contacts in messager.db
 type Contact struct {
-	MainUser    string
-	ContactUser string
+	MainUser    string `gorm:"primary_key"`
+	ContactUser string `gorm:"primary_key"`
 	IsBlocked   int
 }
 

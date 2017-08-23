@@ -3,16 +3,13 @@ package contacts
 var ContactsList *Contacts
 
 type Contact struct {
-	UserName       string
-	NickName       string
-	BirthDay       int
-	MessageHistory string
-	IsBlocked      bool
+	UserName  string
+	NickName  string
+	IsBlocked bool
 }
 
 type Contacts struct {
-	ContactsList   []Contact
-	CurrentContact int
+	ContactsList []Contact
 }
 
 //IndexByUserName return index of contact with userName if it exist, or -1 otherwise

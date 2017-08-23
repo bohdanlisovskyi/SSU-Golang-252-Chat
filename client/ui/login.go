@@ -43,16 +43,9 @@ func initQmlLogin(quickWidget *quick.QQuickWidget) {
 
 func checkLoginDataAndConnect(userName, password string) {
 	if userName == "" || password == "" {
-		/*loger.Log.Info("Login failed. userName and/or password field are empty")
+		loger.Log.Info("Login failed. userName and/or password field are empty")
 		qmlStatus.SendStatus("Please, fill the fields")
 		qmlLogin.LoginDataIsValid(false)
-		return*/
-		qmlStatus.SendStatus("Test login.")
-		loger.Log.Info("Test login.")
-		qmlLogin.LoginDataIsValid(true)
-		userinfo.CurrentUserInfo = &userinfo.UserInfo{
-			UserName: "Kitler",
-		}
 		return
 	}
 	//err has separate declarations
@@ -73,6 +66,7 @@ func checkLoginDataAndConnect(userName, password string) {
 		qmlStatus.SendStatus("Loging failed")
 		return
 	}
+	loger.Log.Infof("Connection created. Server url - %s", connUrl.String())
 	//there we need to send to server loging data
 	newMessageHeader := messageService.MessageHeader{
 		Type_:    config.GetConfig().MessageType.Auth,
@@ -113,7 +107,7 @@ func checkLoginDataAndConnect(userName, password string) {
 	userinfo.CurrentUserInfo = &userinfo.UserInfo{}
 	go listener.ListenToServer(connection)
 	go channelsResolver()
-	go loginResponseWaiter(5)
+	go loginResponseWaiter(8)
 }
 
 func logOut() {

@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/http"
-	"os"
 
 	"fmt"
 
@@ -13,7 +12,8 @@ import (
 
 func main() {
 
-	port := os.Getenv("PORT")
+	//port := os.Getenv("PORT")
+	port := "3006"
 	loger.Log.Infof("Server run with port: " + port)
 	r := mux.NewRouter()
 	r.HandleFunc("/message", core.MessageHandler) // listen message

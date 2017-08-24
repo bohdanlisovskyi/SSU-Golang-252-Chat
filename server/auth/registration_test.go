@@ -11,8 +11,8 @@ import (
 func TestRegisterNewUser(t *testing.T) {
 
 	test_user := messageService.Authentification{
-		UserName: "fklds$222d",
-		Password: "vasya$22sss",
+		UserName: "fklds222d",
+		Password: "vasya22sss",
 		NickName: "voron",
 	}
 	user, tok, err := RegisterNewUser(&test_user)

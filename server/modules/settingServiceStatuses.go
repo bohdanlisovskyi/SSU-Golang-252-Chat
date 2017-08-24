@@ -41,6 +41,15 @@ var changeNicknameOk = messageService.Message{
 	Body: nil,
 }
 
+var messageError = messageService.Message{
+	Header:
+	messageService.MessageHeader{
+		Type_:   coremessage.MarshalError,
+		Command: "Message has not been sent. Please try again",
+	},
+	Body: nil,
+}
+
 var blockUserError = messageService.Message{
 	Header:
 	messageService.MessageHeader{

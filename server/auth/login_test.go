@@ -4,15 +4,14 @@ import (
 	"fmt"
 	"testing"
 
-	"encoding/json"
 	"flag"
 
-	"github.com/gorilla/websocket"
-
+	"encoding/json"
 	"net/url"
 
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
 	"github.com/8tomat8/SSU-Golang-252-Chat/server/customers"
+	"github.com/gorilla/websocket"
 )
 
 func TestLogin(t *testing.T) {
@@ -74,4 +73,16 @@ func TestVerifyToken(t *testing.T) {
 	}
 
 	t.Log("Verification result: ", res)
+}
+
+// For testing in modules.go
+//clientStruc := customers.Client{Conn: conn, Token: "333"}
+//ok, err := auth.VerifyToken(message, clientStruc)
+
+func TestSendContacts(t *testing.T) {
+	test_user := messageService.Authentification{
+		UserName: "Yuriy",
+	}
+	SendContacts(&test_user)
+
 }

@@ -5,9 +5,9 @@ import (
 
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
-	"github.com/8tomat8/SSU-Golang-252-Chat/server/message"
 	"github.com/8tomat8/SSU-Golang-252-Chat/server/modules"
 	"github.com/gorilla/websocket"
+	"github.com/8tomat8/SSU-Golang-252-Chat/server/message"
 )
 
 var upgrader = websocket.Upgrader{
@@ -54,6 +54,8 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 		modules.Register(message, conn)
 	case coremessage.AuthType:
 		modules.Auth(message, conn)
+	case coremessage.ContactsType:
+		modules.SendContacts(message, conn)
 	case coremessage.SettingType:
 		switch message.Header.Command {
 		case coremessage.ChangePassComm:

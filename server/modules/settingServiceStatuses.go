@@ -41,41 +41,6 @@ var changeNicknameOk = messageService.Message{
 	Body: nil,
 }
 
-var changeBirthdayError = messageService.Message{
-	Header:
-	messageService.MessageHeader{
-		Type_:   coremessage.ChangeBirthdayComm,
-		Command: "Birthday has not changed. Please try again",
-	},
-	Body: nil,
-}
-
-var changeBirthdayOk = messageService.Message{
-	Header:
-	messageService.MessageHeader{
-		Type_:   coremessage.ChangeBirthdayComm,
-		Command: coremessage.StatusOk,
-	},
-	Body: nil,
-}
-
-var changeUserInfoError = messageService.Message{
-	Header:
-	messageService.MessageHeader{
-		Type_:   coremessage.ChangeUserInfoComm,
-		Command: "User info has not changed. Please try again",
-	},
-	Body: nil,
-}
-
-var changeUserInfoOk = messageService.Message{
-	Header:
-	messageService.MessageHeader{
-		Type_:   coremessage.ChangeUserInfoComm,
-		Command: coremessage.StatusOk,
-	},
-	Body: nil,
-}
 var blockUserError = messageService.Message{
 	Header:
 	messageService.MessageHeader{

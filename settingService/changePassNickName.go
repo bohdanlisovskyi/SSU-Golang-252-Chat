@@ -26,12 +26,12 @@ func UnmarshalUserDataRequestBody(request *messageService.Message) (pass, nickNa
 	if body.NickName == "" {
 		err := errors.New("NickName value is empty")
 		loger.Log.Error(err)
-		return
+		return "", "", err
 	}
 	if body.Password == "" {
 		err := errors.New("Password value is empty")
 		loger.Log.Error(err)
-		return
+		return "", "", err
 	}
 	return body.Password, body.NickName, nil
 }
@@ -41,7 +41,7 @@ func GetUserName(request *messageService.Message) (userName string, err error) {
 	if request.Header.UserName == "" {
 		err := errors.New("User name value is empty")
 		loger.Log.Error(err)
-		return
+		return "", err
 	}
 	return request.Header.UserName, nil
 }

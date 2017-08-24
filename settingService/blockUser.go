@@ -28,13 +28,13 @@ func UnmarshalBlockUserRequestBody(request *messageService.Message) (contactUser
 	if contactUser == "" {
 		err := errors.New("ContactUser value is empty")
 		loger.Log.Error(err)
-		return
+		return "", -1, err
 	}
 	isBlocked = body.IsBlocked // IsBlocked value could be int 0 or 1
 	if isBlocked != 0 && isBlocked != 1 {
 		err := errors.New("IsBlocked value is not valid. IsBlocked = " + string(isBlocked))
 		loger.Log.Error(err)
-		return
+		return "", -1, err
 	}
 	return contactUser, isBlocked, nil
 }
@@ -50,7 +50,7 @@ func BlockUnblockUser(request *messageService.Message) (ok bool, err error) {
 	if request.Header.UserName == "" {
 		err := errors.New("MainUser value is empty")
 		loger.Log.Error(err)
-		return
+		return false, err
 	}
 	db, err := database.GetStorage()
 	if err != nil {
@@ -91,7 +91,7 @@ func IsUserBlocked(request *messageService.Message) (isBlocked bool, err error) 
 	for rows.Next() {
 		if err := rows.Scan(&row.MainUser, &row.ContactUser, &row.IsBlocked); err != nil {
 			loger.Log.Errorf("scan error:", err)
-			return
+			return isBlocked, err
 		}
 		result = append(result, row)
 	}

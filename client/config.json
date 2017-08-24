@@ -20,6 +20,7 @@
     "registerissucc":   "registerissucc",
     "sendsettings":     "sendsettings",
     "settingschanged":  "settingschanged",
-    "contactsrequest":  "contactsrequest"
+    "contactsrequest":  "contactsrequest",
+    "blockcontact":     "blockcontact"
   }
 }

@@ -201,6 +201,10 @@ ApplicationWindow {
                 registerWindowLocal.errText.text = ""
                 loginWindowLocal.visible = true
                 registerWindowLocal.visible = false
+
+                registerWindowLocal.userInput.text = ""
+                registerWindowLocal.nickInput.text = ""
+                registerWindowLocal.passInput.text = ""
             } else {
                 registerWindowLocal.errText.text = "Something wrong. Check fields"
             }
@@ -223,6 +227,9 @@ ApplicationWindow {
                 logoutMenu.visible = true
                 settingsMenu.height = 20
                 settingsMenu.visible = true
+
+                loginWindowLocal.userInput.text = ""
+                loginWindowLocal.passInput.text = ""
             } else {
                 loginWindowLocal.errText.text = "Something wrong. Check fields"
             }

@@ -14,6 +14,7 @@ Item {
     signal block(bool status, int index)
     property Text historyText: historyTextView
     property TextEdit messageText: messageEdit
+    property ListView contactsList: contactsListView
 
     Rectangle {
         color: "#ffffff"
@@ -248,19 +249,12 @@ Item {
                                 onHeightChanged: {
                                     parent.height = height
                                 }
+
                                 Text {
-                                    text: 'UserName:' + model.display.username
+                                    text: ModelHelper.getData(index, "nickname")
                                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                                     width: contactsListView.width - 40
-                                    height: contentHeight
-
-
-                                }
-                                Text {
-                                    text: 'NickName:' + model.display.nickname
-                                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                                    width: contactsListView.width - 40
-                                    height: contentHeight
+                                    height: contentHeight<40?40:contentHeight
 
                                 }
                             }
@@ -282,7 +276,7 @@ Item {
                                 Layout.fillHeight: false
                                 Layout.fillWidth: false
                                 checkable: true
-                                checked: model.display.isblocked
+                                checked: ModelHelper.getData(index, "isblocked")
                                 onCheckedChanged: {
                                     model.isblocked = checked
                                     block(checked, index)
@@ -303,8 +297,13 @@ Item {
                         }
                     }
                     onCurrentItemChanged: {
-                        currentTitle.text = contactsListView.currentItem.currentData.display.nickname
+                        currentTitle.text = ModelHelper.getData(contactsListView.currentIndex, "nickname")
                     }
+
+                    Connections {
+                         target: ModelHelper
+                         onDataChanged: { contactsListView.model = 0; contactsListView.model = ContactModel }
+                       }
 
                     focus: true
                 }

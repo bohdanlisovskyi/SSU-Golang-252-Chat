@@ -64,6 +64,7 @@ func receiveContacts(message messageService.Message) {
 		return
 	}
 	updateContactsList()
+	qmlStatus.SendStatus("Contacts list updated")
 }
 
 func loginIsSuccessfully(message messageService.Message) {
@@ -86,10 +87,10 @@ func loginIsSuccessfully(message messageService.Message) {
 	qmlLogin.LoginDataIsValid(true)
 	qmlStatus.SendStatus("Login successfully. Waiting for contacts list.")
 	//test contacts. will be removed after implement Contacts service
-	contacts.ContactsList.ContactsList = append(contacts.ContactsList.ContactsList, contacts.Contact{UserName: "aome1", NickName: "1", IsBlocked: true})
-	contacts.ContactsList.ContactsList = append(contacts.ContactsList.ContactsList, contacts.Contact{UserName: "aome2", NickName: "2", IsBlocked: true})
-	contacts.ContactsList.ContactsList = append(contacts.ContactsList.ContactsList, contacts.Contact{UserName: "aome3", NickName: "3", IsBlocked: false})
-	contacts.ContactsList.ContactsList = append(contacts.ContactsList.ContactsList, contacts.Contact{UserName: "aome4", NickName: "4", IsBlocked: true})
+	contacts.ContactsList.ContactsList = append(contacts.ContactsList.ContactsList, messageService.ClientContact{UserName: "aome1", NickName: "1", IsBlocked: 1})
+	contacts.ContactsList.ContactsList = append(contacts.ContactsList.ContactsList, messageService.ClientContact{UserName: "aome2", NickName: "2", IsBlocked: 1})
+	contacts.ContactsList.ContactsList = append(contacts.ContactsList.ContactsList, messageService.ClientContact{UserName: "aome3", NickName: "3", IsBlocked: 0})
+	contacts.ContactsList.ContactsList = append(contacts.ContactsList.ContactsList, messageService.ClientContact{UserName: "aome4", NickName: "4", IsBlocked: 1})
 	updateContactsList()
 }
 
@@ -159,8 +160,6 @@ func receiveNewMessage(message messageService.Message) {
 		loger.Log.Warningf("Cannot unmarshal received message. %s", err)
 		return
 	}
-	//TODO: change div-alignment property to display message properly
-	//qmlContacts.SendLastMessage(messageBody.Text, contacts.ContactsList.IndexByUserName(sender.UserName))
 	senderIndex := addToHistory(message.Header.UserName, messageBody.Text)
 	if senderIndex != -1 {
 		qmlContacts.SendLastMessage(messageBody.Text, senderIndex)

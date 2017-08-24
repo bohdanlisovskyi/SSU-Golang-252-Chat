@@ -1,6 +1,6 @@
 {
   "server": {
-    "host": "127.0.0.1:3006",
+    "host": "sheltered-citadel-12933.herokuapp.com",
     "path": "/message"
   },
   "messagetype": {

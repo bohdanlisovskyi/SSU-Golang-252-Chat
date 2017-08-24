@@ -63,9 +63,15 @@ func initQmlContacts(quickWidget *quick.QQuickWidget) {
 			UserName: userinfo.CurrentUserInfo.UserName,
 			Token:    userinfo.CurrentUserInfo.Token,
 		}
-		newMessageBody := contacts.Contact{
+		var intStatus int
+		if status {
+			intStatus = 1
+		} else {
+			intStatus = 0
+		}
+		newMessageBody := messageService.ClientContact{
 			UserName:  currentContactUserName,
-			IsBlocked: status,
+			IsBlocked: intStatus,
 		}
 		newRawMessageBody, err := json.Marshal(newMessageBody)
 		if err != nil {
@@ -97,7 +103,7 @@ func initQmlContacts(quickWidget *quick.QQuickWidget) {
 }
 
 func initContactObject(quickWidget *quick.QQuickWidget) {
-	contacts.ContactsList = &contacts.Contacts{}
+	contacts.ContactsList = &messageService.ClientContacts{}
 	listOfContacts = arraylist.New()
 
 	listOfContactsModel = core.NewQAbstractListModel(nil)
@@ -217,7 +223,7 @@ func updateContactsList() {
 			listOfContacts.Add(&ContactObject{
 				UserName:  contact.UserName,
 				NickName:  contact.NickName,
-				IsBlocked: contact.IsBlocked,
+				IsBlocked: contact.IsBlocked != 0,
 			})
 		}
 	}

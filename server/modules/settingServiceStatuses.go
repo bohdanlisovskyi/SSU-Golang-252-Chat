@@ -44,7 +44,7 @@ var changeNicknameOk = messageService.Message{
 var messageError = messageService.Message{
 	Header:
 	messageService.MessageHeader{
-		Type_:   coremessage.SentMessageComm,
+		Type_:   coremessage.MessageType,
 		Command: "Message has not been sent. Please try again",
 	},
 	Body: nil,

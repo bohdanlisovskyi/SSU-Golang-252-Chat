@@ -149,7 +149,7 @@ ApplicationWindow {
         id: messagerWindowLocal
         visible: false
         onSend: {
-            qmlMessage.sendMessage(message)
+            qmlMessage.sendMessage(message, index)
         }
         onBlock: {
             qmlContacts.blockContact(status, index)

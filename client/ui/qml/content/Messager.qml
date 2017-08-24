@@ -10,7 +10,7 @@ Item {
     height: 460
     Layout.fillHeight: true
     Layout.fillWidth: true
-    signal send(string message)
+    signal send(string message, int index)
     signal block(bool status, int index)
     property Text historyText: historyTextView
     property TextEdit messageText: messageEdit
@@ -158,7 +158,7 @@ Item {
                     Layout.fillWidth: false
                     onClicked: {
                         if( messageEdit.getText(0, messageEdit.length) !== "") {
-                            messagerWindow.send(messageEdit.getText(0, messageEdit.length))
+                            messagerWindow.send(messageEdit.getText(0, messageEdit.length), contactsListView.currentIndex, "username")
                             messageEdit.text = ""
                         }
                     }

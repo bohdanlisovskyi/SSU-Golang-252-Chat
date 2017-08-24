@@ -23,8 +23,8 @@ func Message(message *messageService.Message, messageType int, conn *websocket.C
 	isBlocked, err := settingService.IsUserBlocked(message)
 	if err != nil {
 		loger.Log.Errorf(" Error has occurred : ", err)
-		byteError, _ := json.Marshal(changeNicknameError) // this for UI
-		conn.WriteMessage(messageType, byteError)         // this for UI
+		byteError, _ := json.Marshal(messageError) // this for UI
+		conn.WriteMessage(messageType, byteError)  // this for UI
 		return
 	}
 	if isBlocked {

@@ -12,11 +12,13 @@ import (
 )
 
 var responseWaiterChannel chan struct{}
+var pingerChannel chan struct{}
 
 func channelsResolver() {
 	for {
 		select {
 		case <-listener.QuitChannel:
+			close(pingerChannel)
 			return
 		case msg := <-listener.AuthorizationChannel:
 			//close this channel to end response-timer

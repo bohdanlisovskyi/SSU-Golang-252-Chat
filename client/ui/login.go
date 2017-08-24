@@ -104,10 +104,12 @@ func checkLoginDataAndConnect(userName, password string) {
 	listener.AuthorizationChannel = make(chan messageService.Message)
 	listener.QuitChannel = make(chan struct{})
 	responseWaiterChannel = make(chan struct{})
+	pingerChannel = make(chan struct{})
 	userinfo.CurrentUserInfo = &userinfo.UserInfo{}
 	go listener.ListenToServer(connection)
 	go channelsResolver()
 	go loginResponseWaiter(8)
+	go pinger(40)
 }
 
 func logOut() {
@@ -141,5 +143,27 @@ func loginResponseWaiter(seconds time.Duration) {
 			//we have got response in time
 			return
 		}
+	}
+}
+
+func pinger(seconds time.Duration) {
+	ticker := time.NewTicker(time.Second * seconds)
+	go func() {
+		for t := range ticker.C {
+			pingBody, _ := json.Marshal(&messageService.MessageBody{})
+			pingMessage := messageService.Message{
+				Header: messageService.MessageHeader{Type_: "ping"},
+				Body:   pingBody,
+			}
+			marshaledPing, _ := json.Marshal(pingMessage)
+			connection.WriteMessage(websocket.TextMessage, marshaledPing)
+			loger.Log.Infoln("Ping " + t.String())
+		}
+
+	}()
+	select {
+	case <-pingerChannel:
+		ticker.Stop()
+		return
 	}
 }

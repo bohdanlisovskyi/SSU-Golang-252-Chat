@@ -37,14 +37,12 @@ func channelsResolver() {
 				registerIsNotSuccessfully(msg)
 			}
 		case msg := <-listener.MessageChannel:
-			loger.Log.Info("Message channel")
 			switch msg.Header.Command {
 			case config.GetConfig().MessageCommand.ReceiveMessage:
 				receiveNewMessage(msg)
 			case config.GetConfig().MessageCommand.MessageSent:
 				messageSent(msg)
 			default:
-				loger.Log.Info("Message wasnt sent")
 				messageWasntSent(msg)
 			}
 		case msg := <-listener.SettingsChannel:
@@ -137,7 +135,6 @@ func registerIsNotSuccessfully(message messageService.Message) {
 }
 
 func receiveNewMessage(message messageService.Message) {
-	//sender := contacts.ContactsList.GetContactByUserName(message.Header.UserName)
 	var sender *ContactObject
 	for i := 0; i < listOfContacts.Size(); i++ {
 		var iData, exists = listOfContacts.Get(i)
@@ -164,9 +161,9 @@ func receiveNewMessage(message messageService.Message) {
 		loger.Log.Warningf("Cannot unmarshal received message. %s", err)
 		return
 	}
-	senderIndex := addToHistory(message.Header.UserName, messageBody.Text)
+	senderIndex := addToHistory(message.Header.UserName, messageBody.Text, false)
 	if senderIndex != -1 {
-		qmlContacts.SendLastMessage(messageBody.Text, senderIndex)
+		qmlContacts.SendLastMessage(senderIndex)
 		qmlStatus.SendStatus("Received message from " + message.Header.UserName)
 		loger.Log.Infof("Message received from %s .", message.Header.UserName)
 		return
@@ -183,9 +180,9 @@ func messageSent(message messageService.Message) {
 		loger.Log.Warningf("Cannot unmarshal received message. %s", err)
 		return
 	}
-	receiverIndex := addToHistory(messageBody.ReceiverName, messageBody.Text)
+	receiverIndex := addToHistory(messageBody.ReceiverName, messageBody.Text, true)
 	if receiverIndex != -1 {
-		qmlContacts.SendLastMessage(messageBody.Text, receiverIndex)
+		qmlContacts.SendLastMessage(receiverIndex)
 		qmlStatus.SendStatus("Message sent to " + messageBody.ReceiverName + " successfully")
 		qmlMessage.MessageSent(true)
 		loger.Log.Infof("Message was sent to %s .", messageBody.ReceiverName)

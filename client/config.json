@@ -12,8 +12,8 @@
   },
   "messagecommand": {
     "sendmessage":      "sendMessage",
-    "receivemessage":   "receiveMessage",
-    "messagesended":    "messageSent",
+    "receivemessage":   "sendMessage",
+    "messagesent":      "sent_message",
     "sendlogindata":    "sendlogindata",
     "loginissucc":      "loginissucc",
     "sendregisterdata": "sendregisterdata",

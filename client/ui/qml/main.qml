@@ -240,6 +240,15 @@ ApplicationWindow {
     }
 
     Connections {
+        target: qmlContacts
+        onSendLastMessage: {
+            if (messagerWindowLocal.contactsList.currentIndex == index) {
+                messagerWindowLocal.historyText.text = ModelHelper.getData(index, "history")
+            }
+        }
+    }
+
+    Connections {
         target: qmlMessage
         onMessageSent: {
             if(messageWasSent) {

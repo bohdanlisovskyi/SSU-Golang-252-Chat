@@ -23,6 +23,14 @@ func Message(message *messageService.Message, messageType int, conn *websocket.C
 	isBlocked, err := settingService.IsUserBlocked(message)
 	if err != nil {
 		loger.Log.Errorf(" Error has occurred : ", err)
+		var messageError = messageService.Message{
+			Header:
+			messageService.MessageHeader{
+				Type_:   coremessage.MessageType,
+				Command: "Message has not been sent. Please try again",
+			},
+			Body: message.Body,
+		}
 		byteError, _ := json.Marshal(messageError) // this for UI
 		conn.WriteMessage(messageType, byteError)  // this for UI
 		return
@@ -201,7 +209,6 @@ func Auth(message *messageService.Message, conn *websocket.Conn) {
 }
 
 func SendContacts(message *messageService.Message, conn *websocket.Conn) {
-
 	ok, err := auth.VerifyToken(message, customers.Clients[message.Header.UserName])
 	if err != nil {
 		loger.Log.Warningf("Error in token verification! %s", err)
@@ -211,13 +218,7 @@ func SendContacts(message *messageService.Message, conn *websocket.Conn) {
 		loger.Log.Warningf("token verification failed! %s", err)
 		return
 	}
-	var user *messageService.Authentification
-	err = json.Unmarshal(message.Body, &user)
-	if err != nil {
-		loger.Log.Warningf("Failed to unmarshal message body %s", err)
-		return
-	}
-	cont, err := auth.SendContacts(user)
+	cont, err := auth.SendContacts(message)
 	if err != nil {
 		loger.Log.Warningf("Failed to send user contacts %s", err)
 		return

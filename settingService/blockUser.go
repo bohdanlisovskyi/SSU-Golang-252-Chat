@@ -82,7 +82,7 @@ func IsUserBlocked(request *messageService.Message) (isBlocked bool, err error) 
 	var row messageService.Contact
 	rows, err := db.Table("Contacts").
 		Select("main_user, contact_user, is_blocked").
-		Where("main_user = ? contact_user = ?", body.ReceiverName, request.Header.UserName).
+		Where("main_user = ? AND contact_user = ?", body.ReceiverName, request.Header.UserName).
 		Rows()
 	if err != nil {
 		loger.Log.Errorf("Querying error:", err)

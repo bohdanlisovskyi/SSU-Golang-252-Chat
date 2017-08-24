@@ -60,10 +60,6 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 			modules.ChangePass(message, messageType, conn)
 		case coremessage.ChangeNicknameComm:
 			modules.ChangeNickName(message, messageType, conn)
-		case coremessage.ChangeBirthdayComm:
-			modules.ChangeBirthday(message, messageType, conn)
-		case coremessage.ChangeUserInfoComm:
-			modules.ChangeAboutUserInfo(message, messageType, conn)
 		case coremessage.BlockUserComm:
 			modules.BlockUnblockUser(message, messageType, conn)
 		default:

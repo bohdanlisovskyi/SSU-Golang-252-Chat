@@ -200,9 +200,7 @@ func Auth(message *messageService.Message, conn *websocket.Conn) {
 }
 
 func SendContacts(message *messageService.Message, conn *websocket.Conn) {
-	// For testing
-	//clientStruc := customers.Client{Conn: conn, Token: "333"}
-	//ok, err := auth.VerifyToken(message, clientStruc)
+
 	ok, err := auth.VerifyToken(message, customers.Clients[message.Header.UserName])
 	if err != nil {
 		loger.Log.Warningf("Error in token verification! %s", err)

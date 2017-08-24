@@ -75,6 +75,10 @@ func TestVerifyToken(t *testing.T) {
 	t.Log("Verification result: ", res)
 }
 
+// For testing in modules.go
+//clientStruc := customers.Client{Conn: conn, Token: "333"}
+//ok, err := auth.VerifyToken(message, clientStruc)
+
 func TestSendContacts(t *testing.T) {
 	test_user := messageService.Authentification{
 		UserName: "Yuriy",

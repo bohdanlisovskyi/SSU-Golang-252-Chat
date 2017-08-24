@@ -97,7 +97,7 @@ func SendNickName(message *messageService.Authentification) (string, error) {
 	db.Where("user_name = ?", message.UserName).First(&authentification)
 	return authentification.NickName, nil
 }
-func SendContacts(cont *messageService.Authentification) (*messageService.Contacts, error) {
+func SendContacts(cont *messageService.Authentification) (*messageService.ClientContacts, error) {
 
 	db, err := database.GetStorage()
 	if err != nil {
@@ -139,10 +139,10 @@ func SendContacts(cont *messageService.Authentification) (*messageService.Contac
 		}
 	}
 
-	var contact messageService.Contact
-	contact = messageService.Contact{}
-	var contacts *messageService.Contacts
-	contacts = &messageService.Contacts{}
+	var contact messageService.ClientContact
+	contact = messageService.ClientContact{}
+	var contacts *messageService.ClientContacts
+	contacts = &messageService.ClientContacts{}
 	for i, j := range result {
 		contact.NickName = nick[i]
 		contact.UserName = j.contact_user

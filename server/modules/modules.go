@@ -227,7 +227,7 @@ func SendContacts(message *messageService.Message, conn *websocket.Conn) {
 		Type_:   coremessage.ContactsType,
 		Command: coremessage.ContactsRequest,
 	}
-	newMessageBody := messageService.Contacts{
+	newMessageBody := messageService.ClientContacts{
 		ContactsList: cont.ContactsList,
 	}
 	newRawMessageBody, err := json.Marshal(newMessageBody)

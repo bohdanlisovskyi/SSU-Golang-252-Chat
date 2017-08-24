@@ -3,8 +3,6 @@ language: go
 go:
   - 1.8.x
 
-os:
-  - osx
 install: cd server && make install-helpers
 
 env:

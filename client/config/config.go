@@ -32,6 +32,7 @@ type MessageCommand struct {
 	SendSettings     string `json:"sendsettings"`
 	SettingsChanged  string `json:"settingschsnged"`
 	ContactsRequest  string `json:"contactsrequest"`
+	BlockContact     string `json:"blockcontact"`
 }
 
 type Config struct {

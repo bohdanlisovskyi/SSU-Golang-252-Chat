@@ -45,13 +45,25 @@ func channelsResolver() {
 			}
 		case msg := <-listener.SettingsChannel:
 			receiveSettings(msg)
-		case <-listener.ContactsChannel:
+		case msg := <-listener.ContactsChannel:
+			receiveContacts(msg)
 		}
 	}
 }
 
 func receiveSettings(message messageService.Message) {
 
+}
+
+func receiveContacts(message messageService.Message) {
+	err := json.Unmarshal(message.Body, contacts.ContactsList)
+	if err != nil {
+		loger.Log.Warningf("Can not unmarshal list of contacts. %s", err)
+		qmlStatus.SendStatus("Contacts list didn't download.")
+		//TODO: send contacts request again
+		return
+	}
+	updateContactsList()
 }
 
 func loginIsSuccessfully(message messageService.Message) {
@@ -73,6 +85,12 @@ func loginIsSuccessfully(message messageService.Message) {
 	loger.Log.Infof("User %s login successfully.", message.Header.UserName)
 	qmlLogin.LoginDataIsValid(true)
 	qmlStatus.SendStatus("Login successfully. Waiting for contacts list.")
+	//test contacts. will be removed after implement Contacts service
+	contacts.ContactsList.ContactsList = append(contacts.ContactsList.ContactsList, contacts.Contact{UserName: "aome1", NickName: "1", IsBlocked: true})
+	contacts.ContactsList.ContactsList = append(contacts.ContactsList.ContactsList, contacts.Contact{UserName: "aome2", NickName: "2", IsBlocked: true})
+	contacts.ContactsList.ContactsList = append(contacts.ContactsList.ContactsList, contacts.Contact{UserName: "aome3", NickName: "3", IsBlocked: false})
+	contacts.ContactsList.ContactsList = append(contacts.ContactsList.ContactsList, contacts.Contact{UserName: "aome4", NickName: "4", IsBlocked: true})
+	updateContactsList()
 }
 
 func loginIsNotSuccessfully(message messageService.Message) {
@@ -126,7 +144,6 @@ func receiveNewMessage(message messageService.Message) {
 		return
 	}
 	//TODO: change div-alignment property to display message properly
-	sender.MessageHistory += messageBody.Text
 	qmlContacts.SendLastMessage(messageBody.Text, contacts.ContactsList.IndexByUserName(sender.UserName))
 }
 
@@ -138,12 +155,17 @@ func messageSent(message messageService.Message) {
 		loger.Log.Warningf("Cannot unmarshal received message. %s", err)
 		return
 	}
-	receiver := contacts.ContactsList.GetContactByUserName(messageBody.ReceiverName)
-	receiver.MessageHistory += messageBody.Text
-	qmlContacts.SendLastMessage(messageBody.Text, contacts.ContactsList.IndexByUserName(receiver.UserName))
-	qmlStatus.SendStatus("Message sent to " + messageBody.ReceiverName + " successfully")
+	receiverIndex := addToHistory(messageBody.ReceiverName, messageBody.Text)
+	if receiverIndex != -1 {
+		qmlContacts.SendLastMessage(messageBody.Text, receiverIndex)
+		qmlStatus.SendStatus("Message sent to " + messageBody.ReceiverName + " successfully")
+		qmlMessage.MessageSent(true)
+		loger.Log.Infof("Message was sent to %s .", messageBody.ReceiverName)
+		return
+	}
+	qmlStatus.SendStatus("Message sent to " + messageBody.ReceiverName + ", but now he's offline.")
 	qmlMessage.MessageSent(true)
-	loger.Log.Infof("Message was sent to %s .", messageBody.ReceiverName)
+	loger.Log.Infof("Message was sent to offline contact %s .", messageBody.ReceiverName)
 }
 
 func messageWasntSent(message messageService.Message) {

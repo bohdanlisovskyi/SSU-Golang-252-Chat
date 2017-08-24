@@ -50,10 +50,8 @@ func initQmlRegister(quickWidget *quick.QQuickWidget) {
 			return
 		}
 		newMessageHeader := messageService.MessageHeader{
-			Type_:    config.GetConfig().MessageType.Register,
-			Command:  config.GetConfig().MessageCommand.SendRegisterData,
-			UserName: "",
-			Token:    "",
+			Type_:   config.GetConfig().MessageType.Register,
+			Command: config.GetConfig().MessageCommand.SendRegisterData,
 		}
 		newMessageBody := messageService.Authentification{
 			UserName: userName,

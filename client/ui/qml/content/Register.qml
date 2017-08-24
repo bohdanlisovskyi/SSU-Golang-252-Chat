@@ -25,7 +25,6 @@ Item {
         id: columnLayout
         anchors.fill: parent
 
-
         TextInput {
             id: userNameInput
             y: 65
@@ -100,7 +99,6 @@ Item {
             }
         }
 
-
         TextInput {
             id: passwordInput
             y: 175
@@ -136,7 +134,6 @@ Item {
                 visible: !passwordInput.text
             }
         }
-
 
         Button {
             id: registerButton
@@ -196,9 +193,5 @@ Item {
                 }
             }
         }
-
-
     }
-
-
 }

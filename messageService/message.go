@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
-	"github.com/8tomat8/SSU-Golang-252-Chat/server/customers"
 )
 
 //Message for client after registration
@@ -14,21 +13,11 @@ type Authentification struct {
 	Password string
 }
 
-// ClientContact is a structure for table contacts in messager.db
+// Contact is a structure for table contacts in messager.db
 type Contact struct {
 	MainUser    string `gorm:"primary_key"`
 	ContactUser string `gorm:"primary_key"`
 	IsBlocked   int
-}
-
-//Message for online contacts after login
-type ClientContact struct {
-	UserName  string `gorm:"main_user"`
-	NickName  string
-	IsBlocked int
-}
-type ClientContacts struct {
-	ContactsList []ClientContact
 }
 
 // Message is a structure for message which is sending between users
@@ -47,10 +36,9 @@ type MessageHeader struct {
 
 // MessageBody is a structure of body for Message
 type MessageBody struct {
-	ReceiverName string             `json:"receiverName"`
-	Time         int                `json:"time"` // unix time will be used http://www.unixtimestamp.com/
-	Text         string             `json:"text"`
-	Contacts     []customers.Client `json:"contacts"`
+	ReceiverName string `json:"receiverName"`
+	Time         int    `json:"time"` // unix time will be used http://www.unixtimestamp.com/
+	Text         string `json:"text"`
 }
 
 // UnmarshalMessage is a function for unmarshaling message (from [] byte JSON to Message structure)

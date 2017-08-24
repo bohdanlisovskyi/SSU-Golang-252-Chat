@@ -188,42 +188,6 @@ func ChangeNickName(message *messageService.Message, messageType int, conn *webs
 	return
 }
 
-func ChangeBirthday(message *messageService.Message, messageType int, conn *websocket.Conn) {
-	ok, err := settingService.ChangeBirthday(message)
-	if err != nil {
-		loger.Log.Errorf(" Error has occurred : ", err)
-		byteError, _ := json.Marshal(changeBirthdayError) // this for UI
-		conn.WriteMessage(messageType, byteError)         // this for UI
-		return
-	}
-	if !ok {
-		loger.Log.Warnf(" Birthday has not changed. Please try again")
-		byteError, _ := json.Marshal(changeBirthdayError) // this for UI
-		conn.WriteMessage(messageType, byteError)         // this for UI
-		return
-	}
-	byteOk, _ := json.Marshal(changeBirthdayOk) // this for UI
-	conn.WriteMessage(messageType, byteOk)      // this for UI
-	return
-}
-
-func ChangeAboutUserInfo(message *messageService.Message, messageType int, conn *websocket.Conn) {
-	ok, err := settingService.ChangeAboutUserInfo(message)
-	if err != nil {
-		loger.Log.Errorf(" Error has occurred : ", err)
-		byteError, _ := json.Marshal(changeUserInfoError) // this for UI
-		conn.WriteMessage(messageType, byteError)         // this for UI
-		return
-	}
-	if !ok {
-		loger.Log.Warnf(" Info about user has not changed. Please try again")
-		byteOk, _ := json.Marshal(changeUserInfoOk) // this for UI
-		conn.WriteMessage(messageType, byteOk)      // this for UI
-		return
-	}
-	return
-}
-
 func BlockUnblockUser(message *messageService.Message, messageType int, conn *websocket.Conn) {
 	ok, err := settingService.BlockUnblockUser(message)
 	if err != nil {

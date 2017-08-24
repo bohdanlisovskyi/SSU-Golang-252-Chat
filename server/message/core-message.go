@@ -2,6 +2,7 @@ package coremessage
 
 import (
 	"encoding/json"
+
 	"github.com/8tomat8/SSU-Golang-252-Chat/loger"
 	"github.com/8tomat8/SSU-Golang-252-Chat/messageService"
 	"github.com/8tomat8/SSU-Golang-252-Chat/server/customers"
@@ -11,7 +12,9 @@ const (
 	EmptyType          = ""
 	MessageType        = "message"
 	RegisterType       = "register"
+	RegisterSuccComm   = "registerissucc"
 	AuthType           = "auth"
+	AuthSuccComm       = "authissucc"
 	SettingType        = "settings"
 	ChangePassComm     = "change_pass"
 	BlockUserComm      = "block_user"

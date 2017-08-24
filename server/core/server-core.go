@@ -69,6 +69,8 @@ func validateMessage(message *messageService.Message, messageType int, conn *web
 		default:
 			loger.Log.Warnf("Command does not exist")
 		}
+	default:
+		loger.Log.Warnf("Command does not exist")
 	}
 
 }

@@ -132,7 +132,23 @@ func registerIsNotSuccessfully(message messageService.Message) {
 }
 
 func receiveNewMessage(message messageService.Message) {
-	sender := contacts.ContactsList.GetContactByUserName(message.Header.UserName)
+	//sender := contacts.ContactsList.GetContactByUserName(message.Header.UserName)
+	var sender *ContactObject
+	for i := 0; i < listOfContacts.Size(); i++ {
+		var iData, exists = listOfContacts.Get(i)
+		if !exists {
+			return
+		}
+		var data = iData.(*ContactObject)
+		if data.UserName == message.Header.UserName {
+			sender = data
+			break
+		}
+	}
+	if sender == nil {
+		loger.Log.Infof("Received message from user not in list. %s", message.Header.UserName)
+		return
+	}
 	if sender.IsBlocked {
 		loger.Log.Infof("Received message from blocked user - %s", sender.UserName)
 		return
@@ -144,7 +160,16 @@ func receiveNewMessage(message messageService.Message) {
 		return
 	}
 	//TODO: change div-alignment property to display message properly
-	qmlContacts.SendLastMessage(messageBody.Text, contacts.ContactsList.IndexByUserName(sender.UserName))
+	//qmlContacts.SendLastMessage(messageBody.Text, contacts.ContactsList.IndexByUserName(sender.UserName))
+	senderIndex := addToHistory(message.Header.UserName, messageBody.Text)
+	if senderIndex != -1 {
+		qmlContacts.SendLastMessage(messageBody.Text, senderIndex)
+		qmlStatus.SendStatus("Received message from " + message.Header.UserName)
+		loger.Log.Infof("Message received from %s .", message.Header.UserName)
+		return
+	}
+	loger.Log.Infof("Message received from %s . But he is not in your list.", message.Header.UserName)
+	return
 }
 
 func messageSent(message messageService.Message) {

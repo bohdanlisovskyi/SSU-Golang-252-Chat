@@ -196,6 +196,7 @@ func Auth(message *messageService.Message, conn *websocket.Conn) {
 		loger.Log.Warningf("Can`t marshal login message. %s", err)
 		return
 	}
+	customers.Clients[user.UserName] = customers.Client{Conn: conn, Token: tok}
 	sendMsg(conn, newMessageHeader, newRawMessageBody)
 }
 

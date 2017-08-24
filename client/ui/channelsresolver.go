@@ -12,11 +12,13 @@ import (
 )
 
 var responseWaiterChannel chan struct{}
+var pingerChannel chan struct{}
 
 func channelsResolver() {
 	for {
 		select {
 		case <-listener.QuitChannel:
+			close(pingerChannel)
 			return
 		case msg := <-listener.AuthorizationChannel:
 			//close this channel to end response-timer
@@ -64,6 +66,7 @@ func receiveContacts(message messageService.Message) {
 		return
 	}
 	updateContactsList()
+	qmlStatus.SendStatus("Contacts list updated")
 }
 
 func loginIsSuccessfully(message messageService.Message) {
@@ -86,10 +89,10 @@ func loginIsSuccessfully(message messageService.Message) {
 	qmlLogin.LoginDataIsValid(true)
 	qmlStatus.SendStatus("Login successfully. Waiting for contacts list.")
 	//test contacts. will be removed after implement Contacts service
-	contacts.ContactsList.ContactsList = append(contacts.ContactsList.ContactsList, contacts.Contact{UserName: "aome1", NickName: "1", IsBlocked: true})
-	contacts.ContactsList.ContactsList = append(contacts.ContactsList.ContactsList, contacts.Contact{UserName: "aome2", NickName: "2", IsBlocked: true})
-	contacts.ContactsList.ContactsList = append(contacts.ContactsList.ContactsList, contacts.Contact{UserName: "aome3", NickName: "3", IsBlocked: false})
-	contacts.ContactsList.ContactsList = append(contacts.ContactsList.ContactsList, contacts.Contact{UserName: "aome4", NickName: "4", IsBlocked: true})
+	contacts.ContactsList.ContactsList = append(contacts.ContactsList.ContactsList, messageService.ClientContact{UserName: "aome1", NickName: "1", IsBlocked: 1})
+	contacts.ContactsList.ContactsList = append(contacts.ContactsList.ContactsList, messageService.ClientContact{UserName: "aome2", NickName: "2", IsBlocked: 1})
+	contacts.ContactsList.ContactsList = append(contacts.ContactsList.ContactsList, messageService.ClientContact{UserName: "aome3", NickName: "3", IsBlocked: 0})
+	contacts.ContactsList.ContactsList = append(contacts.ContactsList.ContactsList, messageService.ClientContact{UserName: "aome4", NickName: "4", IsBlocked: 1})
 	updateContactsList()
 }
 
@@ -132,7 +135,23 @@ func registerIsNotSuccessfully(message messageService.Message) {
 }
 
 func receiveNewMessage(message messageService.Message) {
-	sender := contacts.ContactsList.GetContactByUserName(message.Header.UserName)
+	//sender := contacts.ContactsList.GetContactByUserName(message.Header.UserName)
+	var sender *ContactObject
+	for i := 0; i < listOfContacts.Size(); i++ {
+		var iData, exists = listOfContacts.Get(i)
+		if !exists {
+			return
+		}
+		var data = iData.(*ContactObject)
+		if data.UserName == message.Header.UserName {
+			sender = data
+			break
+		}
+	}
+	if sender == nil {
+		loger.Log.Infof("Received message from user not in list. %s", message.Header.UserName)
+		return
+	}
 	if sender.IsBlocked {
 		loger.Log.Infof("Received message from blocked user - %s", sender.UserName)
 		return
@@ -143,8 +162,15 @@ func receiveNewMessage(message messageService.Message) {
 		loger.Log.Warningf("Cannot unmarshal received message. %s", err)
 		return
 	}
-	//TODO: change div-alignment property to display message properly
-	qmlContacts.SendLastMessage(messageBody.Text, contacts.ContactsList.IndexByUserName(sender.UserName))
+	senderIndex := addToHistory(message.Header.UserName, messageBody.Text)
+	if senderIndex != -1 {
+		qmlContacts.SendLastMessage(messageBody.Text, senderIndex)
+		qmlStatus.SendStatus("Received message from " + message.Header.UserName)
+		loger.Log.Infof("Message received from %s .", message.Header.UserName)
+		return
+	}
+	loger.Log.Infof("Message received from %s . But he is not in your list.", message.Header.UserName)
+	return
 }
 
 func messageSent(message messageService.Message) {

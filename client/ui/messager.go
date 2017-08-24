@@ -21,8 +21,8 @@ var qmlMessage *QmlMessage
 type QmlMessage struct {
 	core.QObject
 
-	_ func(message string)      `slot:"sendMessage"`
-	_ func(messageWasSent bool) `signal:"messageSent"`
+	_ func(message string, currentIndex int) `slot:"sendMessage"`
+	_ func(messageWasSent bool)              `signal:"messageSent"`
 }
 
 //initialize QmlMessage and its slots
@@ -32,23 +32,33 @@ func initQmlMessage(quickWidget *quick.QQuickWidget) {
 	qmlMessage.ConnectSendMessage(sendMessage)
 }
 
-func sendMessage(message string) {
+func sendMessage(message string, currentIndex int) {
+	const MessageWasntSent = "Message wasn`t sent"
 	newMessageHeader := messageService.MessageHeader{
 		Type_:    config.GetConfig().MessageType.Message,
 		Command:  config.GetConfig().MessageCommand.SendMessage,
 		UserName: userinfo.CurrentUserInfo.UserName,
 		Token:    userinfo.CurrentUserInfo.Token,
 	}
+	var iData, exists = listOfContacts.Get(currentIndex)
+	if !exists {
+		qmlMessage.MessageSent(false)
+		loger.Log.Warningf("List has no index %d.", currentIndex)
+		qmlStatus.SendStatus(MessageWasntSent)
+		return
+	}
+	var data = iData.(*ContactObject)
 	newMessageBody := messageService.MessageBody{
-		ReceiverName: "Little Kitty", //have to be replaced with Contacts data
+		ReceiverName: data.UserName,
 		Time:         int(time.Now().Unix()),
 		Text:         message,
 	}
+	loger.Log.Infof("Receiver of message - %s", data.UserName)
 	newRawMessageBody, err := json.Marshal(newMessageBody)
 	if err != nil {
 		qmlMessage.MessageSent(false)
-		loger.Log.Errorf("Can not marshal message body. %s", err)
-		qmlStatus.SendStatus("Message wasn`t sent")
+		loger.Log.Warningf("Can not marshal message body. %s", err)
+		qmlStatus.SendStatus(MessageWasntSent)
 		return
 	}
 	newMessage := messageService.Message{
@@ -58,14 +68,14 @@ func sendMessage(message string) {
 	marshaledMessage, err := messageService.MarshalMessage(&newMessage)
 	if err != nil {
 		qmlMessage.MessageSent(false)
-		loger.Log.Errorf("Can`t marshal message. %s", err)
-		qmlStatus.SendStatus("Message wasn`t sent")
+		loger.Log.Warningf("Can`t marshal message. %s", err)
+		qmlStatus.SendStatus(MessageWasntSent)
 		return
 	}
 	if err := connection.WriteMessage(websocket.TextMessage, marshaledMessage); err != nil {
 		qmlMessage.MessageSent(false)
-		loger.Log.Errorf("Can not send message. %s", err)
-		qmlStatus.SendStatus("Message wasn`t sent. It`s not your fall. Life is just a PAIN")
+		loger.Log.Warningf("Can not send message. %s", err)
+		qmlStatus.SendStatus(MessageWasntSent + ". It`s not your fall. Life is just a PAIN")
 		return
 	}
 	qmlStatus.SendStatus("Waiting for server response.")

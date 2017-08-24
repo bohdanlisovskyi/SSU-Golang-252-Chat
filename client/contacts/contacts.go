@@ -1,8 +1,10 @@
 package contacts
 
-var ContactsList *Contacts
+import "github.com/8tomat8/SSU-Golang-252-Chat/messageService"
 
-type Contact struct {
+var ContactsList *messageService.ClientContacts
+
+/*type Contact struct {
 	UserName  string
 	NickName  string
 	IsBlocked bool
@@ -10,23 +12,4 @@ type Contact struct {
 
 type Contacts struct {
 	ContactsList []Contact
-}
-
-//IndexByUserName return index of contact with userName if it exist, or -1 otherwise
-func (cont *Contacts) IndexByUserName(userName string) int {
-	for index, contact := range cont.ContactsList {
-		if contact.UserName == userName {
-			return index
-		}
-	}
-	return -1
-}
-
-func (cont *Contacts) GetContactByUserName(userName string) *Contact {
-	for _, contact := range cont.ContactsList {
-		if contact.UserName == userName {
-			return &contact
-		}
-	}
-	return nil
-}
+}*/

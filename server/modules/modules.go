@@ -47,9 +47,10 @@ func Message(message *messageService.Message, messageType int, conn *websocket.C
 		}
 	}
 }
-func sendMsg(conn *websocket.Conn, newHeader messageService.MessageHeader) {
+func sendMsg(conn *websocket.Conn, newHeader messageService.MessageHeader, newBody json.RawMessage) {
 	newMessage := messageService.Message{
 		Header: newHeader,
+		Body:   newBody,
 	}
 	marshaledMessage, err := messageService.MarshalMessage(&newMessage)
 	if err != nil {
@@ -70,7 +71,7 @@ func Register(message *messageService.Message, conn *websocket.Conn) {
 			Type_:   coremessage.RegisterType,
 			Command: err.Error(),
 		}
-		sendMsg(conn, newMessageHeader)
+		sendMsg(conn, newMessageHeader, nil)
 		conn.Close()
 		return
 	}
@@ -82,7 +83,13 @@ func Register(message *messageService.Message, conn *websocket.Conn) {
 			Type_:   coremessage.RegisterType,
 			Command: err.Error(),
 		}
-		sendMsg(conn, newMessageHeader)
+		newMessageBody := messageService.Authentification{}
+		newRawMessageBody, err := json.Marshal(newMessageBody)
+		if err != nil {
+			loger.Log.Warningf("Can`t marshal login message. %s", err)
+			return
+		}
+		sendMsg(conn, newMessageHeader, newRawMessageBody)
 		conn.Close()
 		return
 	}
@@ -93,7 +100,13 @@ func Register(message *messageService.Message, conn *websocket.Conn) {
 			Type_:   coremessage.RegisterType,
 			Command: err.Error(),
 		}
-		sendMsg(conn, newMessageHeader)
+		newMessageBody := messageService.Authentification{}
+		newRawMessageBody, err := json.Marshal(newMessageBody)
+		if err != nil {
+			loger.Log.Warningf("Can`t marshal login message. %s", err)
+			return
+		}
+		sendMsg(conn, newMessageHeader, newRawMessageBody)
 		conn.Close()
 		return
 	}
@@ -103,8 +116,13 @@ func Register(message *messageService.Message, conn *websocket.Conn) {
 		UserName: us.UserName,
 		Token:    tok,
 	}
-	sendMsg(conn, newMessageHeader)
-	customers.Clients[message.Header.UserName] = customers.Client{Conn: conn, Token: tok}
+	newMessageBody := messageService.Authentification{}
+	newRawMessageBody, err := json.Marshal(newMessageBody)
+	if err != nil {
+		loger.Log.Warningf("Can`t marshal login message. %s", err)
+		return
+	}
+	sendMsg(conn, newMessageHeader, newRawMessageBody)
 }
 
 func Auth(message *messageService.Message, conn *websocket.Conn) {
@@ -114,7 +132,13 @@ func Auth(message *messageService.Message, conn *websocket.Conn) {
 			Type_:   coremessage.AuthType,
 			Command: err.Error(),
 		}
-		sendMsg(conn, newMessageHeader)
+		newMessageBody := messageService.Authentification{}
+		newRawMessageBody, err := json.Marshal(newMessageBody)
+		if err != nil {
+			loger.Log.Warningf("Can`t marshal login message. %s", err)
+			return
+		}
+		sendMsg(conn, newMessageHeader, newRawMessageBody)
 		conn.Close()
 		return
 	}
@@ -126,7 +150,13 @@ func Auth(message *messageService.Message, conn *websocket.Conn) {
 			Type_:   coremessage.AuthType,
 			Command: err.Error(),
 		}
-		sendMsg(conn, newMessageHeader)
+		newMessageBody := messageService.Authentification{}
+		newRawMessageBody, err := json.Marshal(newMessageBody)
+		if err != nil {
+			loger.Log.Warningf("Can`t marshal login message. %s", err)
+			return
+		}
+		sendMsg(conn, newMessageHeader, newRawMessageBody)
 		conn.Close()
 		return
 	}
@@ -137,7 +167,13 @@ func Auth(message *messageService.Message, conn *websocket.Conn) {
 			Type_:   coremessage.AuthType,
 			Command: err.Error(),
 		}
-		sendMsg(conn, newMessageHeader)
+		newMessageBody := messageService.Authentification{}
+		newRawMessageBody, err := json.Marshal(newMessageBody)
+		if err != nil {
+			loger.Log.Warningf("Can`t marshal login message. %s", err)
+			return
+		}
+		sendMsg(conn, newMessageHeader, newRawMessageBody)
 		conn.Close()
 		return
 	}
@@ -147,7 +183,58 @@ func Auth(message *messageService.Message, conn *websocket.Conn) {
 		UserName: us.UserName,
 		Token:    tok,
 	}
-	sendMsg(conn, newMessageHeader)
+	nick, err := auth.SendNickName(user)
+	if err != nil {
+		loger.Log.Warningf("Can`t get user nick_name. %s", err)
+		return
+	}
+	newMessageBody := messageService.Authentification{
+		NickName: nick,
+	}
+	newRawMessageBody, err := json.Marshal(newMessageBody)
+	if err != nil {
+		loger.Log.Warningf("Can`t marshal login message. %s", err)
+		return
+	}
+	sendMsg(conn, newMessageHeader, newRawMessageBody)
+}
+
+func SendContacts(message *messageService.Message, conn *websocket.Conn) {
+
+	ok, err := auth.VerifyToken(message, customers.Clients[message.Header.UserName])
+	if err != nil {
+		loger.Log.Warningf("Error in token verification! %s", err)
+		return
+	}
+	if !ok {
+		loger.Log.Warningf("token verification failed! %s", err)
+		return
+	}
+	var user *messageService.Authentification
+	err = json.Unmarshal(message.Body, &user)
+	if err != nil {
+		loger.Log.Warningf("Failed to unmarshal message body %s", err)
+		return
+	}
+	cont, err := auth.SendContacts(user)
+	if err != nil {
+		loger.Log.Warningf("Failed to send user contacts %s", err)
+		return
+	}
+	newMessageHeader := messageService.MessageHeader{
+		Type_:   coremessage.ContactsType,
+		Command: coremessage.ContactsRequest,
+	}
+	newMessageBody := messageService.ClientContacts{
+		ContactsList: cont.ContactsList,
+	}
+	newRawMessageBody, err := json.Marshal(newMessageBody)
+	if err != nil {
+		loger.Log.Warningf("Can`t marshal login message. %s", err)
+		return
+	}
+	sendMsg(conn, newMessageHeader, newRawMessageBody)
+
 }
 
 func ChangePass(message *messageService.Message, messageType int, conn *websocket.Conn) {

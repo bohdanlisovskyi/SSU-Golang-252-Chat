@@ -97,8 +97,7 @@ func SendNickName(message *messageService.Authentification) (string, error) {
 	db.Where("user_name = ?", message.UserName).First(&authentification)
 	return authentification.NickName, nil
 }
-func SendContacts(cont *messageService.Authentification) (*messageService.ClientContacts, error) {
-
+func SendContacts(cont *messageService.Message) (*messageService.ClientContacts, error) {
 	db, err := database.GetStorage()
 	if err != nil {
 		loger.Log.Errorf("Failed to open db andsend contacts", err)
@@ -107,7 +106,7 @@ func SendContacts(cont *messageService.Authentification) (*messageService.Client
 	var result []clientResult
 
 	rows, err := db.Table("Contacts").Select("main_user, contact_user, is_blocked").
-		Where("main_user = ? and is_blocked == 0", cont.UserName).Rows()
+		Where("main_user = ? and is_blocked == 0", cont.Header.UserName).Rows()
 	if err != nil {
 		loger.Log.Errorf("query from contacts error:", err)
 		return nil, err
@@ -138,7 +137,6 @@ func SendContacts(cont *messageService.Authentification) (*messageService.Client
 			nick = append(nick, nickRow.nick_name)
 		}
 	}
-
 	var contact messageService.ClientContact
 	contact = messageService.ClientContact{}
 	var contacts *messageService.ClientContacts

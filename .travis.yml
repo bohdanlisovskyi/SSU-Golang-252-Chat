@@ -5,7 +5,6 @@ go:
 
 os:
   - osx
-
 install: cd server && make install-helpers
 
 env:

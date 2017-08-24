@@ -54,7 +54,19 @@ func Message(message *messageService.Message, messageType int, conn *websocket.C
 			loger.Log.Errorf("Write Message Error")
 		}
 	}
+
+	var messageSend = messageService.Message{
+		Header:
+		messageService.MessageHeader{
+			Type_:   coremessage.MessageType,
+			Command: coremessage.SentMessageComm,
+		},
+		Body: message.Body,
+	}
+	succededMessage, _ := json.Marshal(messageSend) // this for UI
+	conn.WriteMessage(messageType, succededMessage)  // this for UI
 }
+
 func sendMsg(conn *websocket.Conn, newHeader messageService.MessageHeader, newBody json.RawMessage) {
 	newMessage := messageService.Message{
 		Header: newHeader,

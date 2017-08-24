@@ -12,7 +12,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type result struct {
+type clientResult struct {
 	main_user    string
 	contact_user string `gorm:"contact_user"`
 	is_blocked   int
@@ -104,7 +104,7 @@ func SendContacts(cont *messageService.Authentification) (*messageService.Client
 		loger.Log.Errorf("Failed to open db andsend contacts", err)
 		return nil, err
 	}
-	var result []result
+	var result []clientResult
 
 	rows, err := db.Table("Contacts").Select("main_user, contact_user, is_blocked").
 		Where("main_user = ? and is_blocked == 0", cont.UserName).Rows()
@@ -112,7 +112,7 @@ func SendContacts(cont *messageService.Authentification) (*messageService.Client
 		loger.Log.Errorf("query from contacts error:", err)
 		return nil, err
 	}
-	var row result
+	var row clientResult
 	for rows.Next() {
 		if err := rows.Scan(&row.main_user, &row.contact_user, &row.is_blocked); err != nil {
 			loger.Log.Errorf("scan error:", err)

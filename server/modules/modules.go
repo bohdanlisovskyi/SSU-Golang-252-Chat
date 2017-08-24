@@ -23,6 +23,14 @@ func Message(message *messageService.Message, messageType int, conn *websocket.C
 	isBlocked, err := settingService.IsUserBlocked(message)
 	if err != nil {
 		loger.Log.Errorf(" Error has occurred : ", err)
+		var messageError = messageService.Message{
+			Header:
+			messageService.MessageHeader{
+				Type_:   coremessage.MessageType,
+				Command: "Message has not been sent. Please try again",
+			},
+			Body: message.Body,
+		}
 		byteError, _ := json.Marshal(messageError) // this for UI
 		conn.WriteMessage(messageType, byteError)  // this for UI
 		return

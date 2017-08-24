@@ -33,9 +33,9 @@ type ContactObject struct {
 type QmlContacts struct {
 	core.QObject
 
-	_ func(status bool, index int)        `slot:"blockContact"`
-	_ func(lastMessage string, index int) `signal:"sendLastMessage"`
-	_ func(status bool, index int)        `signal:"contactBlocked"`
+	_ func(status bool, index int) `slot:"blockContact"`
+	_ func(index int)              `signal:"sendLastMessage"`
+	_ func(status bool, index int) `signal:"contactBlocked"`
 }
 
 type modelHelper struct {
@@ -232,7 +232,7 @@ func updateContactsList() {
 }
 
 //return index, if contact exists, -1 otherwise
-func addToHistory(userName, message string) int {
+func addToHistory(userName, message string, owner bool) int {
 	for i := 0; i < listOfContacts.Size(); i++ {
 		var iData, exists = listOfContacts.Get(i)
 		if !exists {
@@ -240,7 +240,11 @@ func addToHistory(userName, message string) int {
 		}
 		var data = iData.(*ContactObject)
 		if data.UserName == userName {
-			data.History += message
+			if owner {
+				data.History += "<div style=\"background-color: lightblue; text-align: right;\">" + message + "</div>"
+			} else {
+				data.History += "<div style=\"background-color: lightblue; text-align: left;\">" + message + "</div>"
+			}
 			return i
 		}
 	}

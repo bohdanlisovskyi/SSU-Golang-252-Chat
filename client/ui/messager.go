@@ -53,7 +53,6 @@ func sendMessage(message string, currentIndex int) {
 		Time:         int(time.Now().Unix()),
 		Text:         message,
 	}
-	loger.Log.Infof("Receiver of message - %s", data.UserName)
 	newRawMessageBody, err := json.Marshal(newMessageBody)
 	if err != nil {
 		qmlMessage.MessageSent(false)
@@ -79,5 +78,6 @@ func sendMessage(message string, currentIndex int) {
 		return
 	}
 	qmlStatus.SendStatus("Waiting for server response.")
+	loger.Log.Info("Message sent to server. Waiting response.")
 	//now we just waiting for server response
 }

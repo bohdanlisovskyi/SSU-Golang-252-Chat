@@ -56,36 +56,44 @@ Item {
                 horizontalAlignment: Text.AlignHCenter
                 font.pixelSize: 12
             }
-
-            Text {
-                id: historyTextView
-                width: 560
-                textFormat: Text.RichText
-                verticalAlignment: Text.AlignBottom
-                Layout.maximumWidth: 5535
-                Layout.rowSpan: 2
-                renderType: Text.QtRendering
-                enabled: true
-                z: 0
-                antialiasing: true
-                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                font.weight: Font.Normal
-                style: Text.Normal
-                font.letterSpacing: 0
-                font.wordSpacing: 1
-                rightPadding: 5
-                leftPadding: 5
-                bottomPadding: 0
-                topPadding: 0
-                fontSizeMode: Text.FixedSize
-                font.family: "Courier"
+            Flickable {
+                id: flickHistory
+                maximumFlickVelocity: 500
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.minimumHeight: 200
                 Layout.minimumWidth: 230
-                font.pixelSize: 12
-            }
+                contentWidth: historyTextView.paintedWidth
+                contentHeight: historyTextView.paintedHeight
+                clip: true
+                ScrollBar.vertical: ScrollBar { id: vbar; active: false }
+                Text {
+                    id: historyTextView
+                    width: flickHistory.width
+                    height: flickHistory.height
+                    textFormat: Text.RichText
+                    verticalAlignment: Text.AlignBottom
+                    Layout.maximumWidth: 5535
+                    Layout.rowSpan: 2
+                    renderType: Text.QtRendering
+                    enabled: true
+                    z: 0
+                    antialiasing: true
+                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                    font.weight: Font.Normal
+                    style: Text.Normal
+                    font.letterSpacing: 0
+                    font.wordSpacing: 1
+                    rightPadding: 5
+                    leftPadding: 5
+                    bottomPadding: 0
+                    topPadding: 0
+                    fontSizeMode: Text.FixedSize
+                    font.family: "Courier"
 
+                    font.pixelSize: 13
+                }
+            }
             RowLayout {
                 id: sendingRowLayout
                 width: 100
@@ -111,7 +119,7 @@ Item {
                     contentWidth: messageEdit.paintedWidth
                     contentHeight: messageEdit.paintedHeight
                     clip: true
-                    ScrollBar.vertical: ScrollBar { id: vbar; active: false }
+                    ScrollBar.vertical: ScrollBar { id: vbarHistory; active: false }
                     function ensureVisible(r)
                     {
                         if (contentX >= r.x)
@@ -298,12 +306,13 @@ Item {
                     }
                     onCurrentItemChanged: {
                         currentTitle.text = ModelHelper.getData(contactsListView.currentIndex, "nickname")
+                        historyTextView.text = ModelHelper.getData(contactsListView.currentIndex, "history")
                     }
 
                     Connections {
-                         target: ModelHelper
-                         onDataChanged: { contactsListView.model = 0; contactsListView.model = ContactModel }
-                       }
+                        target: ModelHelper
+                        onDataChanged: { contactsListView.model = 0; contactsListView.model = ContactModel }
+                    }
 
                     focus: true
                 }

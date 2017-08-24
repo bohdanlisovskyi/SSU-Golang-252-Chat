@@ -37,12 +37,14 @@ func channelsResolver() {
 				registerIsNotSuccessfully(msg)
 			}
 		case msg := <-listener.MessageChannel:
+			loger.Log.Info("Message channel")
 			switch msg.Header.Command {
 			case config.GetConfig().MessageCommand.ReceiveMessage:
 				receiveNewMessage(msg)
 			case config.GetConfig().MessageCommand.MessageSent:
 				messageSent(msg)
 			default:
+				loger.Log.Info("Message wasnt sent")
 				messageWasntSent(msg)
 			}
 		case msg := <-listener.SettingsChannel:
@@ -202,6 +204,7 @@ func messageWasntSent(message messageService.Message) {
 		loger.Log.Warningf("Cannot unmarshal received message. %s", err)
 		return
 	}
+	loger.Log.Info("Wasnt sent to " + messageBody.ReceiverName)
 	qmlStatus.SendStatus("Message wasn't sent to " + messageBody.ReceiverName)
 	qmlMessage.MessageSent(true)
 	//in this case message.Header.Command contains error message
